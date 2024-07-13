@@ -666,15 +666,9 @@
                     <li>
                         <div class="dropdown-divider mb-0"></div>
                     </li>
-                    <li x-data>
-                        <form id="logout-form" x-ref="logoutForm" method="POST" action="{{ route('logout') }}" style="display: none;">
-                            @csrf
-                        </form>
-                        <a class="dropdown-item d-flex align-items-center" href="#" @click.prevent="$refs.logoutForm.submit()">
-                            <i class="bx bx-log-out-circle"></i>
-                            <span>Logout</span>
-                        </a>
-                        
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center" href="{{ route('admin.logout') }}"><i
+                                class="bx bx-log-out-circle"></i><span>Logout</span></a>
                     </li>
                 </ul>
             </div>
