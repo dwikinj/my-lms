@@ -1,3 +1,3 @@
-<footer class="page-footer">
-    <p class="mb-0">Copyright © 2022. All right reserved.</p>
+<footer class="page-footer" x-data="{ year: new Date().getFullYear() }">
+    <p class="mb-0">Copyright © <span x-text="year"></span>. All right reserved.</p>
 </footer>
