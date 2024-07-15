@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class InstructorController extends Controller
@@ -81,6 +82,44 @@ class InstructorController extends Controller
         ];
 
         return redirect()->back()->with($notification);
+    } //endmethod
+
+    public function InstructorChangePassword()
+    {
+        $id = Auth::user()->id;
+        $profileData = User::find($id);
+        return view('instructor.instructor_change_password', ['profileData' => $profileData]);
+    } //endmethod
+
+    public function InstructorPasswordUpdate(Request $request)
+    {
+        $request->validate([
+            'old_password' => 'required',
+            'new_password' => 'required|confirmed'
+        ]);
+
+
+        $id = Auth::user()->id;
+        $user = User::find($id);
+
+        if (!Hash::check($request->old_password, $user->password)) {
+
+            $notification = [
+                'message' => 'Old password does not match!',
+                'alert-type' => 'error'
+            ];
+
+            return back()->with($notification);
+        }
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        $notification = [
+            'message' => 'Password updated successfully',
+            'alert-type' => 'success'
+        ];
+
+        return back()->with($notification);
     } //endmethod
 
 }
