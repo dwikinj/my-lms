@@ -24,6 +24,14 @@
     <link rel="stylesheet" href="{{asset('frontend/css/fancybox.css')}}">
     <link rel="stylesheet" href="{{asset('frontend/css/style.css')}}">
     <!-- end inject -->
+
+    <!--Alpine js-->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <!--toast js-->
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.css" >
+
+
 </head>
 <body>
 
@@ -114,5 +122,32 @@
 <script src="{{asset('frontend/js/animated-skills.js')}}"></script>
 <script src="{{asset('frontend/js/jquery.MultiFile.min.js')}}"></script>
 <script src="{{asset('frontend/js/main.js')}}"></script>
+
+{{-- Toasterjs --}}
+	  
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+<script>
+ @if(Session::has('message'))
+ var type = "{{ Session::get('alert-type','info') }}"
+ switch(type){
+    case 'info':
+    toastr.info(" {{ Session::get('message') }} ");
+    break;
+
+    case 'success':
+    toastr.success(" {{ Session::get('message') }} ");
+    break;
+
+    case 'warning':
+    toastr.warning(" {{ Session::get('message') }} ");
+    break;
+
+    case 'error':
+    toastr.error(" {{ Session::get('message') }} ");
+    break; 
+ }
+ @endif 
+</script>
 </body>
 </html>
