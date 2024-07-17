@@ -5,22 +5,26 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
-    public function Index()  {
+    public function Index()
+    {
         return view('frontend.index');
     }
 
-    public function UserProfile()  {
+    public function UserProfile()
+    {
 
         $id = Auth::user()->id;
         $profileData = User::find($id);
         return view('frontend.dashboard.edit_profile', ['profileData' => $profileData]);
-    }//end method
+    } //end method
 
-    public function UserProfileUpdate(Request $request) {
+    public function UserProfileUpdate(Request $request)
+    {
         $id = Auth::user()->id;
         $user = User::findOrFail($id);
 
@@ -33,18 +37,18 @@ class UserController extends Controller
             'photo' => 'sometimes|required|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-            if ($validator->fails()) {
-                $errors = $validator->errors();
-                $errorMessage = 'User profile update failed. ';
-               
-                $notification = [
-                    'message' => $errorMessage,
-                    'alert-type' => 'error'
-                ];
-        
-                return redirect()->back()->withErrors($validator)->withInput()->with($notification);
-            }
-        
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+            $errorMessage = 'User profile update failed. ';
+
+            $notification = [
+                'message' => $errorMessage,
+                'alert-type' => 'error'
+            ];
+
+            return redirect()->back()->withErrors($validator)->withInput()->with($notification);
+        }
+
 
         $fillable = ['name', 'username', 'email', 'phone', 'address'];
         $user->fill($request->only($fillable));
@@ -73,7 +77,8 @@ class UserController extends Controller
         return redirect()->back()->with($notification);
     }
 
-    public function UserLogout(Request $request) {
+    public function UserLogout(Request $request)
+    {
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
@@ -83,10 +88,52 @@ class UserController extends Controller
         return redirect()->route('login');
     }
 
-    public function UserChangePassword(Request $request) {
+    public function UserChangePassword()
+    {
+
+
+        return view('frontend.dashboard.change_password');
+    }
+
+    public function UserPasswordUpdate(Request $request)
+    {
         $id = Auth::user()->id;
-        $profileData = User::find($id);
-        
-        return view('frontend.dashboard.change_password', ['profileData' => $profileData]);
+        $user = User::findOrFail($id);
+
+        $validator = Validator::make($request->all(), [
+            'old_password' => 'required',
+            'new_password' => 'required|confirmed|min:8',
+            'new_password_confirmation' => 'required'
+        ]);
+
+        if ($validator->fails()) {
+            $errorMessage = 'Password update failed';
+
+            $notification = [
+                'message' => $errorMessage,
+                'alert-type' => 'error'
+            ];
+
+            return redirect()->back()->withErrors($validator)->withInput()->with($notification);
+        }
+
+        if (!Hash::check($request->old_password, $user->password)) {
+            $notification = [
+                'message' => 'Password update failed. Old password is incorrect.',
+                'alert-type' => 'error'
+            ];
+
+            return redirect()->back()->withErrors($validator)->withInput()->with($notification);
+        }
+
+        $user->password = Hash::make($request->new_password);
+        $user->save();
+
+        $notification = [
+            'message' => 'Password updated successfully',
+            'alert-type' => 'success'
+        ];
+
+        return redirect()->back()->with($notification);
     }
 }
