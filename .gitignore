@@ -18,8 +18,8 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
-/public/admin_images
-/public/category
-/public/instructor_images
-/public/user_images
+/public/upload/admin_images/
+/public/upload/category/
+/public/upload/instructor_images/
+/public/upload/user_images/
 
