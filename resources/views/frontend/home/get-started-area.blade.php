@@ -14,7 +14,7 @@
                         <h5 class="card-title pt-4 pb-2">Become an Instructor</h5>
                         <p class="card-text">Teach what you love. Aduca gives you the tools to create a course.</p>
                         <div class="btn-box mt-20px">
-                            <a href="become-a-teacher.html" class="btn theme-btn theme-btn-sm theme-btn-white lh-30"><i class="la la-user mr-1"></i>Start Teaching</a>
+                            <a href="{{ route('become.instructor') }}" class="btn theme-btn theme-btn-sm theme-btn-white lh-30"><i class="la la-user mr-1"></i>Start Teaching</a>
                         </div><!-- end btn-box -->
                     </div><!-- end card-body -->
                 </div><!-- end card -->
