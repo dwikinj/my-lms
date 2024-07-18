@@ -81,6 +81,9 @@
 <script src="{{ asset('backend/assets/js/app.js') }}"></script>
 <!--validate js-->
 <script src="{{ asset('backend/assets/js/validate.min.js') }}"></script>
+<!-- sweetalert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="{{ asset('backend/assets/js/code.js') }}"></script>
 
 	<script>
 		new PerfectScrollbar(".app-container")
