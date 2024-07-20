@@ -124,11 +124,13 @@ class AdminController extends Controller
         return back()->with($notification);
     } //endmethod
 
-    public function BecomeInstructor() {
+    public function BecomeInstructor()
+    {
         return view('frontend.instructor.register_instructor');
-    }//endmethod
+    } //endmethod
 
-    public function InstructorRegister(Request $request) {
+    public function InstructorRegister(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'username' => 'required|string|max:255|unique:users,username',
@@ -162,8 +164,26 @@ class AdminController extends Controller
             'alert-type' => 'success'
         ];
         return redirect()->route('instructor.login')->with($notification);
+    } //endmethod
 
+    public function AllInstructor()
+    {
+        $allinstructor = User::where('role', User::ROLE_INSTRUCTOR)->latest()->get();
+        return view('admin.backend.instructor.all_instructor', compact('allinstructor'));
+    } //endmethod
 
-    }//endmethod
+    public function UpdateUserStatus(Request $request)
+    {
+        $userId = $request->input('user_id');
+        $isChecked = $request->input('is_checked',0);
+
+        $user = User::find($userId);
+        if ($user) {
+            $user->status = $isChecked;
+            $user->save();
+        }
+
+        return response()->json(['message'=>'User Status Updated Succesfully']);
+    }
 
 }
