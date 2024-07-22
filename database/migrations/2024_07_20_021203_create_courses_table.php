@@ -37,6 +37,8 @@ return new class extends Migration
             $table->tinyInteger('status')->default(0)->comment('0=Inactive','1=Active');
 
             $table->timestamps();
+
+            $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
         });
     }
 

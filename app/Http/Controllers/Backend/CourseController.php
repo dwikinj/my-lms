@@ -18,7 +18,7 @@ class CourseController extends Controller
     public function AllCourse()
     {
         $id = Auth::user()->id;
-        $courses = Course::where('instructor_id', $id)->orderBy('id', 'desc')->get();
+        $courses = Course::with('category')->where('instructor_id', $id)->orderBy('id', 'desc')->get();
 
         return view('instructor.courses.all_course', compact('courses'));
     } //endmethod
