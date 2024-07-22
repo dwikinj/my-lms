@@ -84,6 +84,8 @@ Route::middleware(['auth', 'roles:instructor'])->group(function () {
         Route::get('/all/course','AllCourse')->name('all.course');
         Route::get('/add/course','AddCourse')->name('add.course');
         Route::get('/subcategory/ajax/{categoryId}','GetSubCategory');
+        Route::post('/store/course','StoreCourse')->name('store.course');
+
     });
 });
 Route::get('/instructor/login', [InstructorController::class, 'InstructorLogin'])->name('instructor.login');

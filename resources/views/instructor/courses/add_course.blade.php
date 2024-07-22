@@ -20,7 +20,7 @@
         <div class="card">
             <div class="card-body p-4">
                 <h5 class="mb-4">Add New Course</h5>
-                <form method="post" id="myForm" enctype="multipart/form-data" action="{{ route('store.category') }}"
+                <form method="post" id="myForm" enctype="multipart/form-data" action="{{ route('store.course') }}"
                     class="row g-3">
                     @csrf
                     <div x-data="{
@@ -87,7 +87,8 @@
                                 <select class="form-select" id="subcategory_id" name="subcategory_id"
                                     x-model="selectedSubcategory">
                                     <template x-for="subcategory in subcategories" :key="subcategory.id">
-                                        <option x-bind:value="subcategory.id" x-text="subcategory.subcategory_name"></option>
+                                        <option x-bind:value="subcategory.id" x-text="subcategory.subcategory_name">
+                                        </option>
                                     </template>
                                 </select>
                             </div>
@@ -107,9 +108,8 @@
 
                     <div class="form-group col-md-6">
                         <div class="mb-3">
-                            <label for="certificate" class="form-label">Course Label</label>
-                            <select class="form-select" id="certificate" name="label">
-                                <option selected disabled>Open this select menu</option>
+                            <label for="label" class="form-label">Course Label</label>
+                            <select class="form-select" id="label" name="label">
                                 <option value="Begginer">Begginer</option>
                                 <option value="Middle">Middle</option>
                                 <option value="Advance">Advance</option>
@@ -161,6 +161,37 @@
                         </div>
                     </div>
 
+                    <p>Course Goals</p>
+
+
+                    <!--   //////////// Goal Option /////////////// -->
+
+                    <div x-data="goalManager()">
+                        <div class="row add_item">
+                            <template x-for="(goal, index) in goals" :key="index">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label :for="'goals_' + index" class="form-label">Goals</label>
+                                            <input type="text" :name="'course_goals[]'" :id="'goals_' + index" class="form-control" placeholder="Goals" x-model="goal.value">
+                                        </div>
+                                    </div>
+                                    <div class="form-group col-md-6" style="padding-top: 30px;">
+                                        <button type="button" class="btn btn-success" @click="addGoal" x-show="index === goals.length - 1">
+                                            <i class="fa fa-plus-circle"></i> Add More..
+                                        </button>
+                                        <button type="button" class="btn btn-danger" @click="removeGoal(index)" x-show="goals.length > 1">
+                                            <i class="fa fa-minus-circle"></i> Remove
+                                        </button>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+
+                    <!--   ////////////End Goal Option /////////////// -->
+
+
                     <hr>
                     <div class="row">
                         <div class="col-md-4">
@@ -199,6 +230,21 @@
 
     </div>
 
+    <script>
+        function goalManager() {
+            return {
+                goals: [{ value: '' }],
+                addGoal() {
+                    this.goals.push({ value: '' });
+                },
+                removeGoal(index) {
+                    this.goals.splice(index, 1);
+                },
+                
+            }
+        }
+    </script>
+
     <script type="text/javascript">
         function categorySelection() {
             return {
@@ -229,21 +275,53 @@
         $(document).ready(function() {
             $('#myForm').validate({
                 rules: {
-                    category_name: {
+                    course_name: {
                         required: true,
                     },
-                    image: {
+                    course_title: {
                         required: true,
                     },
+                    video:{
+                        required: true
+                    },
+                    category_id:{
+                        required: true
+                    },
+                    subcategory_id:{
+                        required: true
+                    },
+                    label:{
+                        required: true
+                    },
+                    selling_price:{
+                        required: true
+                    },
+                   
 
                 },
                 messages: {
-                    category_name: {
-                        required: 'Please Enter Category Name',
+                    course_name: {
+                        required: 'Please Enter Course Name',
                     },
-                    image: {
-                        required: 'Please Select Category Image',
+                    course_title: {
+                        required: 'Please Enter Course Title',
                     },
+                    video: {
+                        required: 'Please Input Course Video intro',
+                    },
+                    category_id: {
+                        required: 'Please Input Course Category',
+                    },
+                    subcategory_id: {
+                        required: 'Please Input Course SubCategory',
+                    },
+                    label: {
+                        required: 'Please Input Course Label',
+                    },
+                    selling_price: {
+                        required: 'Please Input Course Price',
+                    },
+                   
 
 
                 },
