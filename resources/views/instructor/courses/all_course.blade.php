@@ -48,8 +48,9 @@
                             <td>{{ $item->discount_price }}</td>
                           
                             <td>
-                                <a href="{{route('edit.category', $item->id)}}" class="btn btn-info px-5">Edit</a>
-                                <a href="{{route('delete.category', $item->id)}}" class="btn btn-danger px-5" id="delete">Delete</a>
+                                <a href="{{route('edit.course', $item->id)}}" class="btn btn-info" title="edit"><i class="fadeIn animated bx bx-eraser"></i></a>
+                                <a href="{{route('delete.course', $item->id)}}" class="btn btn-danger" id="delete" title="delete"><i class="fadeIn animated bx bx-trash-alt"></i></a>
+                                <a href="{{route('edit.course', $item->id)}}" class="btn btn-warning" title="lecture"><i class="fadeIn animated bx bx-list-ul"></i></a>
                             </td>
                             
                         </tr>
