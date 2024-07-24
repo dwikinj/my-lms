@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Course;
 use App\Models\CourseGoal;
+use App\Models\CourseSection;
 use Illuminate\Http\Request;
 use Intervention\Image\Laravel\Facades\Image;
 use Illuminate\Support\Facades\Auth;
@@ -273,4 +274,38 @@ class CourseController extends Controller
 
         return redirect()->route('all.course')->with($notification);
     } //end method
+
+    public function AddCourseLecture($id) {
+        $course = Course::find($id);
+        return view('instructor.courses.section.add_course_lecture', compact('course'));
+    }//end method
+
+    public function AddCourseSection(Request $request) {
+        $validator = Validator::make($request->all(),[
+            'id' => 'required|numeric',
+            'section_title' => 'required|string|max:2555',
+        ]);
+
+        if ($validator->fails()) {
+            $notification = [
+                'message' => 'Course section insert failed. ' . $validator->errors()->first(),
+                'alert-type' => 'error'
+            ];
+
+            return redirect()->back()->with($notification);
+        }
+
+        CourseSection::create([
+            'course_id' => $request->id,
+            'section_title' => $request->section_title,
+        ]);
+        $notification = [
+            'message' => 'Course section insert succesfully',
+            'alert-type' => 'success'
+        ];
+
+        return redirect()->back()->with($notification);
+
+    }//end method
+
 }

@@ -79,7 +79,7 @@ Route::middleware(['auth', 'roles:instructor'])->group(function () {
     Route::get('/instructor/change/password', [InstructorController::class, 'InstructorChangePassword'])->name('instructor.change.password');
     Route::post('/instructor/password/update', [InstructorController::class, 'InstructorPasswordUpdate'])->name('instructor.password.update');
 
-    //Instructor all route (course)
+    //Instructor Course all route
     Route::controller(CourseController::class)->group(function () {
         Route::get('/all/course','AllCourse')->name('all.course');
         Route::get('/add/course','AddCourse')->name('add.course');
@@ -88,6 +88,13 @@ Route::middleware(['auth', 'roles:instructor'])->group(function () {
         Route::get('/edit/course/{id}','EditCourse')->name('edit.course');
         Route::post('/update/course','UpdateCourse')->name('update.course');
         Route::get('/delete/course/{id}','DeleteCourse')->name('delete.course');
+    });
+    
+    //Course Section and Lecture  all routes
+    Route::controller(CourseController::class)->group(function () {
+        Route::get('/add/course/lecture/{id}','AddCourseLecture')->name('add.course.lecture');
+        Route::post('/add/course/section','AddCourseSection')->name('add.course.section');
+        
     });
 });
 Route::get('/instructor/login', [InstructorController::class, 'InstructorLogin'])->name('instructor.login');
