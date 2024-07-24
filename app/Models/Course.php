@@ -19,4 +19,8 @@ class Course extends Model
     {
         return $this->hasMany(CourseGoal::class, 'course_id', 'id');
     }
+
+    public function courseSections() {
+        return $this->hasMany(CourseSection::class,'course_id','id');
+    }
 }
