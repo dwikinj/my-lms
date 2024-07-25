@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Course;
 use App\Models\CourseGoal;
+use App\Models\CourseLecture;
 use App\Models\CourseSection;
 use Illuminate\Http\Request;
 use Intervention\Image\Laravel\Facades\Image;
@@ -79,8 +80,8 @@ class CourseController extends Controller
 
         //video
         $video = $request->file('video');
-        $videoname = time().'.' . $video->getClientOriginalExtension();
-        $video->move(public_path('upload/course/video/'),$videoname);
+        $videoname = time() . '.' . $video->getClientOriginalExtension();
+        $video->move(public_path('upload/course/video/'), $videoname);
         $save_video = 'upload/course/video/' . $videoname;
 
         $course = Course::create([
@@ -122,17 +123,19 @@ class CourseController extends Controller
             'alert-type' => 'success'
         ];
 
-        return redirect()->route('all.course')->with($notification);  
+        return redirect()->route('all.course')->with($notification);
     } //endmethod
 
-    public function EditCourse($id) {
-        $course = Course::with(['category','courseGoals'])->find($id);
+    public function EditCourse($id)
+    {
+        $course = Course::with(['category', 'courseGoals'])->find($id);
         $categories = Category::latest()->get();
-        return view('instructor.courses.edit_course',compact('course','categories'));
+        return view('instructor.courses.edit_course', compact('course', 'categories'));
     }
     //endmethod
 
-    public function UpdateCourse(Request $request) {
+    public function UpdateCourse(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'id' => 'required|numeric|exists:courses,id',
             'course_name' => 'required|string|max:255|unique:courses,course_name,' . $request->id,
@@ -171,8 +174,8 @@ class CourseController extends Controller
             $notification = [
                 'message' => 'Course not found',
                 'alert-type' => 'error'
-            ];               
-    
+            ];
+
             return back()->with($notification);
         }
 
@@ -191,18 +194,18 @@ class CourseController extends Controller
         }
 
         //video
-       if ($request->hasFile('video')) {
-        if ($course->video && file_exists(public_path($course->video))) {
-            unlink(public_path($course->video));
+        if ($request->hasFile('video')) {
+            if ($course->video && file_exists(public_path($course->video))) {
+                unlink(public_path($course->video));
+            }
+
+            $video = $request->file('video');
+            $videoname = time() . '.' . $video->getClientOriginalExtension();
+            $video->move(public_path('upload/course/video/'), $videoname);
+            $save_video = 'upload/course/video/' . $videoname;
+            $course->video = $save_video;
         }
 
-        $video = $request->file('video');
-        $videoname = time().'.' . $video->getClientOriginalExtension();
-        $video->move(public_path('upload/course/video/'),$videoname);
-        $save_video = 'upload/course/video/' . $videoname;
-        $course->video = $save_video;
-       }
-        
         $course->update([
             'category_id' => $request->category_id,
             'subcategory_id' => $request->subcategory_id,
@@ -236,13 +239,13 @@ class CourseController extends Controller
                 ]);
             }
         }
-        
+
         $notification = [
             'message' => 'Course Updated Succesfully',
             'alert-type' => 'success'
         ];
 
-        return redirect()->route('all.course')->with($notification); 
+        return redirect()->route('all.course')->with($notification);
     }
     //endmethod
 
@@ -275,13 +278,15 @@ class CourseController extends Controller
         return redirect()->route('all.course')->with($notification);
     } //end method
 
-    public function AddCourseLecture($id) {
-        $course = Course::with('courseSections')->find($id);
+    public function AddCourseLecture($id)
+    {
+        $course = Course::with('courseSections.courseLectures')->find($id);
         return view('instructor.courses.section.add_course_lecture', compact('course'));
-    }//end method
+    } //end method
 
-    public function AddCourseSection(Request $request) {
-        $validator = Validator::make($request->all(),[
+    public function AddCourseSection(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
             'id' => 'required|numeric',
             'section_title' => 'required|string|max:2555',
         ]);
@@ -305,7 +310,43 @@ class CourseController extends Controller
         ];
 
         return redirect()->back()->with($notification);
+    } //end method
 
-    }//end method
+    public function SaveLecture(Request $request)
+    {
+        // Validasi data
+        $validator = Validator::make($request->all(), [
+            'course_id' => 'required|numeric',
+            'course_section_id' => 'required|numeric',
+            'lecture_title' => 'required|string|max:255',
+            'url' => 'nullable|url',
+            'content' => 'nullable|string',
+        ]);
+
+        // Jika validasi gagal, kembalikan respon dengan error
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Inser Lecture Failed. '. $validator->errors()->first(),
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Buat entri baru di model CourseLecture
+        $lecture = new CourseLecture();
+        $lecture->course_id = $request->course_id;
+        $lecture->course_section_id = $request->course_section_id;
+        $lecture->lecture_title = $request->lecture_title;
+        $lecture->url = $request->url;
+        $lecture->content = $request->content;
+        $lecture->save();
+
+        // Kembalikan respon sukses
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Lecture saved successfully!',
+            'lecture' => $lecture
+        ], 201);
+    } //end method
 
 }

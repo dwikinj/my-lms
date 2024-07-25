@@ -45,34 +45,38 @@
 
                                         <div class="courseHide" id="lectureContainer{{ $key }}">
                                             <div class="container">
-                                                <div
-                                                    class="lectureDiv mb-3 d-flex align-items-center justify-content-between">
-                                                    <div>
-                                                        <strong>Lecture title</strong>
+                                                @foreach ($section->courseLectures as $lecture)
+                                                    <div
+                                                        class="lectureDiv mb-3 d-flex align-items-center justify-content-between">
+                                                        <div>
+                                                            <strong>{{ $loop->iteration }} .
+                                                                {{ $lecture->lecture_title }}</strong>
+                                                        </div>
+                                                        <div class="btn-group">
+                                                            <a href="" class="btn btn-sm btn-primary">Edit</a>&nbsp;
+                                                            <a href="" class="btn btn-sm btn-danger">Delete</a>
+                                                        </div>
                                                     </div>
-                                                    <div class="btn-group">
-                                                        <a href="" class="btn btn-sm btn-primary">Edit</a>&nbsp;
-                                                        <a href="" class="btn btn-sm btn-danger">Delete</a>
-                                                    </div>
-                                                </div>
+                                                @endforeach
                                             </div>
                                         </div>
 
-                                        <div x-show="isFormVisible({{$key}})" class="container mb-3">
+                                        <div x-show="isFormVisible({{ $key }})" class="container mb-3">
                                             <h6>Lecture Title</h6>
                                             <input type="text" name="lecture_title" x-model="newLecture.title"
                                                 class="form-control mb-3" placeholder="Enter Lecture Title">
-                                            
+
                                             <h6>Lecture Content</h6>
                                             <textarea name="content" id="description" x-model="newLecture.content" class="form-control mt-2" cols="30"
-                                                rows="10" ></textarea>
+                                                rows="10"></textarea>
 
                                             <h6 class="mt-3">Add Video Url</h6>
                                             <input type="text" name="url" x-model="newLecture.url"
                                                 class="form-control" placeholder="Add Url">
 
                                             <button class="btn btn-primary mt-3"
-                                                @click="saveLecture({{ $course->id }}, {{ $section->id }}, {{ $key }})">Save Lecture</button>
+                                                x-on:click="saveLecture({{ $course->id }}, {{ $section->id }}, {{ $key }})">Save
+                                                Lecture</button>
                                             <button class="btn btn-secondary mt-3"
                                                 @click="cancelLecture({{ $key }})">Cancel</button>
                                         </div>
@@ -132,13 +136,14 @@
         function courseManager() {
             return {
                 showLectureForm: {
-                   
+
                 },
                 newLecture: {
                     title: '',
                     content: '',
                     url: ''
                 },
+                saveLectureRoute: '{{ route('save.course.lecture') }}',
 
                 isFormVisible(index) {
                     return this.showLectureForm[index] === true;
@@ -150,6 +155,10 @@
                 },
 
                 async saveLecture(courseId, sectionId, index) {
+                    if (tinymce.get('description')) {
+                        this.newLecture.content = tinymce.get('description').getContent();
+                    }
+
                     const lectureData = {
                         course_id: courseId,
                         course_section_id: sectionId,
@@ -159,24 +168,42 @@
                     }
 
                     try {
-                        const response = await fetch('/save-lecture',{
+                        const response = await fetch(this.saveLectureRoute, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
                                 'X-CSRF-TOKEN': '{{ csrf_token() }}'
                             },
-                            body: json.stringify(lectureData)
+                            body: JSON.stringify(lectureData)
                         });
 
-                        if (!response.ok) {
-                            throw new Error('Network problem');
-                        }
-
                         const result = await response.json();
-                        console.log(result);
+                        if (result.status === 'success') {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: result.message,
+                                showConfirmButton: false,
+                                timer: 3000
+                            });
+
+                            this.cancelLecture(index);
+
+                            window.location.reload();
+                        } else {
+                            throw new Error(result.message || 'An error occurred');
+                        }
                     } catch (error) {
-                        console.log(error);
-                    } 
+                        Swal.fire({
+                            toast: true,
+                            position: 'top-end',
+                            icon: 'error',
+                            title: error.message,
+                            showConfirmButton: false,
+                            timer: 3000
+                        });
+                    }
 
                     this.cancelLecture(index);
                 },
@@ -188,6 +215,7 @@
                         content: '',
                         url: ''
                     };
+                    tinymce.get('description').setContent('');
                 }
             }
         }
