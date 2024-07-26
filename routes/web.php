@@ -94,6 +94,7 @@ Route::middleware(['auth', 'roles:instructor'])->group(function () {
     Route::controller(CourseController::class)->group(function () {
         Route::get('/add/course/lecture/{id}','AddCourseLecture')->name('add.course.lecture');
         Route::post('/add/course/section','AddCourseSection')->name('add.course.section');
+        Route::get('/delete/course/{course_id}/section/{course_section_id}','DeleteCourseSection')->name('delete.course.section');
 
         Route::post('/save-lecture','SaveLecture')->name('save.course.lecture');
         Route::get('/delete/course/{course_id}/section/{course_section_id}/lecture/{lecture_id}', 'DeleteCourseLecture')->name('delete.course.lecture');

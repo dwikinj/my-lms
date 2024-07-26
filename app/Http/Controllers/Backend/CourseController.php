@@ -427,4 +427,30 @@ class CourseController extends Controller
         ];
         return redirect()->route('add.course.lecture',$request->course_id)->with($notification);
     }//end method
+
+    public function DeleteCourseSection($courseId, $sectionId)
+    {
+         
+
+        $section = CourseSection::where('id', $sectionId)
+            ->where('course_id', $courseId)
+            ->firstOrFail();
+
+            if (!$section) {
+                $notification = [
+                    'message' => 'Failed to delete section',
+                    'alert-type' => 'error'
+                ];
+                return redirect()->route('add.course.lecture',['id' => $courseId])->with($notification);
+            }
+
+        $section->courseLectures()->delete();
+        $section->delete();
+
+        $notification = [
+            'message' => 'Section delete successfully.',
+            'alert-type' => 'success'
+        ];
+        return redirect()->route('add.course.lecture',['id' => $courseId])->with($notification);
+    }//end method
 }

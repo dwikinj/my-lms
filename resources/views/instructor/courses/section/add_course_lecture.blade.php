@@ -33,13 +33,13 @@
                                         <div class="card-body p-4 d-flex justify-content-between">
                                             <h6>{{ $section->section_title }}</h6>
                                             <div class="d-flex justify-content-between align-items-center">
-                                                <a class="btn btn-primary ms-auto" title="Add Lecture"
+                                                <button class="btn btn-primary ms-auto" title="Add Lecture"
                                                     @click="addLecture({{ $course->id }}, {{ $section->id }}, {{ $key }})">
                                                     <i class="fadeIn animated bx bx-folder-plus"></i>
-                                                </a>&nbsp;
-                                                <button type="submit" class="btn btn-danger  ms-auto"
-                                                    title="Delete Section"><i
-                                                        class="fadeIn animated bx bx-trash"></i></button>
+                                                </button>&nbsp;
+                                                <a href="{{ route('delete.course.section', ['course_id' => $course->id, 'course_section_id' => $section->id])}}"
+                                                    class="btn btn-danger  ms-auto" title="Delete Section" id="delete"><i
+                                                        class="fadeIn animated bx bx-trash"></i></a>
                                             </div>
                                         </div>
 
@@ -147,7 +147,6 @@
                 },
                 saveLectureRoute: '{{ route('save.course.lecture') }}',
 
-
                 isFormVisible(index) {
                     return this.showLectureForm[index] === true;
                 },
@@ -156,7 +155,6 @@
                     this.showLectureForm[index] = true;
 
                 },
-
                 async saveLecture(courseId, sectionId, index) {
                     if (tinymce.get('description')) {
                         this.newLecture.content = tinymce.get('description').getContent();
@@ -206,7 +204,8 @@
                         url: ''
                     };
                     tinymce.get('description').setContent('');
-                }
+                },
+               
             }
         }
     </script>
