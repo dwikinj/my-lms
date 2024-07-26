@@ -96,7 +96,9 @@ Route::middleware(['auth', 'roles:instructor'])->group(function () {
         Route::post('/add/course/section','AddCourseSection')->name('add.course.section');
 
         Route::post('/save-lecture','SaveLecture')->name('save.course.lecture');
-        
+        Route::get('/delete/course/{course_id}/section/{course_section_id}/lecture/{lecture_id}', 'DeleteCourseLecture')->name('delete.course.lecture');
+        Route::get('/edit/course/{course_id}/section/{course_section_id}/lecture/{lecture_id}', 'EditCourseLecture')->name('edit.course.lecture');
+        Route::post('/update-lecture','UpdateCourseLecture')->name('update.course.lecture');
     });
 });
 Route::get('/instructor/login', [InstructorController::class, 'InstructorLogin'])->name('instructor.login');

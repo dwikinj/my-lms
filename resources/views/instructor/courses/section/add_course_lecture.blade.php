@@ -53,8 +53,10 @@
                                                                 {{ $lecture->lecture_title }}</strong>
                                                         </div>
                                                         <div class="btn-group">
-                                                            <a href="" class="btn btn-sm btn-primary">Edit</a>&nbsp;
-                                                            <a href="" class="btn btn-sm btn-danger">Delete</a>
+                                                            <a href="{{ route('edit.course.lecture', ['course_id' => $course->id, 'course_section_id' => $section->id, 'lecture_id' => $lecture->id]) }}"
+                                                                class="btn btn-sm btn-primary">Edit</a>&nbsp;
+                                                            <a href="{{ route('delete.course.lecture', ['course_id' => $course->id, 'course_section_id' => $section->id, 'lecture_id' => $lecture->id]) }}"
+                                                                class="btn btn-sm btn-danger" id="delete">Delete</a>
                                                         </div>
                                                     </div>
                                                 @endforeach
@@ -145,6 +147,7 @@
                 },
                 saveLectureRoute: '{{ route('save.course.lecture') }}',
 
+
                 isFormVisible(index) {
                     return this.showLectureForm[index] === true;
                 },
@@ -179,35 +182,22 @@
 
                         const result = await response.json();
                         if (result.status === 'success') {
-                            Swal.fire({
-                                toast: true,
-                                position: 'top-end',
-                                icon: 'success',
-                                title: result.message,
-                                showConfirmButton: false,
-                                timer: 3000
-                            });
+                            toastr.success(result.message)
 
                             this.cancelLecture(index);
 
-                            window.location.reload();
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 500);
                         } else {
                             throw new Error(result.message || 'An error occurred');
                         }
                     } catch (error) {
-                        Swal.fire({
-                            toast: true,
-                            position: 'top-end',
-                            icon: 'error',
-                            title: error.message,
-                            showConfirmButton: false,
-                            timer: 3000
-                        });
+                        toastr.error(error.message);
                     }
 
                     this.cancelLecture(index);
                 },
-
                 cancelLecture(index) {
                     this.showLectureForm[index] = false;
                     this.newLecture = {

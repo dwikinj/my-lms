@@ -327,7 +327,7 @@ class CourseController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'status' => 'error',
-                'message' => 'Inser Lecture Failed. '. $validator->errors()->first(),
+                'message' => 'Inser Lecture Failed. ' . $validator->errors()->first(),
                 'errors' => $validator->errors()
             ], 422);
         }
@@ -349,4 +349,82 @@ class CourseController extends Controller
         ], 201);
     } //end method
 
+    public function DeleteCourseLecture($course_id, $course_section_id, $lecture_id)
+    {
+        $lecture = CourseLecture::where('id', $lecture_id)
+            ->where('course_id', $course_id)
+            ->where('course_section_id', $course_section_id)
+            ->firstOrFail();
+
+            if (!$lecture) {
+                $notification = [
+                    'message' => 'Lecture not found.',
+                    'alert-type' => 'success'
+                ];
+                return redirect()->back()->with($notification);
+            }
+        
+
+        // Proses penghapusan
+        $lecture->delete();
+        $notification = [
+            'message' => 'Lecture delete successfully.',
+            'alert-type' => 'error'
+        ];
+
+        // Redirect atau response
+        return redirect()->back()->with($notification);
+    }//end method
+
+    public function EditCourseLecture($course_id, $course_section_id, $lecture_id)
+    {
+        $lecture = CourseLecture::where('id', $lecture_id)
+            ->where('course_id', $course_id)
+            ->where('course_section_id', $course_section_id)
+            ->firstOrFail();
+
+        if (!$lecture) {
+            return redirect()->back();
+        }
+
+        return view('instructor.courses.lecture.edit_course_lecture',compact('lecture'));
+    }//end method
+
+    public function UpdateCourseLecture(Request $request)
+    {
+          // Validasi data
+        $validator = Validator::make($request->all(), [
+            'id' => 'required|numeric',
+            'course_id' => 'required|numeric',
+            'course_section_id' => 'required|numeric',
+            'lecture_title' => 'required|string|max:255',
+            'url' => 'nullable|url',
+            'content' => 'nullable|string',
+        ]);
+
+        $lecture = CourseLecture::where('id', $request->id)
+            ->where('course_id', $request->course_id)
+            ->where('course_section_id', $request->course_section_id)
+            ->firstOrFail();
+
+            if ($validator->fails() || !$lecture) {
+                $notification = [
+                    'message' => 'Failed to update',
+                    'alert-type' => 'error'
+                ];
+                return redirect()->back()->with($notification);
+            }
+
+        $lecture->lecture_title = $request->lecture_title;
+        $lecture->url = $request->url;
+        $lecture->content = $request->content;
+
+        $lecture->save();
+
+        $notification = [
+            'message' => 'Lecture update successfully.',
+            'alert-type' => 'success'
+        ];
+        return redirect()->route('add.course.lecture',$request->course_id)->with($notification);
+    }//end method
 }
