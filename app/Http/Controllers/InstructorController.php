@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class InstructorController extends Controller
@@ -46,7 +47,7 @@ class InstructorController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|required|string|max:255',
-            'username' => 'sometimes|required|string|max:255|unique:users,username,' . $id,
+            'username' => 'sometimes|nullable|string|max:255|unique:users,username,' . $id,
             'email' => 'sometimes|required|string|email|max:255|unique:users,email,' . $id,
             'phone' => 'sometimes|nullable|string|max:20',
             'address' => 'sometimes|nullable|string|max:255',
@@ -54,8 +55,21 @@ class InstructorController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect()->back()->withErrors($validator)->withInput();
+            $errors = $validator->errors();
+            $errorMessages = [];
+    
+            foreach ($errors->all() as $message) {
+                $errorMessages[] = $message;
+            }
+    
+            $notification = [
+                'message' => 'Instructor profile update failed: ' . implode(', ', $errorMessages),
+                'alert-type' => 'error'
+            ];
+    
+            return redirect()->back()->withErrors($validator)->with($notification)->withInput();
         }
+    
 
         $fillable = ['name', 'username', 'email', 'phone', 'address'];
         $user->fill($request->only($fillable));
