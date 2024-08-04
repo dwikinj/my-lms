@@ -142,7 +142,23 @@
                                         </div>
                                     </div>
 
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Short Description</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary" x-init="tinymce.init({ selector: 'textarea#description[name=short_description]' }); $nextTick(() => { tinymce.get('description-short_description').setContent(@js($profileData->short_description)); })">
+                                            <textarea class="form-control" name="short_description" id="description" rows="3">{{ old('short_description', $profileData->short_description) }}</textarea>
+                                        </div>
+                                    </div>
 
+                                    <div class="row mb-3">
+                                        <div class="col-sm-3">
+                                            <h6 class="mb-0">Description</h6>
+                                        </div>
+                                        <div class="col-sm-9 text-secondary" x-init="tinymce.init({ selector: 'textarea#description[name=description]' }); $nextTick(() => { tinymce.get('description-description').setContent(@js($profileData->description)); })">
+                                            <textarea class="form-control" name="description" id="description" rows="3">{{ old('description', $profileData->description) }}</textarea>
+                                        </div>
+                                    </div>
 
                                     <div class="row">
                                         <div class="col-sm-3"></div>

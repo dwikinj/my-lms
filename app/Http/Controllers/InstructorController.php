@@ -52,6 +52,8 @@ class InstructorController extends Controller
             'phone' => 'sometimes|nullable|string|max:20',
             'address' => 'sometimes|nullable|string|max:255',
             'photo' => 'sometimes|nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'short_description' => 'sometimes|nullable|string',
+            'description' => 'sometimes|nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -71,7 +73,7 @@ class InstructorController extends Controller
         }
     
 
-        $fillable = ['name', 'username', 'email', 'phone', 'address'];
+        $fillable = ['name', 'username', 'email', 'phone', 'address','short_description','description'];
         $user->fill($request->only($fillable));
 
         // Handle file upload
