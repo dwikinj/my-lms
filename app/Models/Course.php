@@ -22,7 +22,12 @@ class Course extends Model
 
     public function category()
     {
-        return $this->belongsTo(Category::class,'category_id','id');
+        return $this->belongsTo(Category::class, 'category_id', 'id');
+    }
+
+    public function subCategory()
+    {
+        return $this->belongsTo(SubCategory::class, 'subcategory_id');
     }
 
     public function courseGoals()
@@ -30,12 +35,13 @@ class Course extends Model
         return $this->hasMany(CourseGoal::class, 'course_id', 'id');
     }
 
-    public function courseSections() {
-        return $this->hasMany(CourseSection::class,'course_id','id');
+    public function courseSections()
+    {
+        return $this->hasMany(CourseSection::class, 'course_id', 'id');
     }
 
     public function instructor()
     {
-        return $this->belongsTo(User::class,'instructor_id','id');
+        return $this->belongsTo(User::class, 'instructor_id', 'id');
     }
 }
