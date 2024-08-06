@@ -23,4 +23,11 @@ class IndexController extends Controller
         return view('frontend.course.course_details',compact('course','totalLectures','instructorCourses','categories','coursesByCategory'));
     }
     //end method
+
+    public function CategoryCourse($id, $slug) {
+        $courses = Course::with(['instructor'])->where([['category_id','=',$id],['status','=',1]])->get();
+        $category = Category::where('id',$id)->first();
+        return view('frontend.category.category_all',compact('courses','category'));
+    }
+    //end method
 }

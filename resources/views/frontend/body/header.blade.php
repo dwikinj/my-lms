@@ -99,7 +99,7 @@
                                         <ul class="cat-dropdown-menu">
                                             @foreach ($categories as $category)
                                                 <li>
-                                                    <a href="course-grid.html">{{ $category->category_name }} <i
+                                                    <a href="{{ route('category.course', ['id' => $category->id, 'slug' => $category->category_slug]) }}">{{ $category->category_name }} <i
                                                             class="la la-angle-right"></i></a>
                                                     <ul class="sub-menu">
                                                         @forelse ($category->subCategories as $subcategory)

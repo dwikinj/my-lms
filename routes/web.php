@@ -102,9 +102,11 @@ Route::middleware(['auth', 'roles:instructor'])->group(function () {
         Route::get('/edit/course/{course_id}/section/{course_section_id}/lecture/{lecture_id}', 'EditCourseLecture')->name('edit.course.lecture');
         Route::post('/update-lecture','UpdateCourseLecture')->name('update.course.lecture');
     });
-});
+});//end instructor middleware
+
+//accessable Routes for all
 Route::get('/instructor/login', [InstructorController::class, 'InstructorLogin'])->name('instructor.login');
 Route::get('/course/details/{id}/{slug}', [IndexController::class, 'CourseDetails'])->name('course.details');
-//end instructor middleware
-
+Route::get('/category/{id}/{slug}',[IndexController::class, 'CategoryCourse'])->name('category.course');
+//end accessable routes for all
 require __DIR__ . '/auth.php';
