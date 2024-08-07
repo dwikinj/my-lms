@@ -354,7 +354,7 @@
                                                 href="{{ route('course.details', ['id' => $course->id, 'slug' => $course->course_name_slug]) }}">{{ $course->course_name }}</a>
                                         </h5>
                                         <p class="card-text"><a
-                                                href="teacher-detail.html">{{ $course->instructor->name }}</a></p>
+                                                href="{{route('instructor.details',['id'=>$course->instructor->id])}}">{{ $course->instructor->name }}</a></p>
                                         <div class="rating-wrap d-flex align-items-center py-2">
                                             <div class="review-stars">
                                                 <span class="rating-number">4.4</span>
@@ -420,7 +420,7 @@
             <div id="tooltip_content_{{ $course->id }}">
                 <div class="card card-item">
                     <div class="card-body">
-                        <p class="card-text pb-2">By <a href="teacher-detail.html">{{ $course->instructor->name }}</a>
+                        <p class="card-text pb-2">By <a href="{{route('instructor.details',['id'=>$course->instructor->id])}}">{{ $course->instructor->name }}</a>
                         </p>
                         <h5 class="card-title pb-1"><a
                                 href="{{ route('course.details', ['id' => $course->id, 'slug' => $course->course_name_slug]) }}">{{ $course->course_name }}</a>
