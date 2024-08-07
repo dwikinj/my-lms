@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Course;
+use App\Models\SubCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -27,7 +28,15 @@ class IndexController extends Controller
     public function CategoryCourse($id, $slug) {
         $courses = Course::with(['instructor'])->where([['category_id','=',$id],['status','=',1]])->get();
         $category = Category::where('id',$id)->first();
-        return view('frontend.category.category_all',compact('courses','category'));
+        $categories = Category::latest()->get();
+        return view('frontend.category.category_all',compact('courses','category','categories'));
     }
     //end method
+
+    public function SubCategoryCourse($id, $slug) {
+        $courses = Course::with(['instructor'])->where([['subcategory_id','=',$id],['status','=',1]])->get();
+        $subcategory = SubCategory::where('id',$id)->first();
+        $categories = Category::latest()->get();
+        return view('frontend.category.subcategory_all',compact('courses','subcategory','categories'));
+    } //end method
 }
