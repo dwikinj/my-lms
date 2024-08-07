@@ -108,5 +108,6 @@ Route::middleware(['auth', 'roles:instructor'])->group(function () {
 Route::get('/instructor/login', [InstructorController::class, 'InstructorLogin'])->name('instructor.login');
 Route::get('/course/details/{id}/{slug}', [IndexController::class, 'CourseDetails'])->name('course.details');
 Route::get('/category/{id}/{slug}',[IndexController::class, 'CategoryCourse'])->name('category.course');
+Route::get('/subcategory/{id}/{slug}',[IndexController::class, 'SubCategoryCourse'])->name('subcategory.course');
 //end accessable routes for all
 require __DIR__ . '/auth.php';

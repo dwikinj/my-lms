@@ -104,7 +104,7 @@
                                                     <ul class="sub-menu">
                                                         @forelse ($category->subCategories as $subcategory)
                                                             <li><a
-                                                                    href="#">{{ $subcategory->subcategory_name }}</a>
+                                                                    href="{{ route('subcategory.course', ['id' => $subcategory->id, 'slug' => $subcategory->subcategory_slug]) }}">{{ $subcategory->subcategory_name }}</a>
                                                             </li>
                                                         @empty
                                                             <li><a>Subcategory not exist</a></li>
