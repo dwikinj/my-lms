@@ -123,6 +123,13 @@
     }
     @endif 
    </script>
+
+   {{-- sweet alert  --}}
+   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    {{-- sweet end alert --}}
+    
+    @include('frontend.body.script')
+
 </body>
 
 </html>

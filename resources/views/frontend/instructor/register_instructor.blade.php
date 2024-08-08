@@ -12,7 +12,7 @@
                 </div>
                 <ul
                     class="generic-list-item generic-list-item-white generic-list-item-arrow d-flex flex-wrap align-items-center">
-                    <li><a href="index.html">Home</a></li>
+                    <li><a href="{{url('/')}}">Home</a></li>
                     <li>Pages</li>
                     <li>Become An Instructor</li>
                 </ul>

@@ -3,7 +3,7 @@
         <div class="row">
             <div class="col-lg-3 responsive-column-half">
                 <div class="footer-item">
-                    <a href="index.html">
+                    <a href="{{url('/')}}">
                         <img src="images/logo.png" alt="footer logo" class="footer__logo">
                     </a>
                     <ul class="generic-list-item pt-4">
