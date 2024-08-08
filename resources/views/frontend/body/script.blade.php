@@ -20,17 +20,15 @@
                     position: 'top-end',
                     icon: 'success',
                     showConfirmButton: false,
-                    timer: 6000
+                    timer: 1500
                 })
                 if ($.isEmptyObject(data.error)) {
-
                     Toast.fire({
                         type: 'success',
                         title: data.success,
                     })
 
                 } else {
-
                     Toast.fire({
                         type: 'error',
                         icon:'warning',

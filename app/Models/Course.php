@@ -44,4 +44,9 @@ class Course extends Model
     {
         return $this->belongsTo(User::class, 'instructor_id', 'id');
     }
+
+    public function wishlistedByUsers()
+    {
+        return $this->belongsToMany(User::class, 'wishlists', 'course_id', 'user_id')->withTimestamps();
+    }
 }
