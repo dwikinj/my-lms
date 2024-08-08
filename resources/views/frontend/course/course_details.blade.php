@@ -39,7 +39,7 @@
                             <span class="student-total pl-2">540,815 students</span>
                         </div>
                     </div><!-- end d-flex -->
-                    <p class="pt-2 pb-1">Created by <a href="teacher-detail.html"
+                    <p class="pt-2 pb-1">Created by <a href="{{route('instructor.details',['id'=>$course->instructor->id])}}"
                             class="text-color hover-underline">{{ $course->instructor->name }}</a></p>
                     <div class="d-flex flex-wrap align-items-center">
                         <p class="pr-3 d-flex align-items-center">
@@ -208,7 +208,7 @@
                             <div class="instructor-wrap">
                                 <div class="media media-card">
                                     <div class="instructor-img">
-                                        <a href="teacher-detail.html" class="media-img d-block">
+                                        <a href="{{route('instructor.details',['id'=>$course->instructor->id])}}" class="media-img d-block">
                                             <img class="lazy"
                                                 src="{{ !empty($course->instrcutor->photo) ? url('upload/instructor_images/' . $course->instructor->photo) : url('upload/no_image.jpg') }}"
                                                 data-src="{{ !empty($course->instructor->photo) ? url('upload/instructor_images/' . $course->instructor->photo) : url('upload/no_image.jpg') }}"
@@ -220,11 +220,11 @@
                                             <li><i class="la la-comment-o mr-2 text-color-3"></i> 2,533 Reviews</li>
                                             <li><i class="la la-play-circle-o mr-2 text-color-3"></i>
                                                 {{ $instructorCourses->count() }} Courses</li>
-                                            <li><a href="teacher-detail.html">View all Courses</a></li>
+                                            <li><a href="{{route('instructor.details',['id'=>$course->instructor->id])}}">View all Courses</a></li>
                                         </ul>
                                     </div><!-- end instructor-img -->
                                     <div class="media-body">
-                                        <h5><a href="teacher-detail.html">{{ $course->instructor->name }}</a></h5>
+                                        <h5><a href="{{route('instructor.details',['id'=>$course->instructor->id])}}">{{ $course->instructor->name }}</a></h5>
                                         <span class="d-block lh-18 pt-2 pb-3">Joined
                                             {{ $course->instructor->created_at->diffForHumans() }}</span>
                                         <p class="text-black lh-18 pb-3">{{ $course->instructor->email }}</p>
@@ -698,7 +698,7 @@
     <section class="related-course-area bg-gray pt-60px pb-60px">
         <div class="container">
             <div class="related-course-wrap">
-                <h3 class="fs-28 font-weight-semi-bold pb-35px">More Courses by <a href="teacher-detail.html"
+                <h3 class="fs-28 font-weight-semi-bold pb-35px">More Courses by <a href="{{route('instructor.details',['id'=>$course->instructor->id])}}"
                         class="text-color hover-underline">{{ $course->instructor->name }}</a></h3>
                 <div class="view-more-carousel-2 owl-action-styled">
                     @foreach ($instructorCourses as $instructorCourse)
@@ -735,7 +735,7 @@
                                         x-text="title"></a>
                                 </h5>
                                 <p class="card-text"><a
-                                        href="teacher-detail.html">{{ $instructorCourse->instructor->name }}</a></p>
+                                        href="{{route('instructor.details',['id'=>$course->instructor->id])}}">{{ $instructorCourse->instructor->name }}</a></p>
                                 <div class="rating-wrap d-flex align-items-center py-2">
                                     <div class="review-stars">
                                         <span class="rating-number">4.4</span>
@@ -787,7 +787,7 @@
         <div id="tooltip_content_1">
             <div class="card card-item">
                 <div class="card-body">
-                    <p class="card-text pb-2">By <a href="teacher-detail.html">Jose Portilla</a></p>
+                    <p class="card-text pb-2">By <a href="{{route('instructor.details',['id'=>$course->instructor->id])}}">Jose Portilla</a></p>
                     <h5 class="card-title pb-1"><a href="course-details.html">The Business Intelligence Analyst Course
                             2021</a></h5>
                     <div class="d-flex align-items-center pb-1">
