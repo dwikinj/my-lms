@@ -167,8 +167,16 @@
                                                 <div class="shop-cart-btn">
                                                     <div class="avatar-xs">
                                                         <img class="rounded-full img-fluid"
-                                                            src="{{ (!empty($profileData->photo)) ? url('upload/user_images/'.$profileData->photo) : url('upload/no_image.jpg')}}"
-                                                            alt="Avatar image">
+                                                        src="{{ (!empty($profileData->photo)) ? 
+                                                           (($profileData->role === 'admin') ? 
+                                                               url('upload/admin_images/'.$profileData->photo) : 
+                                                               (($profileData->role === 'instructor') ? 
+                                                                   url('upload/instructor_images/'.$profileData->photo) : 
+                                                                   url('upload/user_images/'.$profileData->photo)
+                                                               )
+                                                           ) : 
+                                                           url('upload/no_image.jpg') }}"
+                                                        alt="Avatar image">
                                                     </div>
                                                     <span class="dot-status bg-1"></span>
                                                 </div>
@@ -178,8 +186,16 @@
                                                         <a href="teacher-detail.html"
                                                             class="avatar-sm flex-shrink-0 d-block">
                                                             <img class="rounded-full img-fluid"
-                                                                src="{{ (!empty($profileData->photo)) ? url('upload/user_images/'.$profileData->photo) : url('upload/no_image.jpg')}}"
-                                                                alt="Avatar image">
+     src="{{ (!empty($profileData->photo)) ? 
+        (($profileData->role === 'admin') ? 
+            url('upload/admin_images/'.$profileData->photo) : 
+            (($profileData->role === 'instructor') ? 
+                url('upload/instructor_images/'.$profileData->photo) : 
+                url('upload/user_images/'.$profileData->photo)
+            )
+        ) : 
+        url('upload/no_image.jpg') }}"
+     alt="Avatar image">
                                                         </a>
                                                         <div class="ml-2">
                                                             <h4><a href="teacher-detail.html" class="text-black">{{$profileData->name}}</a></h4>
