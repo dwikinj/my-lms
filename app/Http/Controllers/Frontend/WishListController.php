@@ -30,4 +30,39 @@ class WishListController extends Controller
             return response()->json(['error' => 'Login first to your account']);
         }
     }//end method
+
+    public function AllWishlist(){
+        return view('frontend.wishlist.all_wishlist');
+    }//end method
+
+    public function GetWishlistCourses(){
+        if (Auth::check()) {
+            $wishlist = Auth::user()->wishlistCourses()->with(['instructor'])->get();
+            return response()->json(['wishlist' => $wishlist]);
+        } else {
+            return response()->json(['error' => 'Login first to your account'], 401);
+        }
+    }//end method
+
+
+
+    public function DeleteCourseFromWishlist($course_id) {
+        if (Auth::check()) {
+            $wishlist = Wishlist::where([
+                ['user_id', '=', Auth::id()],
+                ['course_id', '=', $course_id]
+            ])->first();
+    
+            if ($wishlist) {
+                $wishlist->delete();
+                return response()->json(['success' => 'Successfully deleted from your Wishlist']);
+            } else {
+                return response()->json(['error' => 'Course not found in your Wishlist']);
+            }
+        } else {
+            return response()->json(['error' => 'Login first to your account']);
+        }
+    }
+
+
 }
