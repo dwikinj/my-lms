@@ -1,8 +1,8 @@
 @extends('frontend.master')
 @section('home')
     <!-- ================================
-        START BREADCRUMB AREA
-    ================================= -->
+            START BREADCRUMB AREA
+        ================================= -->
     <section class="breadcrumb-area pt-50px pb-50px bg-white pattern-bg">
         <div class="container">
             <div class="col-lg-8 mr-auto">
@@ -39,7 +39,8 @@
                             <span class="student-total pl-2">540,815 students</span>
                         </div>
                     </div><!-- end d-flex -->
-                    <p class="pt-2 pb-1">Created by <a href="{{route('instructor.details',['id'=>$course->instructor->id])}}"
+                    <p class="pt-2 pb-1">Created by <a
+                            href="{{ route('instructor.details', ['id' => $course->instructor->id]) }}"
                             class="text-color hover-underline">{{ $course->instructor->name }}</a></p>
                     <div class="d-flex flex-wrap align-items-center">
                         <p class="pr-3 d-flex align-items-center">
@@ -79,12 +80,12 @@
         </div><!-- end container -->
     </section><!-- end breadcrumb-area -->
     <!-- ================================
-        END BREADCRUMB AREA
-    ================================= -->
+            END BREADCRUMB AREA
+        ================================= -->
 
     <!--======================================
-            START COURSE DETAILS AREA
-    ======================================-->
+                START COURSE DETAILS AREA
+        ======================================-->
     <section class="course-details-area pb-20px">
         <div class="container">
             <div class="row">
@@ -208,7 +209,8 @@
                             <div class="instructor-wrap">
                                 <div class="media media-card">
                                     <div class="instructor-img">
-                                        <a href="{{route('instructor.details',['id'=>$course->instructor->id])}}" class="media-img d-block">
+                                        <a href="{{ route('instructor.details', ['id' => $course->instructor->id]) }}"
+                                            class="media-img d-block">
                                             <img class="lazy"
                                                 src="{{ !empty($course->instrcutor->photo) ? url('upload/instructor_images/' . $course->instructor->photo) : url('upload/no_image.jpg') }}"
                                                 data-src="{{ !empty($course->instructor->photo) ? url('upload/instructor_images/' . $course->instructor->photo) : url('upload/no_image.jpg') }}"
@@ -220,11 +222,15 @@
                                             <li><i class="la la-comment-o mr-2 text-color-3"></i> 2,533 Reviews</li>
                                             <li><i class="la la-play-circle-o mr-2 text-color-3"></i>
                                                 {{ $instructorCourses->count() }} Courses</li>
-                                            <li><a href="{{route('instructor.details',['id'=>$course->instructor->id])}}">View all Courses</a></li>
+                                            <li><a
+                                                    href="{{ route('instructor.details', ['id' => $course->instructor->id]) }}">View
+                                                    all Courses</a></li>
                                         </ul>
                                     </div><!-- end instructor-img -->
                                     <div class="media-body">
-                                        <h5><a href="{{route('instructor.details',['id'=>$course->instructor->id])}}">{{ $course->instructor->name }}</a></h5>
+                                        <h5><a
+                                                href="{{ route('instructor.details', ['id' => $course->instructor->id]) }}">{{ $course->instructor->name }}</a>
+                                        </h5>
                                         <span class="d-block lh-18 pt-2 pb-3">Joined
                                             {{ $course->instructor->created_at->diffForHumans() }}</span>
                                         <p class="text-black lh-18 pb-3">{{ $course->instructor->email }}</p>
@@ -550,7 +556,8 @@
                                     @endif
 
                                     <div class="buy-course-btn-box">
-                                        <button type="button" class="btn theme-btn w-100 mb-2"><i
+                                        <button type="button" class="btn theme-btn w-100 mb-2"
+                                            onclick="addToCart({{ $course->id }},'{{ $course->course_name }}','{{ $course->instructor->id }}','{{ $course->course_name_slug }}')"><i
                                                 class="la la-shopping-cart fs-18 mr-1"></i> Add to cart</button>
                                         <button type="button" class="btn theme-btn w-100 theme-btn-white mb-2"><i
                                                 class="la la-shopping-bag mr-1"></i> Buy this course</button>
@@ -624,7 +631,9 @@
                                 <div class="divider"><span></span></div>
                                 <ul class="generic-list-item">
                                     @foreach ($categories as $category)
-                                        <li><a href="{{ route('category.course', ['id' => $category->id, 'slug' => $category->category_slug]) }}">{{ $category->category_name }}</a></li>
+                                        <li><a
+                                                href="{{ route('category.course', ['id' => $category->id, 'slug' => $category->category_slug]) }}">{{ $category->category_name }}</a>
+                                        </li>
                                     @endforeach
                                 </ul>
                             </div>
@@ -689,22 +698,25 @@
         </div><!-- end container -->
     </section><!-- end course-details-area -->
     <!--======================================
-            END COURSE DETAILS AREA
-    ======================================-->
+                END COURSE DETAILS AREA
+        ======================================-->
 
     <!--======================================
-            START RELATED COURSE AREA
-    ======================================-->
+                START RELATED COURSE AREA
+        ======================================-->
     <section class="related-course-area bg-gray pt-60px pb-60px">
         <div class="container">
             <div class="related-course-wrap">
-                <h3 class="fs-28 font-weight-semi-bold pb-35px">More Courses by <a href="{{route('instructor.details',['id'=>$course->instructor->id])}}"
+                <h3 class="fs-28 font-weight-semi-bold pb-35px">More Courses by <a
+                        href="{{ route('instructor.details', ['id' => $course->instructor->id]) }}"
                         class="text-color hover-underline">{{ $course->instructor->name }}</a></h3>
                 <div class="view-more-carousel-2 owl-action-styled">
                     @foreach ($instructorCourses as $instructorCourse)
-                        <div class="card card-item card-preview" data-tooltip-content="#tooltip_content_{{ $instructorCourse->id }}">
+                        <div class="card card-item card-preview"
+                            data-tooltip-content="#tooltip_content_{{ $instructorCourse->id }}">
                             <div class="card-image">
-                                <a href="{{ route('course.details', ['id' => $instructorCourse->id, 'slug' => $instructorCourse->course_name_slug]) }}" class="d-block">
+                                <a href="{{ route('course.details', ['id' => $instructorCourse->id, 'slug' => $instructorCourse->course_name_slug]) }}"
+                                    class="d-block">
                                     <img class="card-img-top" src="{{ asset($instructorCourse->course_image) }}"
                                         alt="Card image cap">
                                 </a>
@@ -735,7 +747,8 @@
                                         x-text="title"></a>
                                 </h5>
                                 <p class="card-text"><a
-                                        href="{{route('instructor.details',['id'=>$course->instructor->id])}}">{{ $instructorCourse->instructor->name }}</a></p>
+                                        href="{{ route('instructor.details', ['id' => $course->instructor->id]) }}">{{ $instructorCourse->instructor->name }}</a>
+                                </p>
                                 <div class="rating-wrap d-flex align-items-center py-2">
                                     <div class="review-stars">
                                         <span class="rating-number">4.4</span>
@@ -771,11 +784,11 @@
         </div><!-- end container -->
     </section><!-- end related-course-area -->
     <!--======================================
-            END RELATED COURSE AREA
-    ======================================-->
+                END RELATED COURSE AREA
+        ======================================-->
 
 
-  
+
 
     <!-- start scroll top -->
     <div id="scroll-top">
@@ -784,50 +797,52 @@
     <!-- end scroll top -->
 
     <!-- tooltip_templates-->
-<div class="tooltip_templates">
-    @foreach ($instructorCourses as $course)
-        <div id="tooltip_content_{{ $course->id }}">
-            <div class="card card-item">
-                <div class="card-body">
-                    <p class="card-text pb-2">By <a href="{{route('instructor.details',['id'=>$course->instructor->id])}}">{{ $course->instructor->name }}</a>
-                    </p>
-                    <h5 class="card-title pb-1"><a
-                            href="{{ route('course.details', ['id' => $course->id, 'slug' => $course->course_name_slug]) }}">{{ $course->course_name }}</a>
-                    </h5>
-                    <div class="d-flex align-items-center pb-1">
-                        @if ($course->bestseller == 1)
-                            <h6 class="ribbon fs-14 mr-1">Bestseller</h6>
-                        @else
-                            <h6 class="ribbon fs-14 mr-1">New</h6>
-                        @endif
+    <div class="tooltip_templates">
+        @foreach ($instructorCourses as $course)
+            <div id="tooltip_content_{{ $course->id }}">
+                <div class="card card-item">
+                    <div class="card-body">
+                        <p class="card-text pb-2">By <a
+                                href="{{ route('instructor.details', ['id' => $course->instructor->id]) }}">{{ $course->instructor->name }}</a>
+                        </p>
+                        <h5 class="card-title pb-1"><a
+                                href="{{ route('course.details', ['id' => $course->id, 'slug' => $course->course_name_slug]) }}">{{ $course->course_name }}</a>
+                        </h5>
+                        <div class="d-flex align-items-center pb-1">
+                            @if ($course->bestseller == 1)
+                                <h6 class="ribbon fs-14 mr-1">Bestseller</h6>
+                            @else
+                                <h6 class="ribbon fs-14 mr-1">New</h6>
+                            @endif
 
-                        <p class="text-success fs-14 font-weight-medium">Updated<span class="font-weight-bold pl-1">
-                                {{ $course->updated_at->format('F Y') }}</span></p>
+                            <p class="text-success fs-14 font-weight-medium">Updated<span class="font-weight-bold pl-1">
+                                    {{ $course->updated_at->format('F Y') }}</span></p>
+                        </div>
+                        <ul
+                            class="generic-list-item generic-list-item-bullet generic-list-item--bullet d-flex align-items-center fs-14">
+                            <li>{{ $course->duration }} total hours</li>
+                            <li>{{ $course->label }}</li>
+                        </ul>
+                        <p class="card-text pt-1 fs-14 lh-22">{{ $course->prerequisites }}</p>
+                        <ul class="generic-list-item fs-14 py-3">
+                            @forelse($course->courseGoals as $goal)
+                                <li><i class="la la-check mr-1 text-black"></i> {{ $goal->goal_name }}</li>
+                            @empty
+                                <li>No course goals.</li>
+                            @endforelse
+                        </ul>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="#" class="btn theme-btn flex-grow-1 mr-3"><i
+                                    class="la la-shopping-cart mr-1 fs-18"></i> Add to Cart</a>
+                            <div class="icon-element icon-element-sm shadow-sm cursor-pointer" title="Add to Wishlist"
+                                id="{{ $course->id }}" onclick="addToWishList(this.id)"><i class="la la-heart-o"></i>
+                            </div>
+                        </div>
                     </div>
-                    <ul
-                        class="generic-list-item generic-list-item-bullet generic-list-item--bullet d-flex align-items-center fs-14">
-                        <li>{{ $course->duration }} total hours</li>
-                        <li>{{ $course->label }}</li>
-                    </ul>
-                    <p class="card-text pt-1 fs-14 lh-22">{{ $course->prerequisites }}</p>
-                    <ul class="generic-list-item fs-14 py-3">
-                        @forelse($course->courseGoals as $goal)
-                            <li><i class="la la-check mr-1 text-black"></i> {{ $goal->goal_name }}</li>
-                        @empty
-                            <li>No course goals.</li>
-                        @endforelse
-                    </ul>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <a href="#" class="btn theme-btn flex-grow-1 mr-3"><i
-                                class="la la-shopping-cart mr-1 fs-18"></i> Add to Cart</a>
-                        <div class="icon-element icon-element-sm shadow-sm cursor-pointer" title="Add to Wishlist" id="{{$course->id}}" onclick="addToWishList(this.id)"><i
-                                class="la la-heart-o"></i></div>
-                    </div>
-                </div>
-            </div><!-- end card -->
-        </div>
-    @endforeach
-</div><!-- end tooltip_templates -->
+                </div><!-- end card -->
+            </div>
+        @endforeach
+    </div><!-- end tooltip_templates -->
 
     <!-- Modal -->
     <div class="modal fade modal-container" id="shareModal" tabindex="-1" role="dialog"

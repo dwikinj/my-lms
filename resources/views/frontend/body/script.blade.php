@@ -14,25 +14,19 @@
             success: function(data) {
                 // Start Message 
 
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    icon: 'success',
-                    showConfirmButton: false,
-                    timer: 1500
-                })
+
+
                 if ($.isEmptyObject(data.error)) {
-                    Toast.fire({
-                        type: 'success',
-                        title: data.success,
-                    })
+                    toastr.success(
+                        data.success
+
+                    )
 
                 } else {
-                    Toast.fire({
-                        type: 'error',
-                        icon: 'warning',
-                        title: data.error,
-                    })
+                    toastr.error(
+                        data.error
+
+                    )
                 }
 
                 // End Message   
@@ -177,3 +171,143 @@
 </script>
 
 {{-- End load wishlist data  --}}
+
+
+{{--  Start Mini Cart   --}}
+<script type="text/javascript">
+    function miniCart() {
+        $.ajax({
+            type: 'GET',
+            url: '/course/mini/cart',
+            dataType: 'json',
+            success: function(response) {
+                let miniCart = "";
+
+                $.each(response.carts, function(key, value) {
+                    miniCart += `
+                         <li class="media media-card">
+                                                <a href="shopping-cart.html" class="media-img">
+                                                    <img src="/${value.options.image}" alt="${value.name}">
+                                                </a>
+                                                <div class="media-body">
+                                                    <h5><a href="/course/details/${value.id}/${value.options.slug}}">${value.name}</a></h5>
+                                                    <span class="d-block lh-18 py-1">${value.options.instructor}</span>
+                                                    <p class="text-black font-weight-semi-bold lh-18">$${value.price}</p>
+                                                    <button class="btn btn-link p-0 m-0" id="${value.rowId}" onclick="miniCartRemove(this.id)"><i class="la la-times"></i></button>
+                                                </div>
+                        </li>
+                    `
+                });
+
+                $('#miniCart').html(miniCart);
+                $('#cartSubTotal').text(`$${response.cartTotal}`);
+                $('#cartQty').text(`${response.cartQty}`);
+
+            }
+        })
+    }
+    miniCart();
+
+    //start my cart
+    function cart() {
+        $.ajax({
+            type: "GET",
+            url: "/get-cart-course",
+            dataType: "json",
+            success: function(response) {
+                var rows = "";
+                $.each(response.carts, function(key, value) {
+                    rows += `
+                    <tr>
+                        <th scope="row">
+                            <div class="media media-card">
+                                <a href="/course/details/${value.id}/${value.options.slug}" class="media-img mr-0">
+                                    <img src="/${value.options.image}" alt="${value.name}">
+                                </a>
+                            </div>
+                        </th>
+                        <td>
+                            <a href="/course/details/${value.id}/${value.options.slug}" class="text-black font-weight-semi-bold">${value.name}</a>
+                            <p class="fs-14 text-gray lh-20">By <a href="/instructor/details/${value.options.instructor_id}" class="text-color hover-underline">${value.options.instructor}</a>
+                        </td>
+                        <td>
+                            <ul class="generic-list-item font-weight-semi-bold">
+                                <li class="text-black lh-18">$${value.price}</li>
+                            </ul>
+                        </td>
+                        <td>
+                            <button type="button" id="${value.rowId}" onclick="miniCartRemove(this.id)" class="icon-element icon-element-xs shadow-sm border-0" data-toggle="tooltip" data-placement="top" title="Remove">
+                                <i class="la la-times"></i>
+                            </button>
+                        </td>
+                    </tr>
+                    `
+                });
+
+                $('#cartTbody').html(rows);
+                $('span[id="cartSubTotal"]').html(`$${response.cartTotal}`);
+            }
+        })
+    }
+    cart();
+    //end my cart
+
+    //add to minicart
+    function addToCart(courseId, courseName, instructorId, slug) {
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            data: {
+                _token: '{{ csrf_token() }}',
+                course_name: courseName,
+                course_name_slug: slug,
+                instructor: instructorId,
+            },
+
+            url: "/cart/data/store/" + courseId,
+            success: function(data) {
+                // Start Message 
+
+                if ($.isEmptyObject(data.error)) {
+                    toastr.success(
+                        data.success
+                    )
+                    miniCart();
+
+                } else {
+                    toastr.error(
+                        data.error
+                    )
+                }
+                // End Message   
+            }
+        })
+    }
+    //end to minicart
+
+
+    //remove minicart
+    function miniCartRemove(rowId) {
+        $.ajax({
+            type: "DELETE",
+            url: "/course/mini/cart/remove/" + rowId,
+            dataType: 'json',
+            success: function(data) {
+                if (data.success) {
+                    toastr.success(
+                        data.success
+                    )
+                    miniCart();
+                    cart();
+
+                } else {
+                    toastr.error(
+                        data.error
+                    )
+                }
+            }
+        })
+    }
+    //end remove minicart
+</script>
+{{-- End Mini Cart --}}

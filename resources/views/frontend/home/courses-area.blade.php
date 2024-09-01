@@ -70,7 +70,8 @@
                                                 x-text="title"></a>
                                         </h5>
                                         <p class="card-text"><a
-                                                href="{{route('instructor.details',['id'=>$course->instructor->id])}}">{{ $course->instructor->name }}</a></p>
+                                                href="{{ route('instructor.details', ['id' => $course->instructor->id]) }}">{{ $course->instructor->name }}</a>
+                                        </p>
                                         <div class="rating-wrap d-flex align-items-center py-2">
                                             <div class="review-stars">
                                                 <span class="rating-number">4.4</span>
@@ -96,8 +97,10 @@
                                             @endif
 
 
-                                            <div x-data="wishlistHandler()">
-                                                <div class="icon-element icon-element-sm shadow-sm cursor-pointer" title="Add to Wishlist" @click="addToWishList({{ $course->id }})">
+                                            <div>
+                                                <div class="icon-element icon-element-sm shadow-sm cursor-pointer"
+                                                    title="Add to Wishlist"
+                                                    onclick="addToWishList({{ $course->id }})">
                                                     <i class="la la-heart-o"></i>
                                                 </div>
                                             </div>
@@ -139,7 +142,8 @@
                                                     href="{{ route('course.details', ['id' => $course->id, 'slug' => $course->course_name_slug]) }}">{{ $course->course_name }}</a>
                                             </h5>
                                             <p class="card-text"><a
-                                                    href="{{route('instructor.details',['id'=>$course->instructor->id])}}">{{ $course->instructor->name }}</a></p>
+                                                    href="{{ route('instructor.details', ['id' => $course->instructor->id]) }}">{{ $course->instructor->name }}</a>
+                                            </p>
                                             <div class="rating-wrap d-flex align-items-center py-2">
                                                 <div class="review-stars">
                                                     <span class="rating-number">4.4</span>
@@ -163,8 +167,10 @@
                                                         ${{ $course->selling_price }}</p>
                                                 @endif
 
-                                                <div x-data="wishlistHandler()">
-                                                    <div class="icon-element icon-element-sm shadow-sm cursor-pointer" title="Add to Wishlist" @click="addToWishList({{ $course->id }})">
+                                                <div>
+                                                    <div class="icon-element icon-element-sm shadow-sm cursor-pointer"
+                                                        title="Add to Wishlist"
+                                                        onclick="addToWishList({{ $course->id }})">
                                                         <i class="la la-heart-o"></i>
                                                     </div>
                                                 </div>
@@ -198,7 +204,8 @@
         <div id="tooltip_content_{{ $course->id }}">
             <div class="card card-item">
                 <div class="card-body">
-                    <p class="card-text pb-2">By <a href="{{route('instructor.details',['id'=>$course->instructor->id])}}">{{ $course->instructor->name }}</a>
+                    <p class="card-text pb-2">By <a
+                            href="{{ route('instructor.details', ['id' => $course->instructor->id]) }}">{{ $course->instructor->name }}</a>
                     </p>
                     <h5 class="card-title pb-1"><a
                             href="{{ route('course.details', ['id' => $course->id, 'slug' => $course->course_name_slug]) }}">{{ $course->course_name }}</a>
@@ -227,13 +234,17 @@
                         @endforelse
                     </ul>
                     <div class="d-flex justify-content-between align-items-center">
-                        <a href="#" class="btn theme-btn flex-grow-1 mr-3"><i
-                                class="la la-shopping-cart mr-1 fs-18"></i> Add to Cart</a>
-                                <div x-data="wishlistHandler()">
-                                    <div class="icon-element icon-element-sm shadow-sm cursor-pointer" title="Add to Wishlist" @click="addToWishList({{ $course->id }})">
-                                        <i class="la la-heart-o"></i>
-                                    </div>
-                                </div>
+
+                        <button type="submit" class="btn theme-btn flex-grow-1 mr-3"
+                            onclick="addToCart({{ $course->id }},'{{ $course->course_name }}','{{ $course->instructor->id }}','{{ $course->course_name_slug }}')"><i
+                                class="la la-shopping-cart mr-1 fs-18"></i> Add to Cart</button>
+
+                        <div>
+                            <div class="icon-element icon-element-sm shadow-sm cursor-pointer" title="Add to Wishlist"
+                                onclick="addToWishList({{ $course->id }})">
+                                <i class="la la-heart-o"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div><!-- end card -->

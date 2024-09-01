@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\CourseController;
+use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\IndexController;
 use App\Http\Controllers\Frontend\WishListController;
 use App\Http\Controllers\InstructorController;
@@ -35,6 +36,20 @@ Route::middleware('auth')->group(function () {
         Route::delete('/delete-from-wishlist/{course_id}', 'DeleteCourseFromWishlist');
     });
     //end User wishlist all route
+
+    // Cart Controller
+   
+    Route::controller(CartController::class)->group(function () {
+        Route::post('/cart/data/store/{course_id}','AddToCart');
+        Route::get('/cart/data','CartData');
+
+        //get data from minicart
+        Route::get('/course/mini/cart','AddMiniCart');
+        Route::get('/mycart','MyCart')->name('mycart');
+        Route::get('/get-cart-course','GetCartCourse');
+        Route::delete('/course/mini/cart/remove/{rowId}','RemoveMiniCart');
+    });
+    // End Cart Controller
 
 });
 

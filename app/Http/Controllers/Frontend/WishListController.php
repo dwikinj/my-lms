@@ -9,13 +9,14 @@ use Illuminate\Support\Facades\Auth;
 
 class WishListController extends Controller
 {
-    public function AddToWishlist(Request $request, $course_id) {
+    public function AddToWishlist(Request $request, $course_id)
+    {
         if (Auth::check()) {
             $exists = Wishlist::where([
                 ['user_id', '=', Auth::id()],
                 ['course_id', '=', $course_id]
             ])->exists();
-            
+
             if (!$exists) {
                 Wishlist::create([
                     'user_id' => Auth::id(),
@@ -23,36 +24,39 @@ class WishListController extends Controller
                 ]);
 
                 return response()->json(['success' => 'Successfully Added on your Wishlist']);
-            }else {
+            } else {
                 return response()->json(['error' => 'This course already on your Wishlist']);
             }
-        }else {
+        } else {
             return response()->json(['error' => 'Login first to your account']);
         }
-    }//end method
+    } //end method
 
-    public function AllWishlist(){
+    public function AllWishlist()
+    {
         return view('frontend.wishlist.all_wishlist');
-    }//end method
+    } //end method
 
-    public function GetWishlistCourses(){
+    public function GetWishlistCourses()
+    {
         if (Auth::check()) {
             $wishlist = Auth::user()->wishlistCourses()->with(['instructor'])->get();
             return response()->json(['wishlist' => $wishlist]);
         } else {
             return response()->json(['error' => 'Login first to your account'], 401);
         }
-    }//end method
+    } //end method
 
 
 
-    public function DeleteCourseFromWishlist($course_id) {
+    public function DeleteCourseFromWishlist($course_id)
+    {
         if (Auth::check()) {
             $wishlist = Wishlist::where([
                 ['user_id', '=', Auth::id()],
                 ['course_id', '=', $course_id]
             ])->first();
-    
+
             if ($wishlist) {
                 $wishlist->delete();
                 return response()->json(['success' => 'Successfully deleted from your Wishlist']);
@@ -63,6 +67,4 @@ class WishListController extends Controller
             return response()->json(['error' => 'Login first to your account']);
         }
     }
-
-
 }
