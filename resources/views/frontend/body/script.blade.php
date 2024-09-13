@@ -186,7 +186,7 @@
                 $.each(response.carts, function(key, value) {
                     miniCart += `
                          <li class="media media-card">
-                                                <a href="shopping-cart.html" class="media-img">
+                                                <a href="/mycart" class="media-img">
                                                     <img src="/${value.options.image}" alt="${value.name}">
                                                 </a>
                                                 <div class="media-body">

@@ -251,7 +251,7 @@
                     <li><a href="gallery.html">gallery</a></li>
                     <li><a href="pricing-table.html">pricing tables</a></li>
                     <li><a href="contact.html">contact</a></li>
-                    <li><a href="sign-up.html">sign-up</a></li>
+                    <li><a href="{{ route('register') }}">sign-up</a></li>
                     <li><a href="login.html">login</a></li>
                     <li><a href="recover.html">recover</a></li>
                     <li><a href="shopping-cart.html">cart</a></li>

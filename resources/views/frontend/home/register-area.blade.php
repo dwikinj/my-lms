@@ -51,7 +51,7 @@
                         <p class="section__desc">Education is the process of acquiring the body of knowledge and skills that people are expected have in your society. A education develops a critical thought process in addition to learning. Bimply dummy text of the printing and typesetting istryrem Ipsum has been the industry’s standard dummy text ever since the 1500s, when an unknown printer Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquam aliquid architecto aspernatur, facilis perspiciatis rerum saepe vel vitae? Alias culpa dicta facere maiores quam quas, quis sapiente voluptatem? Nulla, voluptatem.</p>
                     </div><!-- end section-heading -->
                     <div class="btn-box pt-35px">
-                        <a href="sign-up.html" class="btn theme-btn"><i class="la la-user mr-1"></i>Get Started</a>
+                        <a href="{{ route('register') }}" class="btn theme-btn"><i class="la la-user mr-1"></i>Get Started</a>
                     </div>
                 </div><!-- end register-content -->
             </div><!-- end col-lg-6 -->
