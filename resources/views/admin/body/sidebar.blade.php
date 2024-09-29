@@ -8,21 +8,21 @@
         </div>
         <div class="toggle-icon ms-auto"><i class='bx bx-arrow-back'></i>
         </div>
-     </div>
+    </div>
     <!--navigation-->
     <ul class="metismenu" id="menu">
         <li>
-            <a href="{{ route('admin.dashboard')}}">
+            <a href="{{ route('admin.dashboard') }}">
                 <div class="parent-icon"><i class='bx bx-home-alt'></i>
                 </div>
                 <div class="menu-title">Dashboard</div>
             </a>
         </li>
 
-        
-       
+
+
         <li class="menu-label">UI Elements</li>
-       
+
         <li>
             <a href="javascript:;" class="has-arrow">
                 <div class="parent-icon"><i class='bx bx-category'></i>
@@ -34,7 +34,7 @@
                 </li>
                 <li> <a href="{{ route('all.subcategory') }}"><i class='bx bx-grid-alt'></i>All SubCategory</a>
                 </li>
-              
+
             </ul>
         </li>
         <li>
@@ -46,12 +46,21 @@
             <ul>
                 <li> <a href="{{ route('all.instructor') }}"><i class='bx bx-radio-circle'></i>All Instructor</a>
                 </li>
-              
-                
             </ul>
         </li>
-       
-      
+        <li>
+            <a class="has-arrow" href="javascript:;">
+                <div class="parent-icon"><i class='bx bx-bookmark-heart'></i>
+                </div>
+                <div class="menu-title">Manage Courses</div>
+            </a>
+            <ul>
+                <li> <a href="{{ route('all.courses') }}"><i class='bx bx-radio-circle'></i>All Courses</a>
+                </li>
+            </ul>
+        </li>
+
+
         <li class="menu-label">Charts & Maps</li>
         <li>
             <a class="has-arrow" href="javascript:;">
@@ -81,8 +90,8 @@
                 </li>
             </ul>
         </li>
-      
-        
+
+
         <li>
             <a href="https://themeforest.net/user/codervent" target="_blank">
                 <div class="parent-icon"><i class="bx bx-support"></i>

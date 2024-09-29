@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Course;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -185,5 +186,36 @@ class AdminController extends Controller
 
         return response()->json(['message'=>'User Status Updated Succesfully']);
     }
+
+    public function AllCourses() {
+        $courses = Course::with(['instructor','category'])->get();
+        return view('admin.backend.course.all_course', compact('courses'));
+    }//end method
+
+    public function updateCourseStatus(Request $request)
+    {
+        $request->validate([
+            'course_id' => 'required|exists:courses,id',
+            'is_checked' => 'required|boolean',
+        ]);
+
+        $courseId = $request->input('course_id');
+        $isChecked = $request->input('is_checked');
+
+        try {
+            $course = Course::findOrFail($courseId);
+            $course->status = $isChecked;
+            $course->save();
+
+            return response()->json(['message' => 'Course status updated successfully'], 200);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Failed to update course status'], 500);
+        }
+    }//end method
+
+    public function AdminCourseDetails(string $id) {
+        $course = Course::with(['category','subCategory','instructor'])->find($id);
+        return view('admin.backend.course.course_details', compact('course'));
+    }//end method
 
 }

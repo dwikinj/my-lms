@@ -81,7 +81,10 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
     //Instructor all route
     Route::controller(AdminController::class)->group(function () {
         Route::get('/all/instructor', 'AllInstructor')->name('all.instructor');
+        Route::get('/all/courses', 'AllCourses')->name('all.courses');
         Route::post('/update/user/status', 'UpdateUserStatus')->name('update.user.status');
+        Route::patch('/update/course/status', 'UpdateCourseStatus')->name('update.course.status');
+        Route::get('/admin/course/details/{id}', 'AdminCourseDetails')->name('admin.course.details');
     });
 });
 

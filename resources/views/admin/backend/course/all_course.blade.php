@@ -29,39 +29,43 @@
                         <thead>
                             <tr>
                                 <th>Sl</th>
-                                <th>Instructor Name</th>
-                                <th>Username</th>
-                                <th>Email</th>
-                                <th>Phone</th>
-                                <th>Status</th>
+                                <th>Image</th>
+                                <th>Course Name</th>
+                                <th>Instructor</th>
+                                <th>Category</th>
+                                <th>Price</th>
                                 <th>Action</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($allinstructor as $key => $item)
+                            @foreach ($courses as $key => $item)
                                 <tr>
                                     <td>{{ $key + 1 }}</td>
-                                    <td>{{ $item->name }}</td>
-                                    <td>{{ $item->username }}</td>
-                                    <td>{{ $item->email }}</td>
-                                    <td>{{ $item->phone }}</td>
                                     <td>
-
-                                        @if ($item->status == 1)
-                                            <span class="btn btn-primary">Active</span>
-                                        @else
-                                            <span class="btn btn-danger">Inactive</span>
-                                        @endif
+                                        <img style="max-width: 80px" class="img-thumbnail"
+                                            src="{{ asset($item->course_image) }}"
+                                            data-src="{{ asset($item->course_image) }}" alt="Card image cap">
+                                    </td>
+                                    <td>{{ $item->course_name }}</td>
+                                    <td>{{ $item->instructor->name }}</td>
+                                    <td>{{ $item->category->category_name }}</td>
+                                    <td>{{ $item->selling_price }}</td>
+                                    <td>
+                                        <a class="btn btn-primary btn-sm text-white"
+                                            href="{{ route('admin.course.details', $item->id) }}">
+                                            <i class="fadeIn animated bx bx-show"></i>
+                                        </a>
                                     </td>
                                     <td>
-                                        <div class="form-check form-switch form-check-danger ">
+                                        <div class="form-check form-switch form-check-danger">
                                             <input class="form-check-input large-checkbox status-toggle" type="checkbox"
-                                                id="flexSwitchCheckDanger" data-user-id="{{ $item->id }}"
-                                                {{ $item->status ? 'checked' : '' }}>
-                                            <label class="form-check-label" for="flexSwitchCheckDanger"> </label>
+                                                id="switch-status-course-{{ $item->id }}"
+                                                data-course-id="{{ $item->id }}" {{ $item->status ? 'checked' : '' }}>
+                                            <label class="form-check-label"
+                                                for="switch-status-course-{{ $item->id }}"></label>
                                         </div>
                                     </td>
-
                                 </tr>
                             @endforeach
 
@@ -75,23 +79,24 @@
     <script>
         $(document).ready(function() {
             $('.status-toggle').on('change', function() {
-                let userId = $(this).data('user-id');
+                let courseId = $(this).data('course-id');
                 let isChecked = $(this).is(':checked');
-
-                //send an ajax request to update status
+                
                 $.ajax({
-                    url: "{{ route('update.user.status') }}",
-                    method: "POST",
+                    url: "{{ route('update.course.status') }}",
+                    method: "PATCH",
                     data: {
-                        user_id: userId,
+                        course_id: courseId,
                         is_checked: isChecked ? 1 : 0,
-                        _token: "{{ csrf_token() }}"
+                    },
+                    headers: {
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
                     },
                     success: function(response) {
                         toastr.success(response.message);
 
                         // Update the status text and class
-                        let statusSpan = $(this).closest('tr').find('span');
+                        let statusSpan = $(this).closest('tr').find('.status-badge');
                         if (isChecked) {
                             statusSpan.removeClass('btn-danger').addClass('btn-primary').text(
                                 'Active');
@@ -99,9 +104,9 @@
                             statusSpan.removeClass('btn-primary').addClass('btn-danger').text(
                                 'Inactive');
                         }
-                    }.bind(this), // Bind 'this' to the AJAX success callback
+                    }.bind(this),
                     error: function() {
-                        toastr.error('Failed');
+                        toastr.error('Failed to update status');
                     }
                 });
             });
