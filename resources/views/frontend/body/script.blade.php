@@ -299,6 +299,7 @@
                     )
                     miniCart();
                     cart();
+                    couponCalc();
 
                 } else {
                     toastr.error(
@@ -309,5 +310,104 @@
         })
     }
     //end remove minicart
+
+    //apply coupon code
+    function applyCoupon() {
+        var coupon_name = $('#coupon_name').val();
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                coupon_name: coupon_name
+            },
+            url: "{{ route('coupon.apply') }}", // Define this route next
+            success: function(data) {
+                if (data.validity == true) {
+                    $('#couponField').hide();
+                    couponCalc();
+                    toastr.success(data.success);
+                } else {
+                    toastr.error(data.error);
+                }
+            }
+        })
+    }
+    //end coupon code
+
+    //coupon calculation
+    function couponCalc() {
+        $.ajax({
+            type: 'GET',
+            dataType: 'json',
+            url: "{{ route('coupon.calculation') }}", // Define this route next
+            success: function(data) {
+                if (data.total) {
+                    $('#couponCalField').html(`
+                        <h3 class="fs-18 font-weight-bold pb-3">Cart Totals</h3>
+                        <div class="divider"><span></span></div>
+                        <ul class="generic-list-item pb-4">
+                            <li class="d-flex align-items-center justify-content-between font-weight-semi-bold">
+                                <span class="text-black">Subtotal:</span>
+                                <span>$${data.total}</span>
+                            </li>
+                            <li class="d-flex align-items-center justify-content-between font-weight-semi-bold">
+                                <span class="text-black">Grand Total:</span>
+                                <span>$${data.total}</span>
+                            </li>
+                        </ul>
+                    `);
+                } else {
+                    $('#couponCalField').html(`
+                        <h3 class="fs-18 font-weight-bold pb-3">Cart Totals</h3>
+                        <div class="divider"><span></span></div>
+                        <ul class="generic-list-item pb-4">
+                            <li class="d-flex align-items-center justify-content-between font-weight-semi-bold">
+                                <span class="text-black">Subtotal:</span>
+                                <span>$${data.subtotal}</span>
+                            </li>
+                            <li class="d-flex align-items-center justify-content-between font-weight-semi-bold">
+                                <span class="text-black">Coupon Name:</span>
+                                <span>${data.coupon_name} <button type="button" class="icon-element icon-element-xs shadow-sm border-0" data-toggle="tooltip" data-placement="top" onclick="couponRemove()">
+                                    <i class="la la-times"></i>
+                                </button></span>
+                            </li>
+                            <li class="d-flex align-items-center justify-content-between font-weight-semi-bold">
+                                <span class="text-black">Coupon Discount:</span>
+                                <span>${data.coupon_discount}%</span>
+                            </li>
+                            <li class="d-flex align-items-center justify-content-between font-weight-semi-bold">
+                                <span class="text-black">Discount Amount:</span>
+                                <span>$${data.discount_amount}</span>
+                            </li>
+                            <li class="d-flex align-items-center justify-content-between font-weight-semi-bold">
+                                <span class="text-black">Grand Total:</span>
+                                <span>$${data.total_amount}</span>
+                            </li>
+                        </ul>
+                    `);
+                }
+            }
+        })
+    }
+    couponCalc();
+    //end coupon code
+
+    //start coupon remove
+    //remove coupon code
+    function couponRemove() {
+        $.ajax({
+            type: 'GET', // Bisa juga menggunakan DELETE, tergantung konfigurasi route di backend
+            dataType: 'json',
+            url: "{{ route('coupon.remove') }}", // Route yang akan kita definisikan di Laravel
+            success: function(data) {
+                if (data.success) {
+                    $('#couponField').show(); // Tampilkan kembali form kupon
+                    couponCalc(); // Update tampilan kalkulasi cart
+                    toastr.success(data.success); // Tampilkan pesan sukses
+                }
+            }
+        });
+    }
+    //end coupon remove
 </script>
 {{-- End Mini Cart --}}

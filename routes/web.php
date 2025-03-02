@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Backend\CategoryController;
+use App\Http\Controllers\Backend\CouponController;
 use App\Http\Controllers\Backend\CourseController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\IndexController;
@@ -33,16 +34,22 @@ Route::middleware('auth')->group(function () {
     //end User wishlist all route
 
     // Cart Controller
-   
+
     Route::controller(CartController::class)->group(function () {
-        Route::post('/cart/data/store/{course_id}','AddToCart');
-        Route::get('/cart/data','CartData');
+        Route::post('/cart/data/store/{course_id}', 'AddToCart');
+        Route::get('/cart/data', 'CartData');
 
         //get data from minicart
-        Route::get('/course/mini/cart','AddMiniCart');
-        Route::get('/mycart','MyCart')->name('mycart');
-        Route::get('/get-cart-course','GetCartCourse');
-        Route::delete('/course/mini/cart/remove/{rowId}','RemoveMiniCart');
+        Route::get('/course/mini/cart', 'AddMiniCart');
+        Route::get('/mycart', 'MyCart')->name('mycart');
+        Route::get('/get-cart-course', 'GetCartCourse');
+        Route::delete('/course/mini/cart/remove/{rowId}', 'RemoveMiniCart');
+
+        //coupon
+        Route::post('/coupon-apply', 'ApplyCoupon')->name('coupon.apply');
+        Route::get('/coupon-calculation', 'CalculationCoupon')->name('coupon.calculation');
+        Route::get('/coupon-remove', 'CouponRemove')->name('coupon.remove'); // Route baru untuk remove coupon
+
     });
     // End Cart Controller
 
@@ -85,6 +92,17 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         Route::post('/update/user/status', 'UpdateUserStatus')->name('update.user.status');
         Route::patch('/update/course/status', 'UpdateCourseStatus')->name('update.course.status');
         Route::get('/admin/course/details/{id}', 'AdminCourseDetails')->name('admin.course.details');
+    });
+
+    //Coupon all route
+    //Coupon all route
+    Route::controller(CouponController::class)->group(function () {
+        Route::get('/all/coupon', 'AllCoupon')->name('all.coupon');
+        Route::get('/add/coupon', 'AddCoupon')->name('add.coupon');
+        Route::post('/store/coupon', 'StoreCoupon')->name('store.coupon'); // POST untuk store
+        Route::get('/edit/coupon/{id}', 'EditCoupon')->name('edit.coupon');
+        Route::put('/update/coupon', 'UpdateCoupon')->name('update.coupon'); // PUT untuk update
+        Route::delete('/delete/coupon/{id}', 'DeleteCoupon')->name('delete.coupon'); // DELETE untuk delete
     });
 });
 
