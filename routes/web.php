@@ -48,7 +48,11 @@ Route::middleware('auth')->group(function () {
         //coupon
         Route::post('/coupon-apply', 'ApplyCoupon')->name('coupon.apply');
         Route::get('/coupon-calculation', 'CalculationCoupon')->name('coupon.calculation');
-        Route::get('/coupon-remove', 'CouponRemove')->name('coupon.remove'); // Route baru untuk remove coupon
+        Route::get('/coupon-remove', 'CouponRemove')->name('coupon.remove'); 
+
+        //checkhout
+        Route::get('/checkout', 'CheckoutCreate')->name('checkout');
+
 
     });
     // End Cart Controller
@@ -94,7 +98,6 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         Route::get('/admin/course/details/{id}', 'AdminCourseDetails')->name('admin.course.details');
     });
 
-    //Coupon all route
     //Coupon all route
     Route::controller(CouponController::class)->group(function () {
         Route::get('/all/coupon', 'AllCoupon')->name('all.coupon');

@@ -8,6 +8,7 @@ use App\Models\Course;
 use Carbon\Carbon;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 
 class CartController extends Controller
@@ -164,7 +165,33 @@ class CartController extends Controller
     //method remove coupon
     public function CouponRemove(){
         Session::forget('coupon'); // Hapus session 'coupon'
-        return response()->json(['success' => 'Coupon Successfully Removed']); // Kembalikan response JSON sukses
+        return response()->json(['success' => 'Coupon Successfully Removed']); 
     } // End Method
+
+    public function CheckoutCreate() {
+        if (Auth::check()) { 
+            if(Cart::total() > 0){
+                $carts = Cart::content();
+                $cartTotal = Cart::total();
+                $cartQty = Cart::count();
+                $couponData = session()->get('coupon');
+
+    
+                return view('frontend.checkout.checkout_view',compact('carts','cartTotal','cartQty','couponData'));
+            }else {
+                $notification = [
+                    'message' => 'Please, Select at Least One Course',
+                    'alert-type' => 'error'
+                ];
+                return redirect()->route('index')->with($notification);
+            }
+        }else {
+            $notification = [
+                'message' => 'Login first',
+                'alert-type' => 'error'
+            ];
+            return redirect()->route('login')->with($notification);
+        }
+    }// End Method
 
 }

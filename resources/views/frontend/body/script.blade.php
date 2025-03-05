@@ -384,6 +384,7 @@
                                 <span>$${data.total_amount}</span>
                             </li>
                         </ul>
+                        
                     `);
                 }
             }
