@@ -53,6 +53,9 @@ Route::middleware('auth')->group(function () {
         //checkhout
         Route::get('/checkout', 'CheckoutCreate')->name('checkout');
 
+        //checkhout
+        Route::post('/payment', 'Payment')->name('payment');
+
 
     });
     // End Cart Controller

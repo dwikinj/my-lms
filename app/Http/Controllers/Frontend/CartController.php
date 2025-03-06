@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Coupon;
 use App\Models\Course;
+use App\Models\Order;
+use App\Models\Payment;
 use Carbon\Carbon;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Http\Request;
@@ -193,5 +195,85 @@ class CartController extends Controller
             return redirect()->route('login')->with($notification);
         }
     }// End Method
+
+    //Payment Method
+    public function Payment(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'phone' => 'required|string|max:20',
+            'address' => 'required|string',
+            'total' => 'required|numeric|min:0',
+        ]);
+
+        if (Session::has('coupon')) {
+            $total_amount = Session::get('coupon')['total_amount'];
+        } else {
+            $total_amount = round(Cart::total());
+        }
+
+        $payment = new Payment();
+        $payment->name = $request->name;
+        $payment->email = $request->email;
+        $payment->phone = $request->phone;
+        $payment->address = $request->address;
+        $payment->cash_delivery = $request->cash_delivery;
+        $payment->total_amount = $total_amount;
+        $payment->payment_type = 'Direct Payment';
+        $payment->invoice_no = 'EOS' . mt_rand(10000000, 99999999);
+        $payment->order_date = Carbon::now()->format('d F Y');
+        $payment->order_month = Carbon::now()->format('F');
+        $payment->order_year = Carbon::now()->format('Y');
+        $payment->status = 'pending';
+
+        $payment->save();
+
+        $carts = Cart::content();
+        $user_id = Auth::id();
+
+        foreach ($carts as $cart) {
+            $existingOrder = Order::where('user_id', $user_id)
+                ->where('course_id', $cart->id)
+                ->first();
+
+            if ($existingOrder) {
+                $notification = [
+                    'message' => 'You have already enrolled this course',
+                    'alert-type' => 'error'
+                ];
+                return redirect()->back()->with($notification);
+            } else {
+                $order = new Order();
+                $order->payment_id = $payment->id;
+                $order->user_id = $user_id;
+                $order->instructor_id = $cart->options->instructor_id;
+                $order->course_id = $cart->id;
+                $order->course_title = $cart->name;
+                $order->price = $cart->price;
+                $order->save();
+            }
+        }
+
+        Cart::destroy();
+        if (Session::has('coupon')) {
+            Session::forget('coupon');
+        }
+
+        if ($request->payment_method == 'cash_delivery') {
+            $notification = [
+                'message' => 'Cash Payment Submitted Successfully',
+                'alert-type' => 'success'
+            ];
+        } else {
+            $notification = [
+                'message' => 'Payment Successful. Thank you for your purchase!',
+                'alert-type' => 'success'
+            ];
+        }
+
+        return redirect()->route('index')->with($notification);
+    }
+    //End Method
 
 }

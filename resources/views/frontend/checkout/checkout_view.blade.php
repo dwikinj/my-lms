@@ -1,8 +1,8 @@
 @extends('frontend.master')
 @section('home')
     <!-- ================================
-        START BREADCRUMB AREA
-    ================================= -->
+            START BREADCRUMB AREA
+        ================================= -->
     <section class="breadcrumb-area section-padding img-bg-2">
         <div class="overlay"></div>
         <div class="container">
@@ -20,12 +20,12 @@
         </div><!-- end container -->
     </section><!-- end breadcrumb-area -->
     <!-- ================================
-        END BREADCRUMB AREA
-    ================================= -->
+            END BREADCRUMB AREA
+        ================================= -->
 
     <!-- ================================
-           START CONTACT AREA
-    ================================= -->
+               START CONTACT AREA
+        ================================= -->
     <section class="cart-area section--padding">
         <div class="container">
             <div class="row">
@@ -34,7 +34,9 @@
                         <div class="card-body">
                             <h3 class="card-title fs-22 pb-3">Billing Details</h3>
                             <div class="divider"><span></span></div>
-                            <form method="post" class="row">
+                            <form method="post" class="row" action="{{ route('payment') }}"
+                                enctype="multipart/form-data">
+                                @csrf
                                 <div class="input-box col-lg-6">
                                     <label class="label-text">Name</label>
                                     <div class="form-group">
@@ -62,7 +64,7 @@
                                 <div class="input-box col-lg-12">
                                     <label class="label-text">Address</label>
                                     <div class="form-group">
-                                        <input class="form-control form--control" type="text" name="text"
+                                        <input class="form-control form--control" type="text" name="address"
                                             value="{{ Auth::user()->address }}">
                                         <span class="la la-map-marker input-icon"></span>
                                     </div>
@@ -82,7 +84,6 @@
                                     <p class="pb-1 text-black-50"><i class="la la-lock fs-24 mr-1"></i>Secure Connection</p>
                                     <p class="fs-14">Your information is safe with us!</p>
                                 </div><!-- end btn-box -->
-                            </form>
                         </div><!-- end card-body -->
                     </div><!-- end card -->
                     <div class="card card-item">
@@ -92,11 +93,12 @@
                             <div class="payment-option-wrap">
                                 <div class="payment-tab is-active">
                                     <div class="payment-tab-toggle">
-                                        <input id="directPayment" name="cod" type="radio" value="cod">
+                                        <input id="directPayment" name="cash_delivery" type="radio" value="cod"
+                                            checked>
                                         <label for="directPayment">Direct Payment</label>
                                     </div>
                                     <div class="payment-tab-toggle">
-                                        <input checked="" id="stripe" name="cod" type="radio" value="stripe">
+                                        <input id="stripe" name="stripe" type="radio" value="stripe">
                                         <label for="stripe">Stripe Payment</label>
                                     </div>
                                 </div><!-- end payment-tab -->
@@ -113,15 +115,27 @@
                             <div class="divider"><span></span></div>
                             <div class="order-details-lists">
                                 @foreach ($carts as $cart)
+                                    <input type="hidden" name="slug[]" value="{{ $cart->options->slug }}">
+                                    <input type="hidden" name="course_id[]" value="{{ $cart->id }}">
+                                    <input type="hidden" name="course_title[]" value="{{ $cart->name }}">
+                                    <input type="hidden" name="price[]" value="{{ $cart->price }}">
+                                    <input type="hidden" name="instructor_id[]"
+                                        value="{{ $cart->options->instructor_id }}">
+
+
                                     <div class="media media-card border-bottom border-bottom-gray pb-3 mb-3">
-                                        <a href="{{ route('course.details', ['id' => $cart->id, 'slug' => $cart->options->slug]) }}" class="media-img">
+                                        <a href="{{ route('course.details', ['id' => $cart->id, 'slug' => $cart->options->slug]) }}"
+                                            class="media-img">
                                             <img src="{{ asset($cart->options->image) }}" alt="{{ $cart->name }}">
                                         </a>
                                         <div class="media-body">
-                                            <h5 class="fs-15 pb-2"><a href="{{ route('course.details', ['id' => $cart->id, 'slug' => $cart->options->slug]) }}">{{ $cart->name }}</a></h5>
+                                            <h5 class="fs-15 pb-2"><a
+                                                    href="{{ route('course.details', ['id' => $cart->id, 'slug' => $cart->options->slug]) }}">{{ $cart->name }}</a>
+                                            </h5>
                                             <p class="text-black font-weight-semi-bold lh-18">${{ $cart->price }}
                                                 @if ($cart->options->discount)
-                                                    <span class="before-price fs-14">${{ $cart->options->oldPrice }}</span>
+                                                    <span
+                                                        class="before-price fs-14">${{ $cart->options->oldPrice }}</span>
                                                 @endif
                                             </p>
                                         </div>
@@ -140,24 +154,27 @@
                                     <span class="text-black">Subtotal:</span>
                                     <span>${{ $cartTotal }}</span>
                                 </li>
-                                @if(Session::has('coupon'))
-                                <li class="d-flex align-items-center justify-content-between font-weight-semi-bold">
-                                    <span class="text-black">Coupon discounts:</span>
-                                    <span>-${{ $couponData['discount_amount'] }}</span>
-                                </li>
-                                <li class="d-flex align-items-center justify-content-between font-weight-semi-bold">
-                                    <span class="text-black">Coupon Name:</span>
-                                    <span>{{ $couponData['coupon_name'] }} ({{ $couponData['coupon_discount'] }}%)</span>
-                                </li>
-                                <li class="d-flex align-items-center justify-content-between font-weight-bold">
-                                    <span class="text-black">Total:</span>
-                                    <span>${{$couponData['total_amount']}}</span>
-                                </li>
+                                @if (Session::has('coupon'))
+                                    <li class="d-flex align-items-center justify-content-between font-weight-semi-bold">
+                                        <span class="text-black">Coupon discounts:</span>
+                                        <span>-${{ $couponData['discount_amount'] }}</span>
+                                    </li>
+                                    <li class="d-flex align-items-center justify-content-between font-weight-semi-bold">
+                                        <span class="text-black">Coupon Name:</span>
+                                        <span>{{ $couponData['coupon_name'] }}
+                                            ({{ $couponData['coupon_discount'] }}%)</span>
+                                    </li>
+                                    <li class="d-flex align-items-center justify-content-between font-weight-bold">
+                                        <span class="text-black">Total:</span>
+                                        <span>${{ $couponData['total_amount'] }}</span>
+                                    </li>
+                                    <input type="hidden" name="total" value="{{ $cartTotal }}">
                                 @else
-                                <li class="d-flex align-items-center justify-content-between font-weight-bold">
-                                    <span class="text-black">Total:</span>
-                                    <span>${{$cartTotal}}</span>
-                                </li>
+                                    <li class="d-flex align-items-center justify-content-between font-weight-bold">
+                                        <span class="text-black">Total:</span>
+                                        <span>${{ $cartTotal }}</span>
+                                    </li>
+                                    <input type="hidden" name="total" value="{{ $cartTotal }}">
                                 @endif
                             </ul>
                             <div class="btn-box border-top border-top-gray pt-3">
@@ -165,16 +182,18 @@
                                     taxes for purchases made in certain tax jurisdictions.</p>
                                 <p class="fs-14 lh-22 mb-3">By completing your purchase you agree to these <a
                                         href="#" class="text-color hover-underline">Terms of Service.</a></p>
-                                <a href="checkout.html" class="btn theme-btn w-100">Proceed <i
-                                        class="la la-arrow-right icon ml-1"></i></a>
+                                <button type="submit" class="btn theme-btn w-100">Proceed <i
+                                        class="la la-arrow-right icon ml-1"></i></button>
                             </div>
                         </div><!-- end card-body -->
                     </div><!-- end card -->
                 </div><!-- end col-lg-5 -->
             </div><!-- end row -->
         </div><!-- end container -->
+        </form>
+
     </section>
     <!-- ================================
-           END CONTACT AREA
-    ================================= -->
+               END CONTACT AREA
+        ================================= -->
 @endsection
