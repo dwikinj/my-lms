@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Frontend;
 
 use App\Http\Controllers\Controller;
+use App\Mail\Orderconfirm;
 use App\Models\Coupon;
 use App\Models\Course;
 use App\Models\Order;
@@ -11,6 +12,7 @@ use Carbon\Carbon;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 
 class CartController extends Controller
@@ -259,6 +261,17 @@ class CartController extends Controller
         if (Session::has('coupon')) {
             Session::forget('coupon');
         }
+
+        //Start send email to student
+        $data = [
+            'invoice_no' => $payment->invoice_no,
+            'amount' => $payment->total_amount,
+            'name' => $payment->name,
+            'email' => $payment->email,
+        ];
+        
+        Mail::to($payment->email)->send(new Orderconfirm($data));
+        //End send email to student
 
         if ($request->payment_method == 'cash_delivery') {
             $notification = [
