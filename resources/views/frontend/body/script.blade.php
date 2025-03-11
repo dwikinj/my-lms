@@ -285,6 +285,40 @@
     }
     //end to minicart
 
+     //buy now
+     function buyCourse(courseId, courseName, instructorId, slug) {
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            data: {
+                _token: '{{ csrf_token() }}',
+                course_name: courseName,
+                course_name_slug: slug,
+                instructor: instructorId,
+            },
+
+            url: "/buy/data/store/" + courseId,
+            success: function(data) {
+                // Start Message 
+
+                if ($.isEmptyObject(data.error)) {
+                    toastr.success(
+                        data.success
+                    )
+                    miniCart();
+                    window.location.href='/checkout';
+
+                } else {
+                    toastr.error(
+                        data.error
+                    )
+                }
+                // End Message   
+            }
+        })
+    }
+    //end method
+
 
     //remove minicart
     function miniCartRemove(rowId) {

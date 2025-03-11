@@ -38,6 +38,7 @@ Route::middleware('auth')->group(function () {
 
     Route::controller(CartController::class)->group(function () {
         Route::post('/cart/data/store/{course_id}', 'AddToCart');
+        Route::post('/buy/data/store/{course_id}', 'BuyToCart');
         Route::get('/cart/data', 'CartData');
 
         //get data from minicart
