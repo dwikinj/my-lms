@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\CouponController;
 use App\Http\Controllers\Backend\CourseController;
+use App\Http\Controllers\Backend\OrderController;
 use App\Http\Controllers\Backend\SettingController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\IndexController;
@@ -118,6 +119,14 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         Route::get('/smtp/setting', 'SmtpSetting')->name('smtp.setting');
         Route::post('/smtp/update', 'SmtpUpdate')->name('smtp.update');
        
+    });
+
+    //Admin Order route
+    Route::controller(OrderController::class)->group(function () {
+        Route::get('/admin/pending/order', 'AdminPendingOrder')->name('admin.pending.order');
+        Route::get('/admin/confirm/order', 'AdminConfirmOrder')->name('admin.confirm.order');
+        Route::get('/admin/order/details/{id}', 'AdminOrderDetail')->name('admin.order.details');
+        Route::get('/admin/order/confirm/{payment_id}', 'AdminOrderConfirmAction')->name('admin.order.confirm.action');
     });
 });
 
