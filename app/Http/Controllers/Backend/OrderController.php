@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Payment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
@@ -41,5 +42,19 @@ class OrderController extends Controller
         ];
 
         return redirect()->route('admin.confirm.order')->with($notification);
+    } //end method
+
+    public function InstructorAllOrder()
+    {
+        $id = Auth::user()->id;
+        $ordersItem = Order::where('instructor_id', $id)->orderBy('id', 'desc')->get();
+        return view('instructor.orders.all_orders', compact('ordersItem'));
+    } //end method
+    public function InstructorOrderDetail($payment_id)
+    {
+        $payment = Payment::findOrFail($payment_id);
+        $orderItem = Order::where('payment_id', $payment->id)->orderBy('id', 'desc')->get();
+
+        return view('instructor.orders.order_details', compact('payment', 'orderItem'));
     } //end method
 }

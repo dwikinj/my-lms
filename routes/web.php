@@ -51,15 +51,13 @@ Route::middleware('auth')->group(function () {
         //coupon
         Route::post('/coupon-apply', 'ApplyCoupon')->name('coupon.apply');
         Route::get('/coupon-calculation', 'CalculationCoupon')->name('coupon.calculation');
-        Route::get('/coupon-remove', 'CouponRemove')->name('coupon.remove'); 
+        Route::get('/coupon-remove', 'CouponRemove')->name('coupon.remove');
 
         //checkhout
         Route::get('/checkout', 'CheckoutCreate')->name('checkout');
 
         //checkhout
         Route::post('/payment', 'Payment')->name('payment');
-
-
     });
     // End Cart Controller
 
@@ -118,7 +116,6 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
     Route::controller(SettingController::class)->group(function () {
         Route::get('/smtp/setting', 'SmtpSetting')->name('smtp.setting');
         Route::post('/smtp/update', 'SmtpUpdate')->name('smtp.update');
-       
     });
 
     //Admin Order route
@@ -166,6 +163,11 @@ Route::middleware(['auth', 'roles:instructor'])->group(function () {
         Route::get('/delete/course/{course_id}/section/{course_section_id}/lecture/{lecture_id}', 'DeleteCourseLecture')->name('delete.course.lecture');
         Route::get('/edit/course/{course_id}/section/{course_section_id}/lecture/{lecture_id}', 'EditCourseLecture')->name('edit.course.lecture');
         Route::post('/update-lecture', 'UpdateCourseLecture')->name('update.course.lecture');
+    });
+
+    Route::controller(OrderController::class)->group(function () {
+        Route::get('/instructor/all/order', 'InstructorAllOrder')->name('instructor.all.order');
+        Route::get('/instructor/order/details/{payment_id}', 'InstructorOrderDetail')->name('instructor.order.details');
     });
 }); //end instructor middleware
 
