@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Payment;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -47,7 +48,17 @@ class OrderController extends Controller
     public function InstructorAllOrder()
     {
         $id = Auth::user()->id;
-        $ordersItem = Order::where('instructor_id', $id)->orderBy('id', 'desc')->get();
+        // Get latest order IDs for each payment
+        $latestOrderIds = Order::where('instructor_id', $id)
+            ->selectRaw('MAX(id) as id')
+            ->groupBy('payment_id')
+            ->pluck('id');
+            
+        // Get full order details for latest orders
+        $ordersItem = Order::whereIn('id', $latestOrderIds)
+            ->orderBy('id', 'DESC')
+            ->get();
+        
         return view('instructor.orders.all_orders', compact('ordersItem'));
     } //end method
     public function InstructorOrderDetail($payment_id)
@@ -56,5 +67,31 @@ class OrderController extends Controller
         $orderItem = Order::where('payment_id', $payment->id)->orderBy('id', 'desc')->get();
 
         return view('instructor.orders.order_details', compact('payment', 'orderItem'));
+    } //end method
+    public function InstructorOrderInvoice($payment_id)
+    {
+        $payment = Payment::findOrFail($payment_id);
+        $orderItem = Order::where('payment_id', $payment->id)->orderBy('id', 'desc')->get();
+
+        $pdf = Pdf::loadView('instructor.orders.order_pdf',compact('payment','orderItem'))->setPaper('a4')->setOption([
+            'tempDir' => public_path(),
+            'chroot' => public_path(),
+        ]);
+
+        return $pdf->download('invoice.pdf');
+
+    } //end method
+    public function InstructorOrderConfirmAction($payment_id)
+    {
+        $payment = Payment::findOrFail($payment_id);
+        $payment->status = 'confirm';
+        $payment->save();
+
+        $notification = [
+            'message' => 'Order Confirmed Successfully',
+            'alert-type' => 'success'
+        ];
+
+        return redirect()->back()->with($notification);
     } //end method
 }

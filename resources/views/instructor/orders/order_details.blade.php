@@ -122,7 +122,7 @@
                                             @if ($payment->status == 'confirm')
                                                 <a href="" class="btn btn-block btn-secondary disabled">Confirm Order</a>
                                             @elseif ($payment->status == 'pending')
-                                                <a id="confirm" href="{{ route('admin.order.confirm.action', $payment->id) }}" class="btn btn-block btn-success">Confirm Order</a>
+                                                <a id="confirm" href="{{ route('instructor.order.confirm.action', $payment->id) }}" class="btn btn-block btn-success">Confirm Order</a>
                                             @endif  
                                         </div>
 

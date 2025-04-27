@@ -53,9 +53,9 @@
                                     </td>
                                     <td>
                                         <a href="{{ route('instructor.order.details', $item->payment->id) }}" class="btn btn-info"
-                                            title="edit"><i class="lni lni-eye"></i></a>
-                                        <a href="{{ route('delete.course', $item->id) }}" class="btn btn-danger"
-                                            id="delete" title="download"><i
+                                            title="see detail"><i class="lni lni-eye"></i></a>
+                                        <a href="{{ route('instructor.order.invoice', $item->payment->id) }}" class="btn btn-danger"
+                                             title="invoice print"><i
                                                 class="lni lni-download"></i></a>
                                     </td>
 
