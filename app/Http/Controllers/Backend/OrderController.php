@@ -53,12 +53,12 @@ class OrderController extends Controller
             ->selectRaw('MAX(id) as id')
             ->groupBy('payment_id')
             ->pluck('id');
-            
+
         // Get full order details for latest orders
         $ordersItem = Order::whereIn('id', $latestOrderIds)
             ->orderBy('id', 'DESC')
             ->get();
-        
+
         return view('instructor.orders.all_orders', compact('ordersItem'));
     } //end method
     public function InstructorOrderDetail($payment_id)
@@ -73,13 +73,12 @@ class OrderController extends Controller
         $payment = Payment::findOrFail($payment_id);
         $orderItem = Order::where('payment_id', $payment->id)->orderBy('id', 'desc')->get();
 
-        $pdf = Pdf::loadView('instructor.orders.order_pdf',compact('payment','orderItem'))->setPaper('a4')->setOption([
+        $pdf = Pdf::loadView('instructor.orders.order_pdf', compact('payment', 'orderItem'))->setPaper('a4')->setOption([
             'tempDir' => public_path(),
             'chroot' => public_path(),
         ]);
 
         return $pdf->download('invoice.pdf');
-
     } //end method
     public function InstructorOrderConfirmAction($payment_id)
     {
@@ -93,5 +92,21 @@ class OrderController extends Controller
         ];
 
         return redirect()->back()->with($notification);
+    } //end method
+
+    //User Courses
+    public function MyCourse()
+    {
+        $id = Auth::user()->id;
+        $latestOrderIds = Order::where('user_id', $id)
+            ->selectRaw('MAX(id) as id')
+            ->groupBy('course_id')
+            ->pluck('id');
+
+        $myCourses = Order::whereIn('id', $latestOrderIds)
+            ->orderBy('id', 'DESC')
+            ->get();
+
+        return view('frontend.mycourse.all_my_course', compact('myCourses'));
     } //end method
 }
