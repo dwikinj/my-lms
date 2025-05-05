@@ -77,6 +77,11 @@
     <script src="{{ asset('backend/assets/plugins/vectormap/jquery-jvectormap-world-mill-en.js') }}"></script>
     <script src="{{ asset('backend/assets/plugins/chartjs/js/chart.js') }}"></script>
     <script src="{{ asset('backend/assets/js/index.js') }}"></script>
+    <!--plugins chat bot-->
+    <script>
+        new PerfectScrollbar('.chat-list');
+        new PerfectScrollbar('.chat-content');
+    </script>
     <!--app JS-->
     <script src="{{ asset('backend/assets/js/app.js') }}"></script>
     <!--validate js-->
@@ -134,7 +139,8 @@
             toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
             tinycomments_mode: 'embedded',
             tinycomments_author: 'Dwiki',
-			ai_request: (request, respondWith) => respondWith.string(() => Promise.reject("See docs to implement AI Assistant")),
+            ai_request: (request, respondWith) => respondWith.string(() => Promise.reject(
+                "See docs to implement AI Assistant")),
 
         });
     </script>

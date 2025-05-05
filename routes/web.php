@@ -5,6 +5,7 @@ use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\CouponController;
 use App\Http\Controllers\Backend\CourseController;
 use App\Http\Controllers\Backend\OrderController;
+use App\Http\Controllers\Backend\QuestionController;
 use App\Http\Controllers\Backend\SettingController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\IndexController;
@@ -40,7 +41,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/my/course', 'MyCourse')->name('my.course');
         Route::get('/course/view/{course_id}', 'CourseView')->name('course.view');
     });
-    //end User wishlist all route
+    //end  My Course all route
+
+    //User QnA routes
+    Route::controller(QuestionController::class)->group(function () {
+        Route::post('/user/question', 'UserQuestion')->name('user.question');
+    });
+    //end  QnA routes
 
     // Cart Controller
 
@@ -177,6 +184,13 @@ Route::middleware(['auth', 'roles:instructor'])->group(function () {
         Route::get('/instructor/order/details/{payment_id}', 'InstructorOrderDetail')->name('instructor.order.details');
         Route::get('/instructor/order/invoice/{payment_id}', 'InstructorOrderInvoice')->name('instructor.order.invoice');
         Route::get('/instructor/order/confirm/{payment_id}', 'InstructorOrderConfirmAction')->name('instructor.order.confirm.action');
+    });
+
+    //Instructor Question route
+    Route::controller(QuestionController::class)->group(function () {
+        Route::get('/instructor/all/question', 'InstructorAllQuestion')->name('instructor.all.question');
+        Route::get('/question/details/{id}', 'QuestionDetails')->name('question.details');
+        Route::post('/instructor/replay', 'InstructorDetail')->name('instructor.replay');
     });
 }); //end instructor middleware
 
