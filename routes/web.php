@@ -72,6 +72,11 @@ Route::middleware('auth')->group(function () {
 
         //checkhout
         Route::post('/payment', 'Payment')->name('payment');
+
+        //Payment Gateway midtrans
+        // Midtrans Routes
+        Route::get('/midtrans/success', 'midtransSuccess')->name('midtrans.success');
+        Route::post('/midtrans/notification', 'midtransNotification')->name('midtrans.notification');
     });
     // End Cart Controller
 

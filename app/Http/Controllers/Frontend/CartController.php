@@ -8,6 +8,7 @@ use App\Models\Coupon;
 use App\Models\Course;
 use App\Models\Order;
 use App\Models\Payment;
+use App\Services\MidtransService;
 use Carbon\Carbon;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Http\Request;
@@ -20,14 +21,20 @@ class CartController extends Controller
     public function AddToCart(Request $request, $id)
     {
         $course = Course::find($id);
+        $existingOrder = Order::where('user_id', Auth::id())
+            ->where('course_id', $id)
+            ->first();
 
-        //is course already exist in cart 
         $cartItem = Cart::search(function ($cartItem, $rowId) use ($id) {
             return $cartItem->id === $id;
         });
 
         if ($cartItem->isNotEmpty()) {
             return response()->json(['error' => 'Course is already in your cart']);
+        }
+
+        if ($existingOrder) {
+            return response()->json(['error' => 'You already bought this course']);
         }
 
         if ($course->discount_price == NULL) {
@@ -65,7 +72,7 @@ class CartController extends Controller
 
         return response()->json(['success' => 'Succesfully Added Course to Your Cart']);
     } //end method
-    
+
     public function BuyToCart(Request $request, $id)
     {
         $course = Course::find($id);
@@ -182,11 +189,11 @@ class CartController extends Controller
             return response()->json(['error' => 'Coupon Code is expired']);
         }
 
-        Session::put('coupon',[
+        Session::put('coupon', [
             'coupon_name' => $coupon->coupon_name,
             'coupon_discount' => $coupon->coupon_discount,
-            'discount_amount' => round(Cart::total() * $coupon->coupon_discount/100),
-            'total_amount' => round(Cart::total() - Cart::total()* $coupon->coupon_discount/100),
+            'discount_amount' => round(Cart::total() * $coupon->coupon_discount / 100),
+            'total_amount' => round(Cart::total() - Cart::total() * $coupon->coupon_discount / 100),
 
         ]);
 
@@ -194,8 +201,6 @@ class CartController extends Controller
             'validity' => true,
             'success' => 'Coupon Applied Successfully',
         ]);
-
-
     } // End Method
     public function CalculationCoupon()
     {
@@ -207,45 +212,46 @@ class CartController extends Controller
                 'discount_amount' => session()->get('coupon')['discount_amount'],
                 'total_amount' => session()->get('coupon')['total_amount'],
             ));
-        }else {
+        } else {
             return response()->json(array(
                 'total' => Cart::total()
             ));
         }
-
     } // End Method
 
     //method remove coupon
-    public function CouponRemove(){
+    public function CouponRemove()
+    {
         Session::forget('coupon'); // Hapus session 'coupon'
-        return response()->json(['success' => 'Coupon Successfully Removed']); 
+        return response()->json(['success' => 'Coupon Successfully Removed']);
     } // End Method
 
-    public function CheckoutCreate() {
-        if (Auth::check()) { 
-            if(Cart::total() > 0){
+    public function CheckoutCreate()
+    {
+        if (Auth::check()) {
+            if (Cart::total() > 0) {
                 $carts = Cart::content();
                 $cartTotal = Cart::total();
                 $cartQty = Cart::count();
                 $couponData = session()->get('coupon');
 
-    
-                return view('frontend.checkout.checkout_view',compact('carts','cartTotal','cartQty','couponData'));
-            }else {
+
+                return view('frontend.checkout.checkout_view', compact('carts', 'cartTotal', 'cartQty', 'couponData'));
+            } else {
                 $notification = [
                     'message' => 'Please, Select at Least One Course',
                     'alert-type' => 'error'
                 ];
                 return redirect()->route('index')->with($notification);
             }
-        }else {
+        } else {
             $notification = [
                 'message' => 'Login first',
                 'alert-type' => 'error'
             ];
             return redirect()->route('login')->with($notification);
         }
-    }// End Method
+    } // End Method
 
     //Payment Method
     public function Payment(Request $request)
@@ -258,43 +264,88 @@ class CartController extends Controller
             'total' => 'required|numeric|min:0',
         ]);
 
-        if (Session::has('coupon')) {
-            $total_amount = Session::get('coupon')['total_amount'];
-        } else {
-            $total_amount = round(Cart::total());
-        }
-
-        $payment = new Payment();
-        $payment->name = $request->name;
-        $payment->email = $request->email;
-        $payment->phone = $request->phone;
-        $payment->address = $request->address;
-        $payment->cash_delivery = $request->cash_delivery;
-        $payment->total_amount = $total_amount;
-        $payment->payment_type = 'Direct Payment';
-        $payment->invoice_no = 'EOS' . mt_rand(10000000, 99999999);
-        $payment->order_date = Carbon::now()->format('d F Y');
-        $payment->order_month = Carbon::now()->format('F');
-        $payment->order_year = Carbon::now()->format('Y');
-        $payment->status = 'pending';
-
-        $payment->save();
-
+        $cartTotal = Cart::total();
+        $subTotal = Cart::total();
         $carts = Cart::content();
-        $user_id = Auth::id();
+        $userId = Auth::id();
 
-        foreach ($carts as $cart) {
-            $existingOrder = Order::where('user_id', $user_id)
-                ->where('course_id', $cart->id)
-                ->first();
+        $totalAmount = (Session::has('coupon'))
+            ? session()->get('coupon')['total_amount']
+            : $cartTotal;
 
-            if ($existingOrder) {
-                $notification = [
-                    'message' => 'You have already enrolled this course',
-                    'alert-type' => 'error'
+
+        $data = array();
+        $data['name'] = $request->name;
+        $data['email'] = $request->email;
+        $data['phone'] = $request->phone;
+        $data['address'] = $request->address;
+        $data['course_title'] = $request->course_title;
+
+
+        if ($request->cash_delivery == 'midtrans') {
+            $midtransService = new MidtransService();
+
+            $orderId = 'EOS' . mt_rand(10000000, 99999999);
+            // Prepare items for Midtrans
+            $items = [];
+            foreach ($carts as $cart) {
+                $price = $cart->price;
+
+                // Jika ada coupon di session, hitung diskon
+                if (session()->has('coupon')) {
+                    $discountPercent = session('coupon')['coupon_discount'];
+                    $price = $price - ($price * ($discountPercent / 100));
+                }
+
+                $items[] = [
+                    'id' => $cart->id,
+                    'price' => ceil($price),
+                    'quantity' => 1,
+                    'name' => $cart->name,
                 ];
-                return redirect()->back()->with($notification);
-            } else {
+            }
+
+            $transactionParams = [
+                'order_id' => $orderId,
+                'total_amount' => (float) str_replace(',', '', $totalAmount),
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'phone' => $data['phone'],
+                'address' => $data['address'],
+                'items' => $items,
+            ];
+            // Get Snap Token
+            $snapToken = $midtransService->createTransaction($transactionParams);
+
+            // Store order info in session
+            Session::put('order_data', $data);
+            Session::put('total_amount', $totalAmount);
+            Session::put('order_id', $orderId);
+
+            return view('frontend.payment.midtrans', compact('data', 'totalAmount', 'carts', 'snapToken', 'subTotal'));
+        } elseif ($request->cash_delivery == 'cod') {
+
+            $payment = new Payment();
+            $payment->name = $request->name;
+            $payment->email = $request->email;
+            $payment->phone = $request->phone;
+            $payment->address = $request->address;
+            $payment->cash_delivery = $request->cash_delivery;
+            $payment->total_amount = $totalAmount;
+            $payment->payment_type = 'Direct Payment';
+            $payment->invoice_no = 'EOS' . mt_rand(10000000, 99999999);
+            $payment->order_date = Carbon::now()->format('d F Y');
+            $payment->order_month = Carbon::now()->format('F');
+            $payment->order_year = Carbon::now()->format('Y');
+            $payment->status = 'pending';
+
+            $payment->save();
+
+            $carts = Cart::content();
+            $user_id = Auth::id();
+
+            foreach ($carts as $cart) {
+
                 $order = new Order();
                 $order->payment_id = $payment->id;
                 $order->user_id = $user_id;
@@ -304,38 +355,106 @@ class CartController extends Controller
                 $order->price = $cart->price;
                 $order->save();
             }
+
+            Cart::destroy();
+            if (Session::has('coupon')) {
+                Session::forget('coupon');
+            }
+
+            //Start send email to student
+            $data = [
+                'invoice_no' => $payment->invoice_no,
+                'amount' => $payment->total_amount,
+                'name' => $payment->name,
+                'email' => $payment->email,
+            ];
+
+            Mail::to($payment->email)->send(new Orderconfirm($data));
+            //End send email to student
+
+            $notification = [
+                'message' => 'COD Payment Successful. Thank you for your purchase!',
+                'alert-type' => 'success'
+            ];
+            return redirect()->route('index')->with($notification);
+        }
+    }
+    //End Method
+
+    public function midtransSuccess(Request $request)
+    {
+        $orderId = $request->order_id;
+        $midtransService = new MidtransService();
+        $status = $midtransService->verifyPayment($orderId);
+
+        if (!$status ||  $status->transaction_status != 'capture') {
+            // Clear cart and coupon
+            Cart::destroy();
+            if (Session::has('coupon')) {
+                Session::forget('coupon');
+            }
+            Session::forget('order_data');
+            Session::forget('order_id');
+            Session::forget('total_amount');
+
+            $notification = [
+                'message' => 'Payment failed or pending. Please try again',
+                'alert-type' => 'error'
+            ];
+            return redirect()->route('index')->with($notification);
         }
 
+        // Get order data from session
+        $data = Session::get('order_data');
+        $carts = Cart::content();
+        $cartTotal = Session::get('total_amount');;
+        $orderId = Session::get('order_id');
+        $userId = Auth::id();
+
+
+        // Create payment record
+        $payment = new Payment();
+        $payment->name = $data['name'];
+        $payment->email = $data['email'];
+        $payment->phone = $data['phone'];
+        $payment->address = $data['address'];
+        $payment->cash_delivery = 'midtrans';
+        $payment->total_amount = $cartTotal;
+        $payment->payment_type = 'Midtrans';
+        $payment->invoice_no = $orderId;
+        $payment->order_date = Carbon::now()->format('d F Y');
+        $payment->order_month = Carbon::now()->format('F');
+        $payment->order_year = Carbon::now()->format('Y');
+        $payment->status = 'completed';
+        $payment->save();
+
+        //save order
+        foreach ($carts as $cart) {
+
+            $order = new Order();
+            $order->payment_id = $payment->id;
+            $order->user_id = $userId;
+            $order->instructor_id = $cart->options['instructor_id'];
+            $order->course_id = $cart->id;
+            $order->course_title = $cart->name;
+            $order->price = $cart->price;
+            $order->save();
+        }
+
+        // Clear cart and coupon
         Cart::destroy();
         if (Session::has('coupon')) {
             Session::forget('coupon');
         }
+        Session::forget('order_data');
+        Session::forget('order_id');
+        Session::forget('total_amount');
 
-        //Start send email to student
-        $data = [
-            'invoice_no' => $payment->invoice_no,
-            'amount' => $payment->total_amount,
-            'name' => $payment->name,
-            'email' => $payment->email,
+        $notification = [
+            'message' => 'Your payment was successful. Your order has been placed.',
+            'alert-type' => 'success'
         ];
-        
-        Mail::to($payment->email)->send(new Orderconfirm($data));
-        //End send email to student
-
-        if ($request->payment_method == 'cash_delivery') {
-            $notification = [
-                'message' => 'Cash Payment Submitted Successfully',
-                'alert-type' => 'success'
-            ];
-        } else {
-            $notification = [
-                'message' => 'Payment Successful. Thank you for your purchase!',
-                'alert-type' => 'success'
-            ];
-        }
-
         return redirect()->route('index')->with($notification);
-    }
-    //End Method
+    } //end method
 
 }
