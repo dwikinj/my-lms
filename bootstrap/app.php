@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\PreventAccessIfAuthenticated;
 use App\Http\Middleware\Role;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -14,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->alias([
             'roles' => Role::class,
+            'prevent.authenticated' => PreventAccessIfAuthenticated::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
