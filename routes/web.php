@@ -6,6 +6,7 @@ use App\Http\Controllers\Backend\CouponController;
 use App\Http\Controllers\Backend\CourseController;
 use App\Http\Controllers\Backend\OrderController;
 use App\Http\Controllers\Backend\QuestionController;
+use App\Http\Controllers\Backend\ReportController;
 use App\Http\Controllers\Backend\SettingController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\IndexController;
@@ -19,7 +20,7 @@ Route::get('/', [UserController::class, 'Index'])->name('index');
 
 Route::get('/dashboard', function () {
     return view('frontend.dashboard.index');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth','roles:user', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/user/profile', [UserController::class, 'UserProfile'])->name('user.profile');
@@ -144,9 +145,17 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         Route::get('/admin/order/details/{id}', 'AdminOrderDetail')->name('admin.order.details');
         Route::get('/admin/order/confirm/{payment_id}', 'AdminOrderConfirmAction')->name('admin.order.confirm.action');
     });
+
+    //Admin Report route
+    Route::controller(ReportController::class)->group(function () {
+        Route::get('/admin/report/view', 'ReportView')->name('admin.report.view');
+        Route::post('/search/by/date', 'SearchByDate')->name('search.by.date');
+        Route::post('/search/by/month', 'SearchByMonth')->name('search.by.month');
+        Route::post('/search/by/year', 'SearchByYear')->name('search.by.year');
+    });
 });
 
-Route::get('/admin/login', [AdminController::class, 'AdminLogin'])->name('admin.login');
+Route::get('/admin/login', [AdminController::class, 'AdminLogin'])->name('admin.login')->middleware('prevent.authenticated');
 //end admin middleware
 
 Route::get('/become/instructor', [AdminController::class, 'BecomeInstructor'])->name('become.instructor');
@@ -200,7 +209,7 @@ Route::middleware(['auth', 'roles:instructor'])->group(function () {
 }); //end instructor middleware
 
 //accessable Routes for all
-Route::get('/instructor/login', [InstructorController::class, 'InstructorLogin'])->name('instructor.login');
+Route::get('/instructor/login', [InstructorController::class, 'InstructorLogin'])->name('instructor.login')->middleware('prevent.authenticated');
 Route::get('/course/details/{id}/{slug}', [IndexController::class, 'CourseDetails'])->name('course.details');
 Route::get('/category/{id}/{slug}', [IndexController::class, 'CategoryCourse'])->name('category.course');
 Route::get('/subcategory/{id}/{slug}', [IndexController::class, 'SubCategoryCourse'])->name('subcategory.course');
