@@ -206,6 +206,16 @@ Route::middleware(['auth', 'roles:instructor'])->group(function () {
         Route::get('/question/details/{id}', 'QuestionDetails')->name('question.details');
         Route::post('/instructor/replay', 'InstructorDetail')->name('instructor.replay');
     });
+
+    //Instructor Question route
+    Route::controller(CouponController::class)->group(function () {
+        Route::get('/instructor/all/coupon', 'InstructorAllCoupon')->name('instructor.all.coupon');
+        Route::get('/instructor/add/coupon', 'InstructorAddCoupon')->name('instructor.add.coupon');
+        Route::post('/instructor/store/coupon', 'InstructorStoreCoupon')->name('instructor.store.coupon');
+        Route::get('/instructor/edit/coupon/{id}', 'InstructorEditCoupon')->name('instructor.edit.coupon');
+        Route::put('/instructor/update/coupon', 'InstructorUpdateCoupon')->name('instructor.update.coupon');
+        Route::get('/instructor/delete/coupon/{id}', 'InstructorDeleteCoupon')->name('instructor.delete.coupon');
+    });
 }); //end instructor middleware
 
 //accessable Routes for all
