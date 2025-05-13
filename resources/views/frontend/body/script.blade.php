@@ -285,8 +285,8 @@
     }
     //end to minicart
 
-     //buy now
-     function buyCourse(courseId, courseName, instructorId, slug) {
+    //buy now
+    function buyCourse(courseId, courseName, instructorId, slug) {
         $.ajax({
             type: "POST",
             dataType: "json",
@@ -306,7 +306,7 @@
                         data.success
                     )
                     miniCart();
-                    window.location.href='/checkout';
+                    window.location.href = '/checkout';
 
                 } else {
                     toastr.error(
@@ -444,5 +444,33 @@
         });
     }
     //end coupon remove
+
+    //start instructor apply coupon code
+    function applyInsCoupon() {
+        var couponName = $('#coupon_name').val();
+        var courseId = $('#course_id').val();
+        var instructorId = $('#instructor_id').val();
+        $.ajax({
+            type: 'POST',
+            dataType: 'json',
+            data: {
+                coupon_name: couponName,
+                course_id: courseId,
+                instructor_id: instructorId,
+            },
+            url: "{{ route('coupon.instructor.apply') }}", // Define this route next
+            success: function(data) {
+                if (data.validity == true) {
+                    $('#couponField').hide();
+                    couponCalc();
+                    toastr.success(data.success);
+                    miniCart();
+                } else {
+                    toastr.error(data.error);
+                }
+            }
+        })
+    }
+    //end instructor apply coupon code
 </script>
 {{-- End Mini Cart --}}

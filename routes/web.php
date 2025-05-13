@@ -65,6 +65,7 @@ Route::middleware('auth')->group(function () {
 
         //coupon
         Route::post('/coupon-apply', 'ApplyCoupon')->name('coupon.apply');
+        Route::post('/instructor/coupon-apply', 'ApplyInstructorCoupon')->name('coupon.instructor.apply');
         Route::get('/coupon-calculation', 'CalculationCoupon')->name('coupon.calculation');
         Route::get('/coupon-remove', 'CouponRemove')->name('coupon.remove');
 

@@ -202,6 +202,56 @@ class CartController extends Controller
             'success' => 'Coupon Applied Successfully',
         ]);
     } // End Method
+
+    public function ApplyInstructorCoupon(Request $request)
+    {
+
+        $validatedData = $request->validate([
+            'coupon_name' => 'required|string|max:255',
+            'course_id' => 'nullable|integer|exists:courses,id',
+            'instructor_id' => 'nullable|integer|exists:users,id',
+        ]);
+
+        $coupon_name = $validatedData['coupon_name'];
+        $course_id = $validatedData['course_id'] ?? null;
+        $instructor_id = $validatedData['instructor_id'] ?? null;
+
+        $today = Carbon::now()->toDateString();
+        $coupon = null;
+
+        //universal coupon
+        $coupon = Coupon::where('coupon_name', $coupon_name)
+            ->whereNull('course_id')
+            ->whereNull('instructor_id')
+            ->where('coupon_validty', '>=', $today)
+            ->first();
+        //end universal coupon
+
+        if (!$coupon && $course_id && $instructor_id) {
+            $coupon = Coupon::where('coupon_name', $coupon_name)
+                ->where('course_id', $course_id)
+                ->where('instructor_id', $instructor_id)
+                ->where('coupon_validty', '>=', $today)
+                ->first();
+        }
+
+        if (!$coupon) {
+            return response()->json(['error' => 'Invalid or Expired Coupon Code']);
+        }
+
+        Session::put('coupon', [
+            'coupon_name' => $coupon->coupon_name,
+            'coupon_discount' => $coupon->coupon_discount,
+            'discount_amount' => round(Cart::total() * $coupon->coupon_discount / 100),
+            'total_amount' => round(Cart::total() - Cart::total() * $coupon->coupon_discount / 100),
+        ]);
+
+        return response()->json([
+            'validity' => true,
+            'success' => 'Coupon Applied Successfully',
+        ]);
+    } // End Method
+
     public function CalculationCoupon()
     {
         if (Session::has('coupon')) {

@@ -1,8 +1,8 @@
 @extends('frontend.master')
 @section('home')
     <!-- ================================
-            START BREADCRUMB AREA
-        ================================= -->
+                START BREADCRUMB AREA
+            ================================= -->
     <section class="breadcrumb-area pt-50px pb-50px bg-white pattern-bg">
         <div class="container">
             <div class="col-lg-8 mr-auto">
@@ -80,12 +80,12 @@
         </div><!-- end container -->
     </section><!-- end breadcrumb-area -->
     <!-- ================================
-            END BREADCRUMB AREA
-        ================================= -->
+                END BREADCRUMB AREA
+            ================================= -->
 
     <!--======================================
-                START COURSE DETAILS AREA
-        ======================================-->
+                    START COURSE DETAILS AREA
+            ======================================-->
     <section class="course-details-area pb-20px">
         <div class="container">
             <div class="row">
@@ -559,8 +559,23 @@
                                         <button type="button" class="btn theme-btn w-100 mb-2"
                                             onclick="addToCart({{ $course->id }},'{{ $course->course_name }}','{{ $course->instructor->id }}','{{ $course->course_name_slug }}')"><i
                                                 class="la la-shopping-cart fs-18 mr-1"></i> Add to cart</button>
-                                        <button type="button" onclick="buyCourse({{ $course->id }},'{{ $course->course_name }}','{{ $course->instructor->id }}','{{ $course->course_name_slug }}')" class="btn theme-btn w-100 theme-btn-white mb-2"><i
+                                        <button type="button"
+                                            onclick="buyCourse({{ $course->id }},'{{ $course->course_name }}','{{ $course->instructor->id }}','{{ $course->course_name_slug }}')"
+                                            class="btn theme-btn w-100 theme-btn-white mb-2"><i
                                                 class="la la-shopping-bag mr-1"></i> Buy this course</button>
+
+                                        <div class="input-group mb-2" id="couponField">
+                                            <input class="form-control form--control pl-3" type="text"
+                                                name="coupon_name" id="coupon_name" placeholder="Coupon code">
+                                            <div class="input-group-append">
+                                                <input type="hidden" id="course_id" name="course_id"
+                                                    value="{{ $course->id }}">
+                                                <input type="hidden" id="instructor_id" name="instructor_id"
+                                                    value="{{ $course->instructor->id }}">
+                                                <button class="btn theme-btn" type="button"
+                                                    onclick="applyInsCoupon()">Apply Code</button>
+                                            </div>
+                                        </div>
                                     </div>
                                     <p class="fs-14 text-center pb-4">30-Day Money-Back Guarantee</p>
                                     <div class="preview-course-incentives">
@@ -698,12 +713,12 @@
         </div><!-- end container -->
     </section><!-- end course-details-area -->
     <!--======================================
-                END COURSE DETAILS AREA
-        ======================================-->
+                    END COURSE DETAILS AREA
+            ======================================-->
 
     <!--======================================
-                START RELATED COURSE AREA
-        ======================================-->
+                    START RELATED COURSE AREA
+            ======================================-->
     <section class="related-course-area bg-gray pt-60px pb-60px">
         <div class="container">
             <div class="related-course-wrap">
@@ -784,8 +799,8 @@
         </div><!-- end container -->
     </section><!-- end related-course-area -->
     <!--======================================
-                END RELATED COURSE AREA
-        ======================================-->
+                    END RELATED COURSE AREA
+            ======================================-->
 
 
 

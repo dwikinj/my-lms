@@ -29,7 +29,6 @@
                                 <th>Sl</th>
                                 <th>Coupon Name </th>
                                 <th>Coupon Discount</th>
-                                <th>Coupon Validity</th>
                                 <th>Coupon Valid </th>
                                 <th>Course Name</th>
                                 <th>Action</th>
@@ -42,7 +41,6 @@
                                     <td>{{ $key + 1 }}</td>
                                     <td> {{ $item->coupon_name }} </td>
                                     <td>{{ $item->coupon_discount }}%</td>
-                                    <td> {{ \Carbon\Carbon::parse($item->coupon_validty)->format('D, d F Y') }} </td>
                                     <td>
                                         @if ($item->coupon_validty >= Carbon\Carbon::now()->format('Y-m-d'))
                                             <span class="badge bg-success">Valid</span>
