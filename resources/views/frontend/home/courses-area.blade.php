@@ -1,5 +1,11 @@
 @php
-    $courses = App\Models\Course::where('status', 1)->orderBy('id', 'ASC')->limit(6)->get();
+    $courses = App\Models\Course::where('status', 1)
+        ->withCount('reviews')
+        ->withAvg('reviews', 'rating')
+        ->orderBy('id', 'ASC')
+        ->limit(6)
+        ->get();
+
     $categories = App\Models\Category::orderBy('category_name', 'ASC')->get();
 @endphp
 
@@ -73,16 +79,41 @@
                                                 href="{{ route('instructor.details', ['id' => $course->instructor->id]) }}">{{ $course->instructor->name }}</a>
                                         </p>
                                         <div class="rating-wrap d-flex align-items-center py-2">
+                                            @php
+
+                                                $averageRating = $course->reviews_avg_rating ?? 0;
+                                                $totalReviews = $course->reviews_count ?? 0;
+                                                $fullStars = floor($averageRating);
+                                                $hasHalfStar = $averageRating - $fullStars >= 0.5;
+                                                $emptyStars = 5 - $fullStars;
+
+                                            @endphp
                                             <div class="review-stars">
-                                                <span class="rating-number">4.4</span>
-                                                <span class="la la-star"></span>
-                                                <span class="la la-star"></span>
-                                                <span class="la la-star"></span>
-                                                <span class="la la-star"></span>
-                                                <span class="la la-star-o"></span>
+                                                @if ($totalReviews > 0)
+                                                    <span
+                                                        class="rating-number">{{ number_format($averageRating, 1) }}</span>
+                                                    @for ($i = 1; $i <= $fullStars; $i++)
+                                                        <span class="la la-star"></span>
+                                                    @endfor
+                                                    @if ($hasHalfStar && !$fullStars == 5)
+                                                        <span class="la la-star-half-alt"></span>
+                                                    @endif
+
+                                                    @for ($i = 1; $i <= $emptyStars; $i++)
+                                                        @if ($fullStars + $i <= 5)
+                                                            <span class="la la-star-o"></span>
+                                                        @endif
+                                                    @endfor
+                                                @else
+                                                    <span class="rating-number">0.0</span>
+                                                    @for ($i = 1; $i <= 5; $i++)
+                                                        <span class="la la-star-o"></span>
+                                                    @endfor
+                                                @endif
                                             </div>
-                                            <span class="rating-total pl-1">(20,230)</span>
+                                            <span class="rating-total pl-1">({{ number_format($totalReviews) }})</span>
                                         </div><!-- end rating-wrap -->
+                                        {{-- AKHIR BAGIAN RATING DINAMIS --}}
                                         <div class="d-flex justify-content-between align-items-center">
 
                                             @if ($course->discount_percentage > 0)
@@ -119,8 +150,11 @@
                         aria-labelledby="business-tab">
                         <div class="row">
                             @php
+
                                 $categoryWiseCourse = App\Models\Course::where('category_id', $category->id)
                                     ->where('status', 1)
+                                    ->withCount('reviews') // Menghasilkan 'reviews_count'
+                                    ->withAvg('reviews', 'rating') // Menghasilkan 'reviews_avg_rating'
                                     ->orderBy('id', 'DESC')
                                     ->get();
                             @endphp
@@ -145,15 +179,40 @@
                                                     href="{{ route('instructor.details', ['id' => $course->instructor->id]) }}">{{ $course->instructor->name }}</a>
                                             </p>
                                             <div class="rating-wrap d-flex align-items-center py-2">
+                                                @php
+                                                    $averageRating = $course->reviews_avg_rating ?? 0;
+                                                    $totalReviews = $course->reviews_count ?? 0;
+                                                    $fullStars = floor($averageRating);
+                                                    $hasHalfStar = $averageRating - $fullStars >= 0.5;
+                                                    $emptyStars = 5 - $fullStars - ($hasHalfStar ? 1 : 0);
+
+                                                @endphp
                                                 <div class="review-stars">
-                                                    <span class="rating-number">4.4</span>
-                                                    <span class="la la-star"></span>
-                                                    <span class="la la-star"></span>
-                                                    <span class="la la-star"></span>
-                                                    <span class="la la-star"></span>
-                                                    <span class="la la-star-o"></span>
+                                                    @if ($totalReviews > 0)
+                                                        <span
+                                                            class="rating-number">{{ number_format($averageRating, 1) }}</span>
+                                                        @for ($i = 1; $i <= $fullStars; $i++)
+                                                            <span class="la la-star"></span>
+                                                        @endfor
+                                                        @if ($hasHalfStar && !$fullStars == 5)
+                                                            <span class="la la-star-half-alt"></span>
+                                                        @endif
+
+                                                        @for ($i = 1; $i <= $emptyStars; $i++)
+                                                            @if ($fullStars + $i <= 5)
+                                                                {{-- Pastikan tidak lebih dari 5 bintang --}}
+                                                                <span class="la la-star-o"></span>
+                                                            @endif
+                                                        @endfor
+                                                    @else
+                                                        <span class="rating-number">0.0</span>
+                                                        @for ($i = 1; $i <= 5; $i++)
+                                                            <span class="la la-star-o"></span>
+                                                        @endfor
+                                                    @endif
                                                 </div>
-                                                <span class="rating-total pl-1">(20,230)</span>
+                                                <span
+                                                    class="rating-total pl-1">({{ number_format($totalReviews) }})</span>
                                             </div><!-- end rating-wrap -->
                                             <div class="d-flex justify-content-between align-items-center">
                                                 @if ($course->discount_percentage > 0)

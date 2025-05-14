@@ -26,18 +26,53 @@
                             <h6 class="ribbon ribbon-lg mr-2 bg-3 text-white">Bestseller</h6>
                         @endif
 
-                        <div class="rating-wrap d-flex flex-wrap align-items-center">
-                            <div class="review-stars">
-                                <span class="rating-number">4.4</span>
+                        @php
+                        // Ambil semua review yang aktif untuk kursus ini
+                        $activeCourseReviews = \App\Models\Review::where('course_id', $course->id)
+                                                               ->where('status', 1) // Hanya review yang aktif/disetujui
+                                                               ->get();
+                    
+                        $reviewCountForDisplay = $activeCourseReviews->count();
+                        $averageRatingForDisplay = 0; // Default jika tidak ada review
+                    
+                        if ($reviewCountForDisplay > 0) {
+                            $sumRatingForDisplay = $activeCourseReviews->sum('rating');
+                            $averageRatingForDisplay = round($sumRatingForDisplay / $reviewCountForDisplay, 1); // Bulatkan ke 1 desimal untuk tampilan angka
+                        }
+                    
+                        $fullStarsForDisplay = 0;
+                        $emptyStarsForDisplay = 5; // Default 5 bintang kosong jika tidak ada review
+                    
+                        if ($reviewCountForDisplay > 0) {
+                            // Tentukan jumlah bintang penuh berdasarkan bagian bulat dari rata-rata rating
+                            $fullStarsForDisplay = floor($averageRatingForDisplay);
+                    
+                            // Sisa bintang adalah bintang kosong
+                            $emptyStarsForDisplay = 5 - $fullStarsForDisplay;
+                        }
+
+                        //for total students
+                        $enrollmentCount = App\Models\Order::where('course_id',$course->id)->count();
+                    @endphp
+                    
+                    <div class="rating-wrap d-flex flex-wrap align-items-center">
+                        <div class="review-stars d-flex align-items-center">
+                            <span class="rating-number mr-1">{{ number_format($averageRatingForDisplay, 1) }}</span>
+                    
+                            {{-- Tampilkan Bintang Penuh --}}
+                            @for ($i = 1; $i <= $fullStarsForDisplay; $i++)
                                 <span class="la la-star"></span>
-                                <span class="la la-star"></span>
-                                <span class="la la-star"></span>
-                                <span class="la la-star"></span>
+                            @endfor
+                    
+                            {{-- Tampilkan Bintang Kosong --}}
+                            @for ($i = 1; $i <= $emptyStarsForDisplay; $i++)
                                 <span class="la la-star-o"></span>
-                            </div>
-                            <span class="rating-total pl-1">(20,230 ratings)</span>
-                            <span class="student-total pl-2">540,815 students</span>
+                            @endfor
                         </div>
+                        <span class="rating-total pl-1">({{ $reviewCountForDisplay }} {{ Str::plural('rating', $reviewCountForDisplay) }})</span>
+                        {{-- Data student masih statis --}}
+                        <span class="student-total pl-2">{{ number_format($enrollmentCount) }} students</span>
+                    </div>
                     </div><!-- end d-flex -->
                     <p class="pt-2 pb-1">Created by <a
                             href="{{ route('instructor.details', ['id' => $course->instructor->id]) }}"
@@ -251,249 +286,195 @@
                             </div><!-- end instructor-wrap -->
                         </div><!-- end course-overview-card -->
 
-                        <div class="course-overview-card pt-4">
-                            <h3 class="fs-24 font-weight-semi-bold pb-40px">Student feedback</h3>
-                            <div class="feedback-wrap">
-                                <div class="media media-card align-items-center">
-                                    <div class="review-rating-summary">
-                                        <span class="stats-average__count">4.6</span>
-                                        <div class="rating-wrap pt-1">
-                                            <div class="review-stars">
+                        @php
+                        // --- Perhitungan untuk Rata-rata Rating dan Total Review (Mirip bagian sebelumnya) ---
+                        $allActiveCourseReviews = \App\Models\Review::where('course_id', $course->id)
+                                                               ->where('status', 1)
+                                                               ->get();
+                    
+                        $totalReviewCount = $allActiveCourseReviews->count();
+                        $averageCourseRating = 0;
+                    
+                        if ($totalReviewCount > 0) {
+                            $sumCourseRating = $allActiveCourseReviews->sum('rating');
+                            $averageCourseRating = round($sumCourseRating / $totalReviewCount, 1);
+                        }
+                    
+                        // Logika bintang untuk rata-rata rating (tanpa setengah bintang)
+                        $avgFullStars = 0;
+                        $avgEmptyStars = 5;
+                        if ($totalReviewCount > 0) {
+                            $avgFullStars = floor($averageCourseRating);
+                            $avgEmptyStars = 5 - $avgFullStars;
+                        }
+                    
+                        // --- Perhitungan untuk Distribusi Rating Bintang (Student Feedback Bars) ---
+                        $ratingDistribution = [
+                            5 => 0, // Jumlah review bintang 5
+                            4 => 0, // Jumlah review bintang 4
+                            3 => 0, // Jumlah review bintang 3
+                            2 => 0, // Jumlah review bintang 2
+                            1 => 0, // Jumlah review bintang 1
+                        ];
+                        $ratingPercentages = $ratingDistribution; // Inisialisasi untuk persentase
+                    
+                        if ($totalReviewCount > 0) {
+                            // Hitung jumlah review untuk setiap rating
+                            foreach ($allActiveCourseReviews as $reviewItem) {
+                                if (isset($ratingDistribution[$reviewItem->rating])) {
+                                    $ratingDistribution[$reviewItem->rating]++;
+                                }
+                            }
+                    
+                            // Hitung persentase untuk setiap rating
+                            foreach ($ratingDistribution as $stars => $count) {
+                                $ratingPercentages[$stars] = round(($count / $totalReviewCount) * 100);
+                            }
+                        }
+                    @endphp
+                    
+                    <div class="course-overview-card pt-4">
+                        <h3 class="fs-24 font-weight-semi-bold pb-40px">Student feedback</h3>
+                        <div class="feedback-wrap">
+                            <div class="media media-card align-items-center">
+                                <div class="review-rating-summary">
+                                    <span class="stats-average__count">{{ number_format($averageCourseRating, 1) }}</span>
+                                    <div class="rating-wrap pt-1">
+                                        <div class="review-stars">
+                                            @for ($i = 1; $i <= $avgFullStars; $i++)
                                                 <span class="la la-star"></span>
-                                                <span class="la la-star"></span>
-                                                <span class="la la-star"></span>
-                                                <span class="la la-star"></span>
-                                                <span class="la la-star-half-alt"></span>
-                                            </div>
-                                            <span class="rating-total d-block">(2,533)</span>
-                                            <span>Course Rating</span>
-                                        </div><!-- end rating-wrap -->
-                                    </div><!-- end review-rating-summary -->
-                                    <div class="media-body">
+                                            @endfor
+                                            @for ($i = 1; $i <= $avgEmptyStars; $i++)
+                                                <span class="la la-star-o"></span>
+                                            @endfor
+                                        </div>
+                                        <span class="rating-total d-block">({{ number_format($totalReviewCount) }} {{ Str::plural('rating', $totalReviewCount) }})</span>
+                                        <span>Course Rating</span>
+                                    </div><!-- end rating-wrap -->
+                                </div><!-- end review-rating-summary -->
+                    
+                                <div class="media-body">
+                                    @for ($starValue = 5; $starValue >= 1; $starValue--)
                                         <div class="review-bars d-flex align-items-center mb-2">
-                                            <div class="review-bars__text">5 stars</div>
+                                            <div class="review-bars__text">{{ $starValue }} {{ Str::plural('star', $starValue) }}</div>
                                             <div class="review-bars__fill">
                                                 <div class="skillbar-box">
-                                                    <div class="skillbar" data-percent="77%">
+                                                    <div class="skillbar" data-percent="{{ $ratingPercentages[$starValue] }}%">
                                                         <div class="skillbar-bar bg-3"></div>
                                                     </div> <!-- End Skill Bar -->
                                                 </div>
                                             </div><!-- end review-bars__fill -->
-                                            <div class="review-bars__percent">77%</div>
+                                            <div class="review-bars__percent">{{ $ratingPercentages[$starValue] }}%</div>
                                         </div><!-- end review-bars -->
-                                        <div class="review-bars d-flex align-items-center mb-2">
-                                            <div class="review-bars__text">4 stars</div>
-                                            <div class="review-bars__fill">
-                                                <div class="skillbar-box">
-                                                    <div class="skillbar" data-percent="54%">
-                                                        <div class="skillbar-bar bg-3"></div>
-                                                    </div> <!-- End Skill Bar -->
-                                                </div>
-                                            </div><!-- end review-bars__fill -->
-                                            <div class="review-bars__percent">54%</div>
-                                        </div><!-- end review-bars -->
-                                        <div class="review-bars d-flex align-items-center mb-2">
-                                            <div class="review-bars__text">3 stars</div>
-                                            <div class="review-bars__fill">
-                                                <div class="skillbar-box">
-                                                    <div class="skillbar" data-percent="14%">
-                                                        <div class="skillbar-bar bg-3"></div>
-                                                    </div> <!-- End Skill Bar -->
-                                                </div>
-                                            </div><!-- end review-bars__fill -->
-                                            <div class="review-bars__percent">14%</div>
-                                        </div><!-- end review-bars -->
-                                        <div class="review-bars d-flex align-items-center mb-2">
-                                            <div class="review-bars__text">2 stars</div>
-                                            <div class="review-bars__fill">
-                                                <div class="skillbar-box">
-                                                    <div class="skillbar" data-percent="5%">
-                                                        <div class="skillbar-bar bg-3"></div>
-                                                    </div> <!-- End Skill Bar -->
-                                                </div>
-                                            </div><!-- end review-bars__fill -->
-                                            <div class="review-bars__percent">5%</div>
-                                        </div><!-- end review-bars -->
-                                        <div class="review-bars d-flex align-items-center mb-2">
-                                            <div class="review-bars__text">1 stars</div>
-                                            <div class="review-bars__fill">
-                                                <div class="skillbar-box">
-                                                    <div class="skillbar" data-percent="2%">
-                                                        <div class="skillbar-bar bg-3"></div>
-                                                    </div> <!-- End Skill Bar -->
-                                                </div>
-                                            </div><!-- end review-bars__fill -->
-                                            <div class="review-bars__percent">2%</div>
-                                        </div><!-- end review-bars -->
-                                    </div><!-- end media-body -->
-                                </div>
-                            </div><!-- end feedback-wrap -->
-                        </div><!-- end course-overview-card -->
+                                    @endfor
+                                </div><!-- end media-body -->
+                            </div>
+                        </div><!-- end feedback-wrap -->
+                    </div><!-- end course-overview-card -->
                         <div class="course-overview-card pt-4">
                             <h3 class="fs-24 font-weight-semi-bold pb-4">Reviews</h3>
                             <div class="review-wrap">
-                                <div class="d-flex flex-wrap align-items-center pb-4">
-                                    <form method="post" class="mr-3 flex-grow-1">
-                                        <div class="form-group">
-                                            <input class="form-control form--control pl-3" type="text" name="search"
-                                                placeholder="Search reviews">
-                                            <span class="la la-search search-icon"></span>
-                                        </div>
-                                    </form>
-                                    <div class="select-container mb-3">
-                                        <select class="select-container-select">
-                                            <option value="all-rating">All ratings</option>
-                                            <option value="five-star">Five stars</option>
-                                            <option value="four-star">Four stars</option>
-                                            <option value="three-star">Three stars</option>
-                                            <option value="two-star">Two stars</option>
-                                            <option value="one-star">One star</option>
-                                        </select>
-                                    </div>
-                                </div>
+                                @php
+                                    $reviews = App\Models\Review::with(['user','instructor'])->where('course_id',$course->id)->where('status',1)->latest()->limit(5)->get()
+                                @endphp
+                            @if (count($reviews) > 0)
+                                @foreach ($reviews as $review)
                                 <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4">
                                     <div class="media-img mr-4 rounded-full">
-                                        <img class="rounded-full lazy" src="images/img-loading.png"
-                                            data-src="images/small-avatar-1.jpg" alt="User image">
+                                        <img class="rounded-full lazy"   src="{{ (!empty($review->user->photo)) ? 
+                                        (($review->user->role === 'instructor') ? 
+                                            url('upload/instructor_images/'.$review->user->photo): 
+                                                url('upload/user_images/'.$review->user->photo)
+                                            
+                                        ) : 
+                                        url('upload/no_image.jpg') }}"
+                                            alt="User image">
                                     </div>
                                     <div class="media-body">
                                         <div class="d-flex flex-wrap align-items-center justify-content-between pb-1">
-                                            <h5>Kavi arasan</h5>
+                                            <h5>{{$review->user->name}}</h5>
                                             <div class="review-stars">
-                                                <span class="la la-star"></span>
-                                                <span class="la la-star"></span>
-                                                <span class="la la-star"></span>
-                                                <span class="la la-star"></span>
-                                                <span class="la la-star"></span>
+                                                <div class="review-stars">
+                                                    @if(isset($review->rating) && is_numeric($review->rating) && $review->rating >= 1 && $review->rating <= 5)
+                                                        @for ($i = 1; $i <= 5; $i++) {{-- Selalu loop 5 kali untuk 5 slot bintang --}}
+                                                            @if ($i <= $review->rating)
+                                                                <span class="la la-star" title="Rating: {{ $review->rating }}/5"></span> 
+                                                            @else
+                                                                <span class="la la-star-o" title="Rating: {{ $review->rating }}/5"></span> 
+                                                            @endif
+                                                        @endfor
+                                                    @else
+                                                        @for ($i = 1; $i <= 5; $i++)
+                                                            <span class="la la-star-o" title="No rating"></span>
+                                                        @endfor
+                                                    @endif
+                                                </div>
+                                            
                                             </div>
                                         </div>
-                                        <span class="d-block lh-18 pb-2">a month ago</span>
-                                        <p class="pb-2">This is one of the best courses I have taken in Udemy. It is very
-                                            complete, and it has made continue learning about Java and SQL databases as
-                                            well.</p>
-                                        <div class="helpful-action">
-                                            <span class="d-block fs-13">Was this review helpful?</span>
-                                            <button class="btn">Yes</button>
-                                            <button class="btn">No</button>
-                                            <span class="btn-text fs-14 cursor-pointer pl-1" data-toggle="modal"
-                                                data-target="#reportModal">Report</span>
-                                        </div>
+                                        <span class="d-block lh-18 pb-2">{{  $review->created_at->diffForHumans() }}</span>
+                                        <p class="pb-2">{{$review->comment}}</p>
                                     </div>
                                 </div><!-- end media -->
-                                <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4">
-                                    <div class="media-img mr-4 rounded-full">
-                                        <img class="rounded-full lazy" src="images/img-loading.png"
-                                            data-src="images/small-avatar-2.jpg" alt="User image">
-                                    </div>
-                                    <div class="media-body">
-                                        <div class="d-flex flex-wrap align-items-center justify-content-between pb-1">
-                                            <h5>Jitesh Shaw</h5>
-                                            <div class="review-stars">
-                                                <span class="la la-star"></span>
-                                                <span class="la la-star"></span>
-                                                <span class="la la-star"></span>
-                                                <span class="la la-star"></span>
-                                                <span class="la la-star"></span>
-                                            </div>
-                                        </div>
-                                        <span class="d-block lh-18 pb-2">1 months ago</span>
-                                        <p class="pb-2">This is one of the best courses I have taken in Udemy. It is very
-                                            complete, and it has made continue learning about Java and SQL databases as
-                                            well.</p>
-                                        <div class="helpful-action">
-                                            <span class="d-block fs-13">Was this review helpful?</span>
-                                            <button class="btn">Yes</button>
-                                            <button class="btn">No</button>
-                                            <span class="btn-text fs-14 cursor-pointer pl-1" data-toggle="modal"
-                                                data-target="#reportModal">Report</span>
-                                        </div>
-                                    </div>
-                                </div><!-- end media -->
-                                <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4">
-                                    <div class="media-img mr-4 rounded-full">
-                                        <img class="rounded-full lazy" src="images/img-loading.png"
-                                            data-src="images/small-avatar-3.jpg" alt="User image">
-                                    </div>
-                                    <div class="media-body">
-                                        <div class="d-flex flex-wrap align-items-center justify-content-between pb-1">
-                                            <h5>Miguel Sanches</h5>
-                                            <div class="review-stars">
-                                                <span class="la la-star"></span>
-                                                <span class="la la-star"></span>
-                                                <span class="la la-star"></span>
-                                                <span class="la la-star"></span>
-                                                <span class="la la-star"></span>
-                                            </div>
-                                        </div>
-                                        <span class="d-block lh-18 pb-2">2 month ago</span>
-                                        <p class="pb-2">This is one of the best courses I have taken in Udemy. It is very
-                                            complete, and it has made continue learning about Java and SQL databases as
-                                            well.</p>
-                                        <div class="helpful-action">
-                                            <span class="d-block fs-13">Was this review helpful?</span>
-                                            <button class="btn">Yes</button>
-                                            <button class="btn">No</button>
-                                            <span class="btn-text fs-14 cursor-pointer pl-1" data-toggle="modal"
-                                                data-target="#reportModal">Report</span>
-                                        </div>
-                                    </div>
-                                </div><!-- end media -->
+                                @endforeach
+                            @else
+                                <p class="pb-3 text-center">No review yet</p>
+                            @endif
+                                
+                                
+
                             </div><!-- end review-wrap -->
-                            <div class="see-more-review-btn text-center">
-                                <button type="button" class="btn theme-btn theme-btn-transparent">Load more
-                                    reviews</button>
-                            </div>
                         </div><!-- end course-overview-card -->
-                        <div class="course-overview-card pt-4">
-                            <h3 class="fs-24 font-weight-semi-bold pb-4">Add a Review</h3>
-                            <div class="leave-rating-wrap pb-4">
-                                <div class="leave-rating leave--rating">
-                                    <input type="radio" name='rate' id="star5" />
-                                    <label for="star5"></label>
-                                    <input type="radio" name='rate' id="star4" />
-                                    <label for="star4"></label>
-                                    <input type="radio" name='rate' id="star3" />
-                                    <label for="star3"></label>
-                                    <input type="radio" name='rate' id="star2" />
-                                    <label for="star2"></label>
-                                    <input type="radio" name='rate' id="star1" />
-                                    <label for="star1"></label>
-                                </div><!-- end leave-rating -->
-                            </div>
-                            <form method="post" class="row">
-                                <div class="input-box col-lg-6">
-                                    <label class="label-text">Name</label>
-                                    <div class="form-group">
-                                        <input class="form-control form--control" type="text" name="name"
-                                            placeholder="Your Name">
-                                        <span class="la la-user input-icon"></span>
-                                    </div>
-                                </div><!-- end input-box -->
-                                <div class="input-box col-lg-6">
-                                    <label class="label-text">Email</label>
-                                    <div class="form-group">
-                                        <input class="form-control form--control" type="email" name="email"
-                                            placeholder="Email Address">
-                                        <span class="la la-envelope input-icon"></span>
-                                    </div>
-                                </div><!-- end input-box -->
-                                <div class="input-box col-lg-12">
-                                    <label class="label-text">Message</label>
-                                    <div class="form-group">
-                                        <textarea class="form-control form--control pl-3" name="message" placeholder="Write Message" rows="5"></textarea>
-                                    </div>
-                                </div><!-- end input-box -->
-                                <div class="btn-box col-lg-12">
-                                    <div class="custom-control custom-checkbox mb-3 fs-15">
-                                        <input type="checkbox" class="custom-control-input" id="saveCheckbox" required>
-                                        <label class="custom-control-label custom--control-label" for="saveCheckbox">
-                                            Save my name, and email in this browser for the next time I comment.
-                                        </label>
-                                    </div><!-- end custom-control -->
-                                    <button class="btn theme-btn" type="submit">Submit Review</button>
-                                </div><!-- end btn-box -->
-                            </form>
-                        </div><!-- end course-overview-card -->
+                        @auth
+                        <form id="reviewForm" action="{{ route('store.review') }}" method="post">
+                            @csrf
+                            <input type="hidden" name="course_id" value="{{ $course->id }}">
+                            <input type="hidden" name="user_id" value="{{ Auth::id() }}">
+                            <input type="hidden" name="instructor_id" value="{{ $course->instructor_id }}">
+                        
+                            <div class="course-overview-card pt-4">
+                                <h3 class="fs-24 font-weight-semi-bold pb-4">Add a Review</h3>                        
+                                <div id="review-messages" class="mb-3"></div>
+                        
+                                <div class="leave-rating-wrap pb-4">
+                                    <div class="leave-rating leave--rating">
+                                        <input type="radio" name='rating' id="star5" value="5" />
+                                        <label for="star5"></label>
+                                        <input type="radio" name='rating' id="star4" value="4" />
+                                        <label for="star4"></label>
+                                        <input type="radio" name='rating' id="star3" value="3" />
+                                        <label for="star3"></label>
+                                        <input type="radio" name='rating' id="star2" value="2" />
+                                        <label for="star2"></label>
+                                        <input type="radio" name='rating' id="star1" value="1" />
+                                        <label for="star1"></label>
+                                    </div><!-- end leave-rating -->
+                                    {{-- Tempat untuk menampilkan error spesifik rating dari AJAX --}}
+                                    <span class="text-danger d-block pt-2" id="rating_error"></span>
+                                </div>
+                        
+                                <div class="row">
+                                    <div class="input-box col-lg-12">
+                                        <label class="label-text" for="comment_textarea">Message</label>
+                                        <div class="form-group">
+                                            <textarea
+                                                id="comment_textarea"
+                                                class="form-control form--control pl-3"
+                                                name="comment"
+                                                placeholder="Write Message"
+                                                rows="5"></textarea>
+                                            {{-- Tempat untuk menampilkan error spesifik comment dari AJAX --}}
+                                            <span class="text-danger d-block pt-1" id="comment_error"></span>
+                                        </div>
+                                    </div><!-- end input-box -->
+                                    <div class="btn-box col-lg-12">
+                                        <button class="btn theme-btn" id="submitReviewBtn" type="submit">Submit Review</button>
+                                    </div><!-- end btn-box -->
+                                </div>
+                            </div><!-- end course-overview-card -->
+                        </form>
+                      
+                        @endauth
                     </div><!-- end course-details-content-wrap -->
                 </div><!-- end col-lg-8 -->
                 <div class="col-lg-4">

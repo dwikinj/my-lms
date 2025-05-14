@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Course extends Model
 {
@@ -48,5 +49,10 @@ class Course extends Model
     public function wishlistedByUsers()
     {
         return $this->belongsToMany(User::class, 'wishlists', 'course_id', 'user_id')->withTimestamps();
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class, 'course_id', 'id');
     }
 }

@@ -474,3 +474,93 @@
     //end instructor apply coupon code
 </script>
 {{-- End Mini Cart --}}
+
+{{-- Review Ajax --}}
+<script>
+    $(document).ready(function() {
+        $('#reviewForm').on('submit', function(e) {
+            e.preventDefault(); // Mencegah submit form tradisional
+
+            var form = $(this);
+            var submitButton = $('#submitReviewBtn');
+            var originalButtonText = submitButton.html();
+            var formData = form.serialize(); // Mengambil data form
+            var url = form.attr('action');
+
+            // Reset pesan error sebelumnya
+            $('#review-messages').html('');
+            $('#rating_error').text('');
+            $('#comment_error').text('');
+            $('.form-control').removeClass('is-invalid'); // Hapus kelas error jika ada
+
+            // Tampilkan loading state (opsional)
+            submitButton.html('Submitting... <i class="fas fa-spinner fa-spin"></i>').prop('disabled',
+                true);
+
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: formData,
+                dataType: 'json', // Berharap respons JSON dari server
+                success: function(response) {
+                    if (response.success) {
+                        // Tampilkan pesan sukses
+                        $('#review-messages').html('<div class="alert alert-success">' +
+                            response.message + '</div>');
+                        // Kosongkan form
+                        form[0].reset();
+                        // Anda mungkin ingin melakukan hal lain, seperti me-reload bagian review di halaman
+                        // atau menambahkan review baru ke daftar secara dinamis.
+                        // Contoh: setTimeout(function(){ location.reload(); }, 2000); // Reload halaman setelah 2 detik
+                    }
+                    // (Teorinya, blok ini tidak akan tercapai jika ada validasi error karena server akan return 422)
+                },
+                error: function(xhr, status, error) {
+                    if (xhr.status === 422) { // Error validasi
+                        var errors = xhr.responseJSON.errors;
+                        if (errors) {
+                            if (errors.rating) {
+                                $('#rating_error').text(errors.rating[0]);
+                            }
+                            if (errors.comment) {
+                                $('#comment_error').text(errors.comment[0]);
+                                $('#comment_textarea').addClass('is-invalid');
+                            }
+                            // Tambahkan penanganan untuk error lain jika ada
+                            // Misalnya, tampilkan pesan error umum jika ada error lain selain field
+                            var generalErrorMessages = [];
+                            $.each(errors, function(key, value) {
+                                if (key !== 'rating' && key !==
+                                    'comment') { // Contoh jika ada error lain
+                                    generalErrorMessages.push(value[0]);
+                                }
+                            });
+                            if (generalErrorMessages.length > 0) {
+                                $('#review-messages').html(
+                                    '<div class="alert alert-danger"><ul>' +
+                                    generalErrorMessages.map(msg => `<li>${msg}</li>`)
+                                    .join('') + '</ul></div>');
+                            }
+                        } else {
+                            $('#review-messages').html(
+                                '<div class="alert alert-danger">Validation error, but no specific messages returned.</div>'
+                                );
+                        }
+                    } else {
+                        // Error server lain
+                        var errorMessage = xhr.responseJSON && xhr.responseJSON.message ?
+                            xhr.responseJSON.message :
+                            'An unexpected error occurred. Please try again.';
+                        $('#review-messages').html('<div class="alert alert-danger">' +
+                            errorMessage + '</div>');
+                    }
+                },
+                complete: function() {
+                    // Kembalikan tombol ke state normal
+                    submitButton.html(originalButtonText).prop('disabled', false);
+                }
+            });
+        });
+    });
+</script>
+{{-- End Review Ajax --}}

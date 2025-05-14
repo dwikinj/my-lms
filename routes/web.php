@@ -7,6 +7,7 @@ use App\Http\Controllers\Backend\CourseController;
 use App\Http\Controllers\Backend\OrderController;
 use App\Http\Controllers\Backend\QuestionController;
 use App\Http\Controllers\Backend\ReportController;
+use App\Http\Controllers\Backend\ReviewController;
 use App\Http\Controllers\Backend\SettingController;
 use App\Http\Controllers\Frontend\CartController;
 use App\Http\Controllers\Frontend\IndexController;
@@ -20,7 +21,7 @@ Route::get('/', [UserController::class, 'Index'])->name('index');
 
 Route::get('/dashboard', function () {
     return view('frontend.dashboard.index');
-})->middleware(['auth','roles:user', 'verified'])->name('dashboard');
+})->middleware(['auth', 'roles:user', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/user/profile', [UserController::class, 'UserProfile'])->name('user.profile');
@@ -81,6 +82,15 @@ Route::middleware('auth')->group(function () {
         Route::post('/midtrans/notification', 'midtransNotification')->name('midtrans.notification');
     });
     // End Cart Controller
+
+    // Review Controller
+
+    Route::controller(ReviewController::class)->group(function () {
+        Route::post('/store/review', 'StoreReview')->name('store.review');
+    });
+    // End Review Controller
+
+
 
 });
 
