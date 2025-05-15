@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Backend;
 use App\Http\Controllers\Controller;
 use App\Models\Review;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 
 class ReviewController extends Controller
@@ -83,4 +84,13 @@ class ReviewController extends Controller
             ], 500);
         }
     } //end method
+
+    public function InstructorActiveReview()
+    {
+        $instructorId = Auth::id();
+        $reviews = Review::with(['user', 'course', 'instructor'])->where('instructor_id',$instructorId)->where('status', 1)->orderBy('id', 'desc')->get();
+        return view('instructor.review.active_review', compact('reviews'));
+    } //end method
+
+
 }

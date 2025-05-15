@@ -234,6 +234,11 @@ Route::middleware(['auth', 'roles:instructor'])->group(function () {
         Route::put('/instructor/update/coupon', 'InstructorUpdateCoupon')->name('instructor.update.coupon');
         Route::get('/instructor/delete/coupon/{id}', 'InstructorDeleteCoupon')->name('instructor.delete.coupon');
     });
+
+     //Instructor Review route
+     Route::controller(ReviewController::class)->group(function () {
+        Route::get('/instructor/active/review', 'InstructorActiveReview')->name('instructor.active.review');
+    });
 }); //end instructor middleware
 
 //accessable Routes for all
