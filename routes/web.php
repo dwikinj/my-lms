@@ -164,6 +164,13 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         Route::post('/search/by/month', 'SearchByMonth')->name('search.by.month');
         Route::post('/search/by/year', 'SearchByYear')->name('search.by.year');
     });
+
+    //Admin Review route
+    Route::controller(ReviewController::class)->group(function () {
+        Route::get('/admin/pending/review', 'AdminPendingReview')->name('admin.pending.review');
+        Route::get('/admin/active/review', 'AdminActiveReview')->name('admin.active.review');
+        Route::post('/admin/update/review', 'AdminUpdateStatusReview')->name('update.review.status');
+    });
 });
 
 Route::get('/admin/login', [AdminController::class, 'AdminLogin'])->name('admin.login')->middleware('prevent.authenticated');

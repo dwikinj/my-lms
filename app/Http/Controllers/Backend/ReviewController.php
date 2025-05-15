@@ -47,4 +47,40 @@ class ReviewController extends Controller
             ], 500);
         }
     } //end method
+
+    public function AdminPendingReview()
+    {
+        $reviews = Review::with(['user', 'course', 'instructor'])->where('status', 0)->orderBy('id', 'desc')->get();
+        return view('admin.backend.review.pending_review', compact('reviews'));
+    } //end method
+
+    public function AdminActiveReview()
+    {
+        $reviews = Review::with(['user', 'course', 'instructor'])->where('status', 1)->orderBy('id', 'desc')->get();
+        return view('admin.backend.review.active_review', compact('reviews'));
+    } //end method
+
+    public function AdminUpdateStatusReview(Request $request)
+    {
+        $review_id = $request->input('review_id');
+        $status = $request->input('status') ? 1 : 0;
+
+        try {
+            $review = Review::findOrFail($review_id);
+            $review->update([
+                'status' => $status,
+            ]);
+
+            // Mengembalikan respons JSON
+            return response()->json([
+                'message' => 'Review Status Updated Successfully',
+                'alertType' => 'success'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to update review status.',
+                'alertType' => 'error'
+            ], 500);
+        }
+    } //end method
 }
