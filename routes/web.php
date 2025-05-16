@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\Backend\ActiveUserController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\CouponController;
 use App\Http\Controllers\Backend\CourseController;
@@ -170,6 +171,12 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         Route::get('/admin/pending/review', 'AdminPendingReview')->name('admin.pending.review');
         Route::get('/admin/active/review', 'AdminActiveReview')->name('admin.active.review');
         Route::post('/admin/update/review', 'AdminUpdateStatusReview')->name('update.review.status');
+    });
+
+    //Admin Manage User and Instructor route
+    Route::controller(ActiveUserController::class)->group(function () {
+        Route::get('/admin/all/user', 'AllUser')->name('admin.all.user');
+        Route::get('/admin/all/instructor', 'AllInstructor')->name('admin.all.instructor');
     });
 });
 

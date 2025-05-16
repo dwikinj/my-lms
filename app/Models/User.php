@@ -3,6 +3,8 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -24,7 +26,7 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
-   
+
 
     protected $guarded = [];
 
@@ -48,11 +50,27 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'last_seen' => 'datetime',
         ];
     }
 
     public function wishlistCourses()
     {
         return $this->belongsToMany(Course::class, 'wishlists', 'user_id', 'course_id')->withTimestamps();
+    }
+
+    public function getLastSeenStatusAttribute(): string
+    {
+        if (!$this->last_seen) {
+            return 'Never'; // 
+        }
+
+        $onlineThreshold = Carbon::now()->subMinutes(1);
+
+        if ($this->last_seen->gt($onlineThreshold)) {
+            return 'Online';
+        }
+
+        return $this->last_seen->diffForHumans();
     }
 }
