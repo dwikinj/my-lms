@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\Backend\ActiveUserController;
+use App\Http\Controllers\Backend\BlogController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\CouponController;
 use App\Http\Controllers\Backend\CourseController;
@@ -177,6 +178,28 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
     Route::controller(ActiveUserController::class)->group(function () {
         Route::get('/admin/all/user', 'AllUser')->name('admin.all.user');
         Route::get('/admin/all/instructor', 'AllInstructor')->name('admin.all.instructor');
+    });
+
+    //Blog Category route
+    Route::controller(BlogController::class)->group(function () {
+        Route::get('/blog/category', 'AllBlogCategory')->name('blog.category');
+        Route::post('/blog/category', 'StoreBlogCategory')->name('blog.add.category');
+        Route::delete('/blog/category/{id}', 'DeleteBlogCategory')->name('blog.delete.category');
+        Route::get('/admin/blog/category/{id}/edit-data', 'GetCategoryDataForEdit')->name('blog.category.edit.data');
+        Route::put('/admin/blog/category/update/{id}', 'UpdateCategory')->name('blog.category.update');
+    });
+
+    //Blog Post route
+    Route::controller(BlogController::class)->group(function () {
+        Route::get('/blog/post', 'BlogPost')->name('blog.post');
+        Route::get('/blog/add/post', 'AddBlogPost')->name('blog.post.add');
+        Route::post('/blog/store/post', 'StoreBlogPost')->name('blog.post.store'); 
+        Route::post('/blog/post/upload-image-quill', 'UploadImageQuill')->name('blog.post.upload_image_quill');
+        Route::delete('/blog/post/{id}', 'DeleteBlogPost')->name('blog.post.delete');
+        Route::get('/blog/post/{id}/edit', 'BlogPostEdit')->name('blog.post.edit');
+        Route::put('/blog/post/update', 'BlogPostUpdate')->name('blog.post.update');
+
+
     });
 });
 
