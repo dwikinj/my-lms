@@ -39,7 +39,7 @@
         </li>
         <li>
             <a class="has-arrow" href="javascript:;">
-                <div class="parent-icon"><i class='bx bx-bookmark-heart'></i>
+                <div class="parent-icon"><i class='bx bx-user-voice'></i>
                 </div>
                 <div class="menu-title">Manage Instructor</div>
             </a>
@@ -50,7 +50,7 @@
         </li>
         <li>
             <a class="has-arrow" href="javascript:;">
-                <div class="parent-icon"><i class='bx bx-bookmark-heart'></i>
+                <div class="parent-icon"><i class='bx bx-book-open'></i>
                 </div>
                 <div class="menu-title">Manage Courses</div>
             </a>
@@ -61,7 +61,7 @@
         </li>
         <li>
             <a class="has-arrow" href="javascript:;">
-                <div class="parent-icon"><i class='bx bx-bookmark-heart'></i>
+                <div class="parent-icon"><i class='bx bx-purchase-tag-alt'></i>
                 </div>
                 <div class="menu-title">Manage Coupon</div>
             </a>
@@ -72,7 +72,7 @@
         </li>
         <li>
             <a class="has-arrow" href="javascript:;">
-                <div class="parent-icon"><i class='bx bx-bookmark-heart'></i>
+                <div class="parent-icon"><i class='bx bx-cog'></i>
                 </div>
                 <div class="menu-title">Manage Setting</div>
             </a>
@@ -83,7 +83,7 @@
         </li>
         <li>
             <a class="has-arrow" href="javascript:;">
-                <div class="parent-icon"><i class='bx bx-bookmark-heart'></i>
+                <div class="parent-icon"><i class='bx bx-receipt'></i>
                 </div>
                 <div class="menu-title">Manage Orders</div>
             </a>
@@ -96,7 +96,7 @@
         </li>
         <li>
             <a class="has-arrow" href="javascript:;">
-                <div class="parent-icon"><i class='bx bx-bookmark-heart'></i>
+                <div class="parent-icon"><i class='bx bx-bar-chart-alt-2'></i>
                 </div>
                 <div class="menu-title">Manage Report</div>
             </a>
@@ -108,7 +108,7 @@
         </li>
         <li>
             <a class="has-arrow" href="javascript:;">
-                <div class="parent-icon"><i class='bx bx-bookmark-heart'></i>
+                <div class="parent-icon"><i class='bx bx-star'></i>
                 </div>
                 <div class="menu-title">Manage Review</div>
             </a>
@@ -122,7 +122,7 @@
         </li>
         <li>
             <a class="has-arrow" href="javascript:;">
-                <div class="parent-icon"><i class='bx bx-bookmark-heart'></i>
+                <div class="parent-icon"><i class='bx bx-group'></i>
                 </div>
                 <div class="menu-title">Manage All User</div>
             </a>
@@ -136,7 +136,7 @@
         </li>
         <li>
             <a class="has-arrow" href="javascript:;">
-                <div class="parent-icon"><i class='bx bx-bookmark-heart'></i>
+                <div class="parent-icon"><i class='bx bx-news'></i>
                 </div>
                 <div class="menu-title">Manage Blog</div>
             </a>
