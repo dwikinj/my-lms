@@ -200,6 +200,7 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         Route::put('/blog/post/update', 'BlogPostUpdate')->name('blog.post.update');
 
 
+
     });
 });
 
@@ -278,5 +279,11 @@ Route::get('/category/{id}/{slug}', [IndexController::class, 'CategoryCourse'])-
 Route::get('/subcategory/{id}/{slug}', [IndexController::class, 'SubCategoryCourse'])->name('subcategory.course');
 Route::get('/instructor/details/{id}', [IndexController::class, 'InstructorDetails'])->name('instructor.details');
 Route::post('/add-to-wishlist/{course_id}', [WishListController::class, 'AddToWishlist']);
+
+//Blog Post
+Route::get('/blog/post/details/{id}/{slug}',[BlogController::class, 'BlogPostDetail'])->name('blog.post.detail');
+Route::get('/blog/category/list/{id}',[BlogController::class, 'BlogCategoryList'])->name('blog.post.category.list');
+Route::get('/blog',[BlogController::class, 'BlogList'])->name('blog');
+
 //end accessable routes for all
 require __DIR__ . '/auth.php';

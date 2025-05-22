@@ -328,4 +328,38 @@ class BlogController extends Controller
             'redirect_url' => route('blog.post') // URL untuk redirect setelah sukses
         ]);
     }
+
+    //Blog Post Detail
+    public function BlogPostDetail($id, $slug)
+    {
+        $blog = BlogPost::where('id', $id)
+            ->where('post_slug', $slug)
+            ->firstOrFail();
+
+        $blogCategory = BlogCategory::latest()->get();
+        $post = BlogPost::latest()->limit(3)->get();
+
+        return view('frontend.blog.blog_details', compact('blog', 'blogCategory', 'post'));
+    } //end method
+
+    public function BlogCategoryList($id)
+    {
+        $blog = BlogPost::where('blog_category_id', $id)->get();
+        $blogCategory = BlogCategory::where('id', $id)->first();
+        $blogCategoryAll = BlogCategory::latest()->get();
+        $post = BlogPost::latest()->limit(3)->get();
+
+
+        return view('frontend.blog.blog_category_list', compact('blog', 'blogCategory', 'blogCategoryAll', 'post'));
+    } //end method
+
+    public function BlogList()
+    {
+        $blog = BlogPost::latest()->get();
+        $blogCategoryAll = BlogCategory::latest()->get();
+        $post = BlogPost::latest()->limit(3)->get();
+
+        return view('frontend.blog.blog_list', compact('blog', 'blogCategoryAll', 'post'));
+    } //endmethod
+
 }
