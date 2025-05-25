@@ -8,12 +8,15 @@ use App\Models\Coupon;
 use App\Models\Course;
 use App\Models\Order;
 use App\Models\Payment;
+use App\Models\User;
+use App\Notifications\OrderComplete;
 use App\Services\MidtransService;
 use Carbon\Carbon;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Session;
 
 class CartController extends Controller
@@ -319,6 +322,10 @@ class CartController extends Controller
         $carts = Cart::content();
         $userId = Auth::id();
 
+        //user instructor
+        $user = User::where('role', 'instructor')->get();
+        //end user instructor
+
         $totalAmount = (Session::has('coupon'))
             ? session()->get('coupon')['total_amount']
             : $cartTotal;
@@ -404,6 +411,17 @@ class CartController extends Controller
                 $order->course_title = $cart->name;
                 $order->price = $cart->price;
                 $order->save();
+
+                //Send notification
+                $orderData = [
+                    'message' => 'New COD Enrollment In Course',
+                    'order_id' => $order->id,
+                    'user_id' => $order->user_id,
+                    'course_title' => $order->course_title,
+                    'price' => $order->price,
+                ];
+                Notification::send($user, new OrderComplete($orderData));
+                //End send notification;
             }
 
             Cart::destroy();
@@ -421,6 +439,9 @@ class CartController extends Controller
 
             Mail::to($payment->email)->send(new Orderconfirm($data));
             //End send email to student
+
+
+
 
             $notification = [
                 'message' => 'COD Payment Successful. Thank you for your purchase!',

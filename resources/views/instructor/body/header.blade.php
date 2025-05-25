@@ -1,3 +1,9 @@
+@php
+    $user = Auth::user();
+    $unreadNotificationsCount = $user->unreadNotifications()->count();
+    $notificationsCount = $user->notifications()->count();
+@endphp
+
 <header>
     <div class="topbar d-flex align-items-center">
         <nav class="navbar navbar-expand gap-3">
@@ -11,12 +17,11 @@
                         class='bx bx-search'></i></span>
             </div>
 
-
             <div class="top-menu ms-auto">
                 <ul class="navbar-nav align-items-center gap-1">
                     <li class="nav-item mobile-search-icon d-flex d-lg-none" data-bs-toggle="modal"
                         data-bs-target="#SearchModal">
-                        <a class="nav-link" href="avascript:;"><i class='bx bx-search'></i>
+                        <a class="nav-link" href="javascript:;"><i class='bx bx-search'></i>
                         </a>
                     </li>
 
@@ -25,143 +30,58 @@
                         </a>
                     </li>
 
-
-
                     <li class="nav-item dropdown dropdown-large">
                         <a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="#"
-                            data-bs-toggle="dropdown"><span class="alert-count">7</span>
+                            data-bs-toggle="dropdown" id="notificationDropdown">
+                            <span class="alert-count" id="notification-count">{{ $unreadNotificationsCount }}</span>
                             <i class='bx bx-bell'></i>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end">
                             <a href="javascript:;">
                                 <div class="msg-header">
                                     <p class="msg-header-title">Notifications</p>
-                                    <p class="msg-header-badge">8 New</p>
+                                    <p class="msg-header-badge" id="notification-badge">{{ $unreadNotificationsCount }}
+                                        New</p>
                                 </div>
                             </a>
-                            <div class="header-notifications-list">
-                                <a class="dropdown-item" href="javascript:;">
-                                    <div class="d-flex align-items-center">
-                                        <div class="user-online">
-                                            <img src="{{ asset('backend/assets/images/avatars/avatar-1.png') }}"
-                                                class="msg-avatar" alt="user avatar">
+
+                            <div class="header-notifications-list" id="notifications-container">
+                                @forelse ($user->unreadNotifications as $notification)
+                                    <a class="dropdown-item notification-item" href="javascript:;"
+                                        data-notification-id="{{ $notification->id }}">
+                                        <div class="d-flex align-items-center">
+                                            <div class="notify bg-light-success text-danger">C</div>
+                                            <div class="flex-grow-1">
+                                                <h6 class="msg-name">New Orders
+                                                    <span
+                                                        class="msg-time float-end">{{ $notification->created_at->diffForHumans() }}</span>
+                                                </h6>
+                                                <p class="msg-info">{{ $notification->data['message'] }}</p>
+                                            </div>
                                         </div>
-                                        <div class="flex-grow-1">
-                                            <h6 class="msg-name">Daisy Anderson<span class="msg-time float-end">5 sec
-                                                    ago</span></h6>
-                                            <p class="msg-info">The standard chunk of lorem</p>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item" href="javascript:;">
-                                    <div class="d-flex align-items-center">
-                                        <div class="notify bg-light-danger text-danger">dc
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <h6 class="msg-name">New Orders <span class="msg-time float-end">2 min
-                                                    ago</span></h6>
-                                            <p class="msg-info">You have recived new orders</p>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item" href="javascript:;">
-                                    <div class="d-flex align-items-center">
-                                        <div class="user-online">
-                                            <img src="{{ asset('backend/assets/images/avatars/avatar-2.png') }}"
-                                                class="msg-avatar" alt="user avatar">
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <h6 class="msg-name">Althea Cabardo <span class="msg-time float-end">14
-                                                    sec ago</span></h6>
-                                            <p class="msg-info">Many desktop publishing packages</p>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item" href="javascript:;">
-                                    <div class="d-flex align-items-center">
-                                        <div class="notify bg-light-success text-success">
-                                            <img src="{{ asset('backend/assets/images/app/outlook.png') }}"
-                                                width="25" alt="user avatar">
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <h6 class="msg-name">Account Created<span class="msg-time float-end">28
-                                                    min
-                                                    ago</span></h6>
-                                            <p class="msg-info">Successfully created new email</p>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item" href="javascript:;">
-                                    <div class="d-flex align-items-center">
-                                        <div class="notify bg-light-info text-info">Ss
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <h6 class="msg-name">New Product Approved <span class="msg-time float-end">2
-                                                    hrs ago</span></h6>
-                                            <p class="msg-info">Your new product has approved</p>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item" href="javascript:;">
-                                    <div class="d-flex align-items-center">
-                                        <div class="user-online">
-                                            <img src="{{ asset('backend/assets/images/avatars/avatar-4.png') }}"
-                                                class="msg-avatar" alt="user avatar">
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <h6 class="msg-name">Katherine Pechon <span class="msg-time float-end">15
-                                                    min ago</span></h6>
-                                            <p class="msg-info">Making this the first true generator</p>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item" href="javascript:;">
-                                    <div class="d-flex align-items-center">
-                                        <div class="notify bg-light-success text-success"><i
-                                                class='bx bx-check-square'></i>
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <h6 class="msg-name">Your item is shipped <span
-                                                    class="msg-time float-end">5 hrs
-                                                    ago</span></h6>
-                                            <p class="msg-info">Successfully shipped your item</p>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item" href="javascript:;">
-                                    <div class="d-flex align-items-center">
-                                        <div class="notify bg-light-primary">
-                                            <img src="{{ asset('backend/assets/images/app/github.png') }}"
-                                                width="25" alt="user avatar">
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <h6 class="msg-name">New 24 authors<span class="msg-time float-end">1 day
-                                                    ago</span></h6>
-                                            <p class="msg-info">24 new authors joined last week</p>
-                                        </div>
-                                    </div>
-                                </a>
-                                <a class="dropdown-item" href="javascript:;">
-                                    <div class="d-flex align-items-center">
-                                        <div class="user-online">
-                                            <img src="{{ asset('backend/assets/images/avatars/avatar-8.png') }}"
-                                                class="msg-avatar" alt="user avatar">
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <h6 class="msg-name">Peter Costanzo <span class="msg-time float-end">6 hrs
-                                                    ago</span></h6>
-                                            <p class="msg-info">It was popularised in the 1960s</p>
-                                        </div>
-                                    </div>
-                                </a>
+                                    </a>
+                                @empty
+                                    <p class="dropdown-item text-center text-muted" id="no-notifications">No New
+                                        Notifications.</p>
+                                @endforelse
                             </div>
+
                             <a href="javascript:;">
                                 <div class="text-center msg-footer">
-                                    <button class="btn btn-primary w-100">View All Notifications</button>
+                                    <button class="btn btn-primary w-100" id="mark-all-read"
+                                        style="{{ $unreadNotificationsCount == 0 ? 'display: none;' : '' }}">
+                                        Mark All as Read
+                                    </button>
+                                    <button class="btn btn-secondary w-100"
+                                        style="{{ $notificationsCount == 0 ? 'display: none;' : '' }}"
+                                        id="delete-all-notifications">
+                                        Delete All Notifications
+                                    </button>
                                 </div>
                             </a>
                         </div>
                     </li>
+
                     <li class="nav-item dropdown dropdown-large">
                         <a class="nav-link dropdown-toggle dropdown-toggle-nocaret position-relative" href="#"
                             role="button" data-bs-toggle="dropdown" aria-expanded="false"> <span
@@ -378,11 +298,13 @@
                     </div>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-end">
-                    <li><a class="dropdown-item d-flex align-items-center" href="{{ route('instructor.profile') }}"><i
+                    <li><a class="dropdown-item d-flex align-items-center"
+                            href="{{ route('instructor.profile') }}"><i
                                 class="bx bx-user fs-5"></i><span>Profile</span></a>
                     </li>
                     <li><a class="dropdown-item d-flex align-items-center"
-                            href="{{ route('instructor.change.password') }}"><i class="bx bx-cog fs-5"></i><span>Change
+                            href="{{ route('instructor.change.password') }}"><i
+                                class="bx bx-cog fs-5"></i><span>Change
                                 Password</span></a>
                     </li>
                     <li><a class="dropdown-item d-flex align-items-center" href="javascript:;"><i
@@ -406,3 +328,164 @@
         </nav>
     </div>
 </header>
+
+@push('scripts')
+    <script>
+        $(document).ready(function() {
+            // CSRF Token untuk semua AJAX request
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+
+            // Function untuk update notification counter
+            function updateNotificationCounter(count) {
+                $('#notification-count').text(count);
+                $('#notification-badge').text(count + ' New');
+
+                if (count == 0) {
+                    $('#notification-count').hide();
+                    $('#mark-all-read').hide();
+                } else {
+                    $('#notification-count').show();
+                    $('#mark-all-read').show();
+                }
+            }
+
+            // Function untuk load notifications
+            function loadNotifications() {
+                $.ajax({
+                    url: '{{ route('notifications.unread') }}',
+                    type: 'GET',
+                    success: function(response) {
+                        updateNotificationCounter(response.count);
+
+                        let notificationsHtml = '';
+                        if (response.notifications.length > 0) {
+                            response.notifications.forEach(function(notification) {
+                                notificationsHtml += `
+                            <a class="dropdown-item notification-item" href="javascript:;" data-notification-id="${notification.id}">
+                                <div class="d-flex align-items-center">
+                                    <div class="notify bg-light-success text-danger">C</div>
+                                    <div class="flex-grow-1">
+                                        <h6 class="msg-name">New Orders 
+                                            <span class="msg-time float-end">${notification.created_at_human}</span>
+                                        </h6>
+                                        <p class="msg-info">${notification.message}</p>
+                                    </div>
+                                </div>
+                            </a>
+                        `;
+                            });
+                        } else {
+                            notificationsHtml =
+                                '<p class="dropdown-item text-center text-muted" id="no-notifications">No New Notifications.</p>';
+                        }
+
+                        $('#notifications-container').html(notificationsHtml);
+                    },
+                    error: function(xhr, status, error) {
+                        toastr.error('Error loading notifications');
+                    }
+                });
+            }
+
+            // Click pada notification item untuk mark as read
+            $(document).on('click', '.notification-item', function(e) {
+                e.preventDefault();
+
+                let notificationId = $(this).data('notification-id');
+                let $notificationItem = $(this);
+
+                $.ajax({
+                    url: '{{ url('/notifications') }}/' + notificationId + '/mark-as-read',
+                    type: 'POST',
+                    success: function(response) {
+                        if (response.success) {
+                            // Remove notification dari list
+                            $notificationItem.fadeOut(300, function() {
+                                $(this).remove();
+
+                                // Update counter
+                                updateNotificationCounter(response.unread_count);
+
+                                // Jika tidak ada notification, tampilkan pesan
+                                if (response.unread_count == 0) {
+                                    $('#notifications-container').html(
+                                        '<p class="dropdown-item text-center text-muted" id="no-notifications">No New Notifications.</p>'
+                                        );
+                                }
+                            });
+
+                            toastr.success('Notification marked as read');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        toastr.error('Failed to mark notification as read');
+                    }
+                });
+            });
+
+            // Mark All as Read button
+            $('#mark-all-read').on('click', function(e) {
+                e.preventDefault();
+
+                $.ajax({
+                    url: '{{ route('notifications.markAllAsRead') }}',
+                    type: 'POST',
+                    success: function(response) {
+                        if (response.success) {
+                            // Clear semua notifications
+                            $('#notifications-container').html(
+                                '<p class="dropdown-item text-center text-muted" id="no-notifications">No New Notifications.</p>'
+                                );
+
+                            // Update counter
+                            updateNotificationCounter(0);
+
+                            toastr.success('All notifications marked as read');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        toastr.error('Failed to mark all notifications as read');
+                    }
+                });
+            });
+
+            // Auto refresh notifications setiap 30 detik
+            setInterval(function() {
+                loadNotifications();
+            }, 30000); // 30 seconds
+
+            // Load notifications saat dropdown dibuka
+            $('#notificationDropdown').on('click', function() {
+                loadNotifications();
+            });
+
+            // View All Notifications button (optional - redirect ke halaman notifications)
+            $('#delete-all-notifications').on('click', function(e) {
+                e.preventDefault();
+
+                $.ajax({
+                    url: '{{ route('notifications.clearAll') }}',
+                    type: 'DELETE',
+                    success: function(response) {
+                        if (response.success) {
+                            // Clear semua notifications
+                            $('#delete-all-notifications').hide();
+
+                            // Update counter
+                            updateNotificationCounter(0);
+
+                            toastr.success('All notifications deleted');
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        toastr.error('Failed to delete all notifications');
+                    }
+                });
+            });
+        });
+    </script>
+@endpush

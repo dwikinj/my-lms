@@ -6,6 +6,7 @@ use App\Http\Controllers\Backend\BlogController;
 use App\Http\Controllers\Backend\CategoryController;
 use App\Http\Controllers\Backend\CouponController;
 use App\Http\Controllers\Backend\CourseController;
+use App\Http\Controllers\Backend\NotificationController;
 use App\Http\Controllers\Backend\OrderController;
 use App\Http\Controllers\Backend\QuestionController;
 use App\Http\Controllers\Backend\ReportController;
@@ -92,6 +93,16 @@ Route::middleware('auth')->group(function () {
     });
     // End Review Controller
 
+    //Start Notification
+    Route::controller(NotificationController::class)->group(function () {
+        Route::post('/notifications/{notificationId}/mark-as-read', 'markAsRead')->name('notifications.markAsRead');
+        Route::post('/notifications/mark-all-as-read', 'markAllAsRead')->name('notifications.markAllAsRead');
+        Route::get('/notifications/unread', 'getUnreadNotifications')->name('notifications.unread');
+        Route::get('/notifications/all', 'getAllNotifications')->name('notifications.all');
+        Route::delete('/notifications/{notificationId}', 'deleteNotification')->name('notifications.delete');
+        Route::delete('/notifications/all/clear', 'clearAllNotifications')->name('notifications.clearAll');
+    });
+    //End Notification
 
 
 });
@@ -193,14 +204,11 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
     Route::controller(BlogController::class)->group(function () {
         Route::get('/blog/post', 'BlogPost')->name('blog.post');
         Route::get('/blog/add/post', 'AddBlogPost')->name('blog.post.add');
-        Route::post('/blog/store/post', 'StoreBlogPost')->name('blog.post.store'); 
+        Route::post('/blog/store/post', 'StoreBlogPost')->name('blog.post.store');
         Route::post('/blog/post/upload-image-quill', 'UploadImageQuill')->name('blog.post.upload_image_quill');
         Route::delete('/blog/post/{id}', 'DeleteBlogPost')->name('blog.post.delete');
         Route::get('/blog/post/{id}/edit', 'BlogPostEdit')->name('blog.post.edit');
         Route::put('/blog/post/update', 'BlogPostUpdate')->name('blog.post.update');
-
-
-
     });
 });
 
@@ -266,8 +274,8 @@ Route::middleware(['auth', 'roles:instructor'])->group(function () {
         Route::get('/instructor/delete/coupon/{id}', 'InstructorDeleteCoupon')->name('instructor.delete.coupon');
     });
 
-     //Instructor Review route
-     Route::controller(ReviewController::class)->group(function () {
+    //Instructor Review route
+    Route::controller(ReviewController::class)->group(function () {
         Route::get('/instructor/active/review', 'InstructorActiveReview')->name('instructor.active.review');
     });
 }); //end instructor middleware
@@ -281,9 +289,9 @@ Route::get('/instructor/details/{id}', [IndexController::class, 'InstructorDetai
 Route::post('/add-to-wishlist/{course_id}', [WishListController::class, 'AddToWishlist']);
 
 //Blog Post
-Route::get('/blog/post/details/{id}/{slug}',[BlogController::class, 'BlogPostDetail'])->name('blog.post.detail');
-Route::get('/blog/category/list/{id}',[BlogController::class, 'BlogCategoryList'])->name('blog.post.category.list');
-Route::get('/blog',[BlogController::class, 'BlogList'])->name('blog');
+Route::get('/blog/post/details/{id}/{slug}', [BlogController::class, 'BlogPostDetail'])->name('blog.post.detail');
+Route::get('/blog/category/list/{id}', [BlogController::class, 'BlogCategoryList'])->name('blog.post.category.list');
+Route::get('/blog', [BlogController::class, 'BlogList'])->name('blog');
 
 //end accessable routes for all
 require __DIR__ . '/auth.php';

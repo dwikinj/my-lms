@@ -146,6 +146,9 @@
     </script>
     <!--end TinyMC Editor--->
 
+    <!-- Scripts -->
+    @stack('scripts')
+
 
 </body>
 
