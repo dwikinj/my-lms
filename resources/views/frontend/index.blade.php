@@ -1,6 +1,9 @@
 @extends('frontend.master')
 @section('home')
 
+@section('title')
+My Lms(Aduca) 
+@endsection
 <!--================================
          START HERO AREA
 =================================-->

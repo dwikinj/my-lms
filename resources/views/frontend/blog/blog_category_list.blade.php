@@ -1,6 +1,9 @@
 @extends('frontend.master')
 @section('home')
 
+@section('title')
+{{$blogCategory->category_name}} | My Lms(Aduca)
+@endsection
 <!-- ================================
     START BREADCRUMB AREA
 ================================= -->

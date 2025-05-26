@@ -1,5 +1,9 @@
 @extends('frontend.master')
 @section('home')
+
+@section('title')
+    Register | My Lms(Aduca)
+@endsection
     <!-- ================================
                         START BREADCRUMB AREA
                     ================================= -->

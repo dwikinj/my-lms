@@ -162,6 +162,12 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         Route::post('/smtp/update', 'SmtpUpdate')->name('smtp.update');
     });
 
+    //Site Setting all route
+    Route::controller(SettingController::class)->group(function () {
+        Route::get('/site/setting', 'SiteSetting')->name('site.setting');
+        Route::put('/site/setting', 'UpdateSiteSetting')->name('site.setting.update');
+    });
+
     //Admin Order route
     Route::controller(OrderController::class)->group(function () {
         Route::get('/admin/pending/order', 'AdminPendingOrder')->name('admin.pending.order');

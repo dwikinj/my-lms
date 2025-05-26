@@ -1,6 +1,10 @@
 @extends('frontend.master')
 @section('home')
 
+@section('title')
+    {{$blog->post_title}} | My Lms(Aduca)
+@endsection
+
 <!-- ================================
     START BREADCRUMB AREA
 ================================= -->
@@ -16,7 +20,7 @@
                 <li>{{$blog->post_title}}</li>
             </ul>
             <ul class="generic-list-item generic-list-item-bullet generic-list-item--bullet d-flex align-items-center flex-wrap fs-14 pt-2">
-                <li class="d-flex align-items-center">By<a href="#">Admin</a></li>
+                <li class="d-flex align-items-center">By <a href="#">Admin</a></li>
                 <li class="d-flex align-items-center">{{$blog->created_at->format('M d, Y')}}</li>
                 <li class="d-flex align-items-center"><a href="#comments" class="page-scroll">4 Comments</a></li>
                 <li class="d-flex align-items-center">130 Shares</li>

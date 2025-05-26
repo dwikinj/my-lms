@@ -1,5 +1,6 @@
 @php
     $categories = App\Models\Category::all();
+    $setting = App\Models\SiteSetting::first();
 @endphp
 
 <header class="header-menu-area bg-white">
@@ -10,9 +11,9 @@
                     <div class="header-widget">
                         <ul class="generic-list-item d-flex flex-wrap align-items-center fs-14">
                             <li class="d-flex align-items-center pr-3 mr-3 border-right border-right-gray"><i
-                                    class="la la-phone mr-1"></i><a href="tel:00123456789"> (00) 123 456 789</a></li>
+                                    class="la la-phone mr-1"></i><a href="tel:{{$setting->phone}}"> {{$setting->phone}}</a></li>
                             <li class="d-flex align-items-center"><i class="la la-envelope-o mr-1"></i><a
-                                    href="mailto:contact@aduca.com"> contact@aduca.com</a></li>
+                                    href="mailto:{{$setting->email}}"> {{$setting->email}}</a></li>
                         </ul>
                     </div><!-- end header-widget -->
                 </div><!-- end col-lg-6 -->
