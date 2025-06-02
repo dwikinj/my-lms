@@ -237,6 +237,9 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         Route::get('/edit/permission/{id}', 'EditPermision')->name('edit.permission');
         Route::patch('/update/permission', 'UpdatePermision')->name('update.permission');
         Route::get('/delete/permission/{id}', 'DeletePermision')->name('delete.permission');
+        Route::get('/import/permission', 'ImportPermision')->name('import.permission');
+        Route::get('/export/permission', 'ExportPermision')->name('export.permission');
+        Route::post('/import/xlsxpermission', 'ImportXlsxPermision')->name('import.xlsxpermission');
     });
 });
 
