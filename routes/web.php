@@ -241,6 +241,23 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         Route::get('/export/permission', 'ExportPermision')->name('export.permission');
         Route::post('/import/xlsxpermission', 'ImportXlsxPermision')->name('import.xlsxpermission');
     });
+    //Permission  route
+    Route::controller(RoleController::class)->group(function () {
+        Route::get('/all/roles', 'AllRoles')->name('all.roles');
+        Route::get('/add/roles', 'AddRoles')->name('add.roles');
+        Route::post('/add/roles', 'StoreRoles')->name('store.roles');
+        Route::get('/edit/roles/{id}', 'EditRoles')->name('edit.roles');
+        Route::patch('/update/roles', 'UpdateRoles')->name('update.roles');
+        Route::get('/delete/roles/{id}', 'DeleteRoles')->name('delete.roles');
+
+        Route::get('/add/roles/permission', 'AddRolesPermission')->name('add.roles.permission');
+        Route::post('/add/roles/permission','StoreRolesPermission')->name('store.roles.permission');
+        Route::get('/all/roles/permission', 'AllRolesPermission')->name('all.roles.permission');
+        Route::get('/edit/roles/permission/{id}', 'EditRolesPermission')->name('edit.roles.permission');
+        Route::post('/update/roles/permission/{id}', 'UpdateRolesPermission')->name('update.roles.permission');
+        Route::get('/delete/roles/permission/{id}', 'DeleteRolesPermission')->name('delete.roles.permission');
+        
+    });
 });
 
 Route::get('/admin/login', [AdminController::class, 'AdminLogin'])->name('admin.login')->middleware('prevent.authenticated');

@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
@@ -73,5 +74,19 @@ class User extends Authenticatable
         }
 
         return $this->last_seen->diffForHumans();
+    }
+
+    public static function getPermissionGroup()
+    {
+        $permission_groups = Permission::select('group_name')->groupBy('group_name')->get();
+        return $permission_groups;
+    }
+
+    public static function getPermissionByGroupName($group_name)
+    {
+        $permissions = Permission::where('group_name', $group_name)
+            ->select('name', 'id')
+            ->get();
+        return $permissions;
     }
 }
