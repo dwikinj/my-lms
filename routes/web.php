@@ -258,6 +258,15 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         Route::get('/delete/roles/permission/{id}', 'DeleteRolesPermission')->name('delete.roles.permission');
         
     });
+    //Admin  route
+    Route::controller(AdminController::class)->group(function () {
+        Route::get('/all/admin', 'AllAdmin')->name('all.admin');
+        Route::get('/add/admin', 'AddAdmin')->name('add.admin');
+        Route::post('/store/admin', 'StoreAdmin')->name('store.admin');
+        Route::get('/edit/admin/{id}', 'EditAdmin')->name('edit.admin');
+        Route::patch('/update/admin', 'UpdateAdmin')->name('update.admin'); 
+        Route::get('/delete/admin/{id}', 'DeleteAdmin')->name('delete.admin');
+    });
 });
 
 Route::get('/admin/login', [AdminController::class, 'AdminLogin'])->name('admin.login')->middleware('prevent.authenticated');
