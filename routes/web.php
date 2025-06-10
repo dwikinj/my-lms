@@ -120,17 +120,17 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
 
     //Category all route
     Route::controller(CategoryController::class)->group(function () {
-        Route::get('/all/category', 'AllCategory')->name('all.category');
-        Route::get('/add/category', 'AddCategory')->name('add.category');
+        Route::middleware('permission:category.all')->get('/all/category', 'AllCategory')->name('all.category');
+        Route::middleware('permission:category.add')->get('/add/category', 'AddCategory')->name('add.category');
         Route::post('/store/category', 'StoreCategory')->name('store.category');
-        Route::get('/edit/category/{id}', 'EditCategory')->name('edit.category');
+        Route::middleware('permission:category.edit')->get('/edit/category/{id}', 'EditCategory')->name('edit.category');
         Route::post('/update/category', 'UpdateCategory')->name('update.category');
-        Route::get('/delete/category/{id}', 'DeleteCategory')->name('delete.category');
+        Route::middleware('permission:category.delete')->get('/delete/category/{id}', 'DeleteCategory')->name('delete.category');
     });
 
     //SubCategory all route
     Route::controller(CategoryController::class)->group(function () {
-        Route::get('/all/subcategory', 'AllSubCategory')->name('all.subcategory');
+        Route::middleware('permission:subcategory.all')->get('/all/subcategory', 'AllSubCategory')->name('all.subcategory');
         Route::get('/add/subcategory', 'AddSubCategory')->name('add.subcategory');
         Route::post('/store/subcategory', 'StoreSubCategory')->name('store.subcategory');
         Route::get('/edit/subcategory/{id}', 'EditSubCategory')->name('edit.subcategory');
@@ -149,28 +149,26 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
 
     //Coupon all route
     Route::controller(CouponController::class)->group(function () {
-        Route::get('/all/coupon', 'AllCoupon')->name('all.coupon');
-        Route::get('/add/coupon', 'AddCoupon')->name('add.coupon');
+        Route::middleware('permission:coupon.all')->get('/all/coupon', 'AllCoupon')->name('all.coupon');
+        Route::middleware('permission:coupon.add')->get('/add/coupon', 'AddCoupon')->name('add.coupon');
         Route::post('/store/coupon', 'StoreCoupon')->name('store.coupon'); // POST untuk store
-        Route::get('/edit/coupon/{id}', 'EditCoupon')->name('edit.coupon');
+        Route::middleware('permission:coupon.edit')->get('/edit/coupon/{id}', 'EditCoupon')->name('edit.coupon');
         Route::put('/update/coupon', 'UpdateCoupon')->name('update.coupon'); // PUT untuk update
-        Route::delete('/delete/coupon/{id}', 'DeleteCoupon')->name('delete.coupon'); // DELETE untuk delete
+        Route::middleware('permission:coupon.delete')->delete('/delete/coupon/{id}', 'DeleteCoupon')->name('delete.coupon'); // DELETE untuk delete
     });
 
     //Setting all route
-    Route::controller(SettingController::class)->group(function () {
+    Route::controller(SettingController::class)->middleware('permission:setting.menu')->group(function () {
         Route::get('/smtp/setting', 'SmtpSetting')->name('smtp.setting');
         Route::post('/smtp/update', 'SmtpUpdate')->name('smtp.update');
-    });
-
-    //Site Setting all route
-    Route::controller(SettingController::class)->group(function () {
         Route::get('/site/setting', 'SiteSetting')->name('site.setting');
         Route::put('/site/setting', 'UpdateSiteSetting')->name('site.setting.update');
     });
 
+
+
     //Admin Order route
-    Route::controller(OrderController::class)->group(function () {
+    Route::controller(OrderController::class)->middleware('permission:order.menu')->group(function () {
         Route::get('/admin/pending/order', 'AdminPendingOrder')->name('admin.pending.order');
         Route::get('/admin/confirm/order', 'AdminConfirmOrder')->name('admin.confirm.order');
         Route::get('/admin/order/details/{id}', 'AdminOrderDetail')->name('admin.order.details');
@@ -178,7 +176,7 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
     });
 
     //Admin Report route
-    Route::controller(ReportController::class)->group(function () {
+    Route::controller(ReportController::class)->middleware('permission:report.menu')->group(function () {
         Route::get('/admin/report/view', 'ReportView')->name('admin.report.view');
         Route::post('/search/by/date', 'SearchByDate')->name('search.by.date');
         Route::post('/search/by/month', 'SearchByMonth')->name('search.by.month');
@@ -186,20 +184,20 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
     });
 
     //Admin Review route
-    Route::controller(ReviewController::class)->group(function () {
+    Route::controller(ReviewController::class)->middleware('permission:review.menu')->group(function () {
         Route::get('/admin/pending/review', 'AdminPendingReview')->name('admin.pending.review');
         Route::get('/admin/active/review', 'AdminActiveReview')->name('admin.active.review');
         Route::post('/admin/update/review', 'AdminUpdateStatusReview')->name('update.review.status');
     });
 
     //Admin Manage User and Instructor route
-    Route::controller(ActiveUserController::class)->group(function () {
+    Route::controller(ActiveUserController::class)->middleware('permission:all.user.menu')->group(function () {
         Route::get('/admin/all/user', 'AllUser')->name('admin.all.user');
         Route::get('/admin/all/instructor', 'AllInstructor')->name('admin.all.instructor');
     });
 
     //Blog Category route
-    Route::controller(BlogController::class)->group(function () {
+    Route::controller(BlogController::class)->middleware('permission:blog.menu')->group(function () {
         Route::get('/blog/category', 'AllBlogCategory')->name('blog.category');
         Route::post('/blog/category', 'StoreBlogCategory')->name('blog.add.category');
         Route::delete('/blog/category/{id}', 'DeleteBlogCategory')->name('blog.delete.category');
@@ -208,18 +206,7 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
     });
 
     //Blog Post route
-    Route::controller(BlogController::class)->group(function () {
-        Route::get('/blog/post', 'BlogPost')->name('blog.post');
-        Route::get('/blog/add/post', 'AddBlogPost')->name('blog.post.add');
-        Route::post('/blog/store/post', 'StoreBlogPost')->name('blog.post.store');
-        Route::post('/blog/post/upload-image-quill', 'UploadImageQuill')->name('blog.post.upload_image_quill');
-        Route::delete('/blog/post/{id}', 'DeleteBlogPost')->name('blog.post.delete');
-        Route::get('/blog/post/{id}/edit', 'BlogPostEdit')->name('blog.post.edit');
-        Route::put('/blog/post/update', 'BlogPostUpdate')->name('blog.post.update');
-    });
-
-    //Blog Post route
-    Route::controller(BlogController::class)->group(function () {
+    Route::controller(BlogController::class)->middleware('permission:blog.menu')->group(function () {
         Route::get('/blog/post', 'BlogPost')->name('blog.post');
         Route::get('/blog/add/post', 'AddBlogPost')->name('blog.post.add');
         Route::post('/blog/store/post', 'StoreBlogPost')->name('blog.post.store');
@@ -230,7 +217,7 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
     });
 
     //Permission  route
-    Route::controller(RoleController::class)->group(function () {
+    Route::controller(RoleController::class)->middleware('permission:rolepermission.menu')->group(function () {
         Route::get('/all/permission', 'AllPermision')->name('all.permission');
         Route::get('/add/permission', 'AddPermision')->name('add.permission');
         Route::post('/add/permission', 'StorePermision')->name('store.permission');
@@ -242,7 +229,7 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         Route::post('/import/xlsxpermission', 'ImportXlsxPermision')->name('import.xlsxpermission');
     });
     //Permission  route
-    Route::controller(RoleController::class)->group(function () {
+    Route::controller(RoleController::class)->middleware('permission:rolepermission.menu')->group(function () {
         Route::get('/all/roles', 'AllRoles')->name('all.roles');
         Route::get('/add/roles', 'AddRoles')->name('add.roles');
         Route::post('/add/roles', 'StoreRoles')->name('store.roles');
@@ -259,7 +246,7 @@ Route::middleware(['auth', 'roles:admin'])->group(function () {
         
     });
     //Admin  route
-    Route::controller(AdminController::class)->group(function () {
+    Route::controller(AdminController::class)->middleware('permission:rolepermission.menu')->group(function () {
         Route::get('/all/admin', 'AllAdmin')->name('all.admin');
         Route::get('/add/admin', 'AddAdmin')->name('add.admin');
         Route::post('/store/admin', 'StoreAdmin')->name('store.admin');
