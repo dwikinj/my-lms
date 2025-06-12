@@ -692,12 +692,16 @@
                                     <div class="footer-item">
                                         <h3 class="fs-20 font-weight-semi-bold pb-3">Courses</h3>
                                         <ul class="generic-list-item">
-                                            <li><a href="#">Web Development</a></li>
-                                            <li><a href="#">Hacking</a></li>
-                                            <li><a href="#">PHP Learning</a></li>
-                                            <li><a href="#">Spoken English</a></li>
-                                            <li><a href="#">Self-Driving Car</a></li>
-                                            <li><a href="#">Garbage Collectors</a></li>
+                                            @php
+                                                // It's generally better to fetch data in the controller,
+                                                // but here's how to do it with @php as requested.
+                                                $footerCategories = \App\Models\Category::orderBy('category_name', 'asc')->take(6)->get();
+                                            @endphp
+                                            @if(isset($footerCategories) && $footerCategories->count() > 0)
+                                                @foreach ($footerCategories as $category)
+                                                    <li><a href="{{ route('category.course', ['id' => $category->id, 'slug' => $category->category_slug]) }}">{{ $category->category_name }}</a></li>
+                                                @endforeach
+                                            @endif
                                         </ul>
                                     </div><!-- end footer-item -->
                                 </div><!-- end col-lg-3 -->

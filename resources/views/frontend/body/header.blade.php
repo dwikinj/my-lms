@@ -180,7 +180,7 @@
                             @endauth
 
                             <div class="nav-right-button">
-                                <a href="admission.html" class="btn theme-btn d-none d-lg-inline-block"><i
+                                <a href="{{ route('register') }}" class="btn theme-btn d-none d-lg-inline-block"><i
                                         class="la la-user-plus mr-1"></i> Admission</a>
                             </div><!-- end nav-right-button -->
                         </div><!-- end menu-wrapper -->
@@ -248,7 +248,7 @@
                     <li><a href="for-business.html">for business</a></li>
                     <li><a href="become-a-teacher.html">become an instructor</a></li>
                     <li><a href="faq.html">FAQs</a></li>
-                    <li><a href="admission.html">admission</a></li>
+                    <li><a href="{{ route('register') }}">admission</a></li>
                     <li><a href="gallery.html">gallery</a></li>
                     <li><a href="pricing-table.html">pricing tables</a></li>
                     <li><a href="contact.html">contact</a></li>

@@ -1,3 +1,13 @@
+@php
+    // Mengambil 6 ulasan terbaru yang statusnya disetujui (1)
+    // with('user') digunakan untuk eager loading, menghindari query N+1 dan meningkatkan performa
+    $reviews = App\Models\Review::where('status', 1)
+        ->with('user')
+        ->latest() // Mengurutkan berdasarkan 'created_at' dari yang terbaru
+        ->limit(6)
+        ->get();
+@endphp
+
 <section class="testimonial-area section-padding">
     <div class="container">
         <div class="section-heading text-center">
@@ -8,280 +18,62 @@
     </div><!-- end container -->
     <div class="container-fluid">
         <div class="testimonial-carousel owl-action-styled">
-            <div class="card card-item">
-                <div class="card-body">
-                    <div class="media media-card align-items-center pb-3">
-                        <div class="media-img avatar-md">
-                            <img src="images/small-avatar-1.jpg" alt="Testimonial avatar" class="rounded-full">
-                        </div>
-                        <div class="media-body">
-                            <h5>Kevin Martin</h5>
-                            <div class="d-flex align-items-center pt-1">
-                                <span class="lh-18 pr-2">Student</span>
-                                <div class="review-stars">
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
+
+            {{-- Looping melalui setiap review yang diambil --}}
+            @forelse ($reviews as $review)
+                <div class="card card-item">
+                    <div class="card-body">
+                        <div class="media media-card align-items-center pb-3">
+                            <div class="media-img avatar-md">
+                                {{-- Logika dinamis untuk menampilkan foto user --}}
+                                {{-- Menggunakan logika yang sama dari file referensi Anda untuk menangani role user/instructor --}}
+                                <img src="{{ !empty($review->user->photo) ? (($review->user->role === 'instructor' ? url('upload/instructor_images/' . $review->user->photo) : url('upload/user_images/' . $review->user->photo))) : url('upload/no_image.jpg') }}"
+                                    alt="Testimonial avatar" class="rounded-full">
+                            </div>
+                            <div class="media-body">
+                                {{-- Menampilkan nama user secara dinamis --}}
+                                <h5>{{ $review->user->name }}</h5>
+                                <div class="d-flex align-items-center pt-1">
+                                    {{-- Menampilkan role user, default 'Student' jika tidak ada --}}
+                                    <span class="lh-18 pr-2">{{ Str::ucfirst($review->user->role ?? 'Student') }}</span>
+                                    <div class="review-stars">
+                                        {{-- Logika dinamis untuk menampilkan rating bintang --}}
+                                        @if (isset($review->rating) && is_numeric($review->rating))
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                @if ($i <= $review->rating)
+                                                    <span class="la la-star"></span>
+                                                @else
+                                                    <span class="la la-star-o"></span>
+                                                @endif
+                                            @endfor
+                                        @else
+                                            {{-- Fallback jika tidak ada rating --}}
+                                            @for ($i = 1; $i <= 5; $i++)
+                                                <span class="la la-star-o"></span>
+                                            @endfor
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    </div><!-- end media -->
-                    <p class="card-text">
-                        My children and I LOVE Aduca! The courses are fantastic and the
-                        instructors are so fun and knowledgeable.
-                        I only wish we found it sooner.
-                    </p>
-                </div><!-- end card-body -->
-            </div><!-- end card -->
-            <div class="card card-item">
-                <div class="card-body">
-                    <div class="media media-card align-items-center pb-3">
-                        <div class="media-img avatar-md">
-                            <img src="images/small-avatar-2.jpg" alt="Testimonial avatar" class="rounded-full">
-                        </div>
-                        <div class="media-body">
-                            <h5>Oliver Beddows</h5>
-                            <div class="d-flex align-items-center pt-1">
-                                <span class="lh-18 pr-2">Student</span>
-                                <div class="review-stars">
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- end media -->
-                    <p class="card-text">
-                        No matter what you want to learn, you’ll find an
-                        amazing selection of courses here.
-                        The instructors are so knowledgable while
-                        being fun and interesting. Lorem ipsum dolor sit amet,
-                        consectetur adipisicing elit. Ad blanditiis consectetur
-                    </p>
-                </div><!-- end card-body -->
-            </div><!-- end card -->
-            <div class="card card-item">
-                <div class="card-body">
-                    <div class="media media-card align-items-center pb-3">
-                        <div class="media-img avatar-md">
-                            <img src="images/small-avatar-3.jpg" alt="Testimonial avatar" class="rounded-full">
-                        </div>
-                        <div class="media-body">
-                            <h5>Jackob Hallac</h5>
-                            <div class="d-flex align-items-center pt-1">
-                                <span class="lh-18 pr-2">Student</span>
-                                <div class="review-stars">
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- end media -->
-                    <p class="card-text">
-                        I really recommend this site to all my friends and anyone who’s willing to
-                        learn real skills. This platform gives
-                        you the opportunity to learn from experts at a convenient time.
-                    </p>
-                </div><!-- end card-body -->
-            </div><!-- end card -->
-            <div class="card card-item">
-                <div class="card-body">
-                    <div class="media media-card align-items-center pb-3">
-                        <div class="media-img avatar-md">
-                            <img src="images/small-avatar-4.jpg" alt="Testimonial avatar" class="rounded-full">
-                        </div>
-                        <div class="media-body">
-                            <h5>Lubic Duble</h5>
-                            <div class="d-flex align-items-center pt-1">
-                                <span class="lh-18 pr-2">Student</span>
-                                <div class="review-stars">
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- end media -->
-                    <p class="card-text">
-                        Thank you Aduca! You've renewed my passion for
-                        learning and my dream of becoming a web developer.
-                    </p>
-                </div><!-- end card-body -->
-            </div><!-- end card -->
-            <div class="card card-item">
-                <div class="card-body">
-                    <div class="media media-card align-items-center pb-3">
-                        <div class="media-img avatar-md">
-                            <img src="images/small-avatar-5.jpg" alt="Testimonial avatar" class="rounded-full">
-                        </div>
-                        <div class="media-body">
-                            <h5>Daniel Ward</h5>
-                            <div class="d-flex align-items-center pt-1">
-                                <span class="lh-18 pr-2">Student</span>
-                                <div class="review-stars">
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- end media -->
-                    <p class="card-text">
-                        I came across this site when I had no funds to pay for a college education.
-                        This site has literally been a lifesaver as
-                        I can now earn from freelance working using the skills
-                        I learned from here.
-                    </p>
-                </div><!-- end card-body -->
-            </div><!-- end card -->
-            <div class="card card-item">
-                <div class="card-body">
-                    <div class="media media-card align-items-center pb-3">
-                        <div class="media-img avatar-md">
-                            <img src="images/small-avatar-1.jpg" alt="Testimonial avatar" class="rounded-full">
-                        </div>
-                        <div class="media-body">
-                            <h5>Kevin Martin</h5>
-                            <div class="d-flex align-items-center pt-1">
-                                <span class="lh-18 pr-2">Student</span>
-                                <div class="review-stars">
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- end media -->
-                    <p class="card-text">
-                        My children and I LOVE Aduca! The courses are fantastic and the
-                        instructors are so fun and knowledgeable.
-                        I only wish we found it sooner.
-                    </p>
-                </div><!-- end card-body -->
-            </div><!-- end card -->
-            <div class="card card-item">
-                <div class="card-body">
-                    <div class="media media-card align-items-center pb-3">
-                        <div class="media-img avatar-md">
-                            <img src="images/small-avatar-2.jpg" alt="Testimonial avatar" class="rounded-full">
-                        </div>
-                        <div class="media-body">
-                            <h5>Oliver Beddows</h5>
-                            <div class="d-flex align-items-center pt-1">
-                                <span class="lh-18 pr-2">Student</span>
-                                <div class="review-stars">
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- end media -->
-                    <p class="card-text">
-                        No matter what you want to learn, you’ll find an
-                        amazing selection of courses here.
-                        The instructors are so knowledgable while
-                        being fun and interesting. Lorem ipsum dolor sit amet,
-                        consectetur adipisicing elit. Ad blanditiis consectetur
-                    </p>
-                </div><!-- end card-body -->
-            </div><!-- end card -->
-            <div class="card card-item">
-                <div class="card-body">
-                    <div class="media media-card align-items-center pb-3">
-                        <div class="media-img avatar-md">
-                            <img src="images/small-avatar-3.jpg" alt="Testimonial avatar" class="rounded-full">
-                        </div>
-                        <div class="media-body">
-                            <h5>Jackob Hallac</h5>
-                            <div class="d-flex align-items-center pt-1">
-                                <span class="lh-18 pr-2">Student</span>
-                                <div class="review-stars">
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- end media -->
-                    <p class="card-text">
-                        I really recommend this site to all my friends and anyone who’s willing to
-                        learn real skills. This platform gives
-                        you the opportunity to learn from experts at a convenient time.
-                    </p>
-                </div><!-- end card-body -->
-            </div><!-- end card -->
-            <div class="card card-item">
-                <div class="card-body">
-                    <div class="media media-card align-items-center pb-3">
-                        <div class="media-img avatar-md">
-                            <img src="images/small-avatar-4.jpg" alt="Testimonial avatar" class="rounded-full">
-                        </div>
-                        <div class="media-body">
-                            <h5>Lubic Duble</h5>
-                            <div class="d-flex align-items-center pt-1">
-                                <span class="lh-18 pr-2">Student</span>
-                                <div class="review-stars">
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- end media -->
-                    <p class="card-text">
-                        Thank you Aduca! You've renewed my passion for
-                        learning and my dream of becoming a web developer.
-                    </p>
-                </div><!-- end card-body -->
-            </div><!-- end card -->
-            <div class="card card-item">
-                <div class="card-body">
-                    <div class="media media-card align-items-center pb-3">
-                        <div class="media-img avatar-md">
-                            <img src="images/small-avatar-5.jpg" alt="Testimonial avatar" class="rounded-full">
-                        </div>
-                        <div class="media-body">
-                            <h5>Daniel Ward</h5>
-                            <div class="d-flex align-items-center pt-1">
-                                <span class="lh-18 pr-2">Student</span>
-                                <div class="review-stars">
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                    <span class="la la-star"></span>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- end media -->
-                    <p class="card-text">
-                        I came across this site when I had no funds to pay for a college education.
-                        This site has literally been a lifesaver as
-                        I can now earn from freelance working using the skills
-                        I learned from here.
-                    </p>
-                </div><!-- end card-body -->
-            </div><!-- end card -->
+                        </div><!-- end media -->
+
+                        {{-- Menampilkan komentar review secara dinamis --}}
+                        <p class="card-text">
+                            {{ $review->comment }}
+                        </p>
+                    </div><!-- end card-body -->
+                </div><!-- end card -->
+
+            @empty
+                <div class="card card-item">
+                    <div class="card-body text-center">
+                        <p class="card-text">
+                            No student feedback available yet.
+                        </p>
+                    </div>
+                </div>
+            @endforelse
+
         </div><!-- end testimonial-carousel -->
     </div><!-- container-fluid -->
 </section><!-- end testimonial-area -->

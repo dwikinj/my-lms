@@ -50,12 +50,17 @@
                     <h3 class="fs-20 font-weight-semi-bold">Courses</h3>
                     <span class="section-divider section--divider"></span>
                     <ul class="generic-list-item">
-                        <li><a href="#">Web Development</a></li>
-                        <li><a href="#">Hacking</a></li>
-                        <li><a href="#">PHP Learning</a></li>
-                        <li><a href="#">Spoken English</a></li>
-                        <li><a href="#">Self-Driving Car</a></li>
-                        <li><a href="#">Garbage Collectors</a></li>
+                        @php
+                           
+                            $footerCategories = \App\Models\Category::orderBy('category_name', 'asc')->take(6)->get();
+                        @endphp
+                        @if (isset($footerCategories) && $footerCategories->count() > 0)
+                            @foreach ($footerCategories as $category)
+                                <li><a
+                                        href="{{ route('category.course', ['id' => $category->id, 'slug' => $category->category_slug]) }}">{{ $category->category_name }}</a>
+                                </li>
+                            @endforeach
+                        @endif
                     </ul>
                 </div><!-- end footer-item -->
             </div><!-- end col-lg-3 -->
@@ -65,10 +70,12 @@
                     <span class="section-divider section--divider"></span>
                     <div class="mobile-app">
                         <p class="pb-3 lh-24">Download our mobile app and learn on the go.</p>
-                        <a href="#" class="d-block mb-2 hover-s"><img src="{{asset('frontend/images/appstore.png')}}" alt="App store"
+                        <a href="#" class="d-block mb-2 hover-s"><img
+                                src="{{ asset('frontend/images/appstore.png') }}" alt="App store"
                                 class="img-fluid"></a>
-                        <a href="#" class="d-block hover-s"><img src="{{asset('frontend/images/googleplay.png')}}"
-                                alt="Google play store" class="img-fluid"></a>
+                        <a href="#" class="d-block hover-s"><img
+                                src="{{ asset('frontend/images/googleplay.png') }}" alt="Google play store"
+                                class="img-fluid"></a>
                     </div>
                 </div><!-- end footer-item -->
             </div><!-- end col-lg-3 -->
