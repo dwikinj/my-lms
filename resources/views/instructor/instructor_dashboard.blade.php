@@ -84,6 +84,7 @@
     </script>
     <!--app JS-->
     <script src="{{ asset('backend/assets/js/app.js') }}"></script>
+    <script src="{{ asset('backend/assets/js/dark-mode-handler.js') }}"></script>
     <!--validate js-->
     <script src="{{ asset('backend/assets/js/validate.min.js') }}"></script>
     <!-- sweetalert -->
