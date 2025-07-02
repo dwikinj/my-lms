@@ -29,18 +29,11 @@
                             </div>
                         </div><!-- end logo-box -->
                         <div class="menu-wrapper">
-                            <form method="post" class="mr-auto ml-0">
-                                <div class="form-group mb-0">
-                                    <input class="form-control form--control form--control-gray pl-3" type="text"
-                                        name="search" placeholder="Search for anything">
-                                    <span class="la la-search search-icon"></span>
-                                </div>
-                            </form>
                             <div class="nav-right-button d-flex align-items-center">
                                 <div class="user-action-wrap d-flex align-items-center">
 
 
-                                 
+
                                     <div class="shop-cart notification-cart pr-3 mr-3 border-right border-right-gray">
                                         <ul>
                                             <li>
@@ -126,8 +119,7 @@
                                                 <ul
                                                     class="cart-dropdown-menu after-none p-0 notification-dropdown-menu">
                                                     <li class="menu-heading-block d-flex align-items-center">
-                                                        <span
-                                                            class="avatar-sm flex-shrink-0 d-block">
+                                                        <span class="avatar-sm flex-shrink-0 d-block">
                                                             <img class="rounded-full img-fluid"
                                                                 src="{{ !empty($profileData->photo)
                                                                     ? ($profileData->role === 'admin'
@@ -139,8 +131,7 @@
                                                                 alt="Avatar image">
                                                         </span>
                                                         <div class="ml-2">
-                                                            <h4><span 
-                                                                    class="text-black">{{ $profileData->name }}</span>
+                                                            <h4><span class="text-black">{{ $profileData->name }}</span>
                                                             </h4>
                                                             <span
                                                                 class="d-block fs-14 lh-20">{{ $profileData->email }}</span>
@@ -169,10 +160,10 @@
                                                                     stroke-linejoin="round">
                                                                     <circle cx="12" cy="12" r="5">
                                                                     </circle>
-                                                                    <line x1="12" y1="1"
-                                                                        x2="12" y2="3"></line>
-                                                                    <line x1="12" y1="21"
-                                                                        x2="12" y2="23"></line>
+                                                                    <line x1="12" y1="1" x2="12"
+                                                                        y2="3"></line>
+                                                                    <line x1="12" y1="21" x2="12"
+                                                                        y2="23"></line>
                                                                     <line x1="4.22" y1="4.22"
                                                                         x2="5.64" y2="5.64"></line>
                                                                     <line x1="18.36" y1="18.36"
@@ -202,7 +193,7 @@
                                                             <li>
                                                                 <div class="section-block"></div>
                                                             </li>
-                                                           
+
                                                         </ul>
                                                     </li>
                                                 </ul>
