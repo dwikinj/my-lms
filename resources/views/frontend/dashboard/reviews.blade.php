@@ -8,7 +8,7 @@
                         <h3>My Reviews</h3>
                     </div>
                     <div class="card-body">
-                        <table class="table table-bordered">
+                        <table class="table generic-table">
                             <thead>
                                 <tr>
                                     <th>Course</th>
