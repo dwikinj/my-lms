@@ -744,28 +744,31 @@ Author Email:   contact@techydevs.com
 
         /*====== Dark mode js ========*/
         const themePicker = document.querySelectorAll(".theme-picker-btn");
-        const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
-        const currentTheme = localStorage.getItem("theme");
+        const body = document.body;
 
-        if (currentTheme === "dark") {
-            document.body.classList.toggle("dark-theme");
-        } else if (currentTheme === "light") {
-            document.body.classList.toggle("light-theme");
+        // Function to apply the theme
+        const applyTheme = (theme) => {
+            body.classList.remove("dark-theme", "light-theme");
+            body.classList.add(theme);
+            localStorage.setItem("theme", theme);
+        };
+
+        // Check for saved theme preference
+        const savedTheme = localStorage.getItem("theme");
+        if (savedTheme) {
+            applyTheme(savedTheme);
+        } else {
+            // If no preference, use system preference
+            const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+            applyTheme(prefersDark ? "dark-theme" : "light-theme");
         }
 
-        themePicker.forEach(function (btn) {
-            if (btn) {
-                btn.addEventListener("click", function () {
-                    if (prefersDarkScheme.matches) {
-                        document.body.classList.toggle("light-theme");
-                        var theme = document.body.classList.contains("light-theme") ? "light" : "dark";
-                    } else {
-                        document.body.classList.toggle("dark-theme");
-                        var theme = document.body.classList.contains("dark-theme") ? "dark" : "light";
-                    }
-                    localStorage.setItem("theme", theme);
-                });
-            }
+        // Add event listeners to buttons
+        themePicker.forEach(btn => {
+            btn.addEventListener("click", () => {
+                const newTheme = body.classList.contains("dark-theme") ? "light-theme" : "dark-theme";
+                applyTheme(newTheme);
+            });
         });
 
         /*==== Show/Hide password of input field =====*/
