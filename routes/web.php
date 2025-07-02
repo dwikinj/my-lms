@@ -324,13 +324,18 @@ Route::middleware(['auth', 'roles:instructor'])->group(function () {
     });
 }); //end instructor middleware
 
-//accessable Routes for all
+////accessable Routes for all////
 Route::get('/instructor/login', [InstructorController::class, 'InstructorLogin'])->name('instructor.login')->middleware('prevent.authenticated');
-Route::get('/course/details/{id}/{slug}', [IndexController::class, 'CourseDetails'])->name('course.details');
 Route::get('/category/{id}/{slug}', [IndexController::class, 'CategoryCourse'])->name('category.course');
 Route::get('/subcategory/{id}/{slug}', [IndexController::class, 'SubCategoryCourse'])->name('subcategory.course');
 Route::get('/instructor/details/{id}', [IndexController::class, 'InstructorDetails'])->name('instructor.details');
 Route::post('/add-to-wishlist/{course_id}', [WishListController::class, 'AddToWishlist']);
+
+//COurses Frotnend
+Route::get('/course/details/{id}/{slug}', [IndexController::class, 'CourseDetails'])->name('course.details');
+Route::get('all/courses/grid', [IndexController::class, 'AllCourses'])->name('course.all');
+Route::get('/courses/filter-by-rating', [IndexController::class, 'filterCoursesByRating'])->name('courses.filterByRating');
+
 
 //Blog Post
 Route::get('/blog/post/details/{id}/{slug}', [BlogController::class, 'BlogPostDetail'])->name('blog.post.detail');

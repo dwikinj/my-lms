@@ -1,3 +1,7 @@
+@php
+    
+    $courseCount = App\Models\Course::count();
+@endphp
 <section class="about-area section--padding overflow-hidden">
     <div class="container">
         <div class="row">
@@ -5,10 +9,10 @@
                 <div class="about-content pb-5">
                     <div class="section-heading">
                         <h5 class="ribbon ribbon-lg mb-2">About us</h5>
-                        <h2 class="section__title">Benefits of Learning With Aduca</h2>
+                        <h2 class="section__title">Benefits of Learning With MyLms</h2>
                         <span class="section-divider"></span>
                         <p class="section__desc">
-                            Aduca offers a flexible and comprehensive learning platform, designed to help you achieve your educational goals.
+                            MyLms offers a flexible and comprehensive learning platform, designed to help you achieve your educational goals.
                             With thousands of quality courses from expert instructors, you can learn anytime, anywhere,
                             and at your own pace. Enhance your skills and unlock new opportunities with us.
                         </p>
@@ -68,7 +72,7 @@
                                         </g>
                                     </svg>
                                 </div>
-                                <h4 class="fs-20 font-weight-semi-bold pt-3">130,000 Courses</h4>
+                                <h4 class="fs-20 font-weight-semi-bold pt-3">{{ number_format($courseCount) }} Courses</h4>
                             </div><!-- end info-icon-box -->
                         </div><!-- end col-lg-4 -->
                         <div class="col-lg-4 responsive-column-half">
@@ -148,10 +152,7 @@
                             </div><!-- end info-icon-box -->
                         </div><!-- end col-lg-4 -->
                     </div><!-- end row -->
-                    <div class="btn-box">
-                        <a href="/" class="btn theme-btn">Learn More <i
-                                class="la la-arrow-right icon ml-1"></i></a>
-                    </div><!-- end btn-box -->
+                    
                 </div><!-- end about-content -->
             </div><!-- end col-lg-6 -->
             <div class="col-lg-5 ml-auto">

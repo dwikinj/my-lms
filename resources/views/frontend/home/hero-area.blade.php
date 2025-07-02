@@ -22,7 +22,7 @@
             <div class="container">
                 <div class="hero-content text-center">
                     <div class="section-heading">
-                        <h2 class="section__title text-white fs-65 lh-80 pb-3">Join Aduca & Get <br> Your Free Courses!</h2>
+                        <h2 class="section__title text-white fs-65 lh-80 pb-3">Join MyLms & Get <br> Your Free Courses!</h2>
                         <p class="section__desc text-white pb-4">Emply dummy text of the printing and typesetting industry orem Ipsum has been the
                             <br>industry's standard dummy text ever sinceprinting and typesetting industry.
                         </p>

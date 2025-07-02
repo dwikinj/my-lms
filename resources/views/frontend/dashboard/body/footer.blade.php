@@ -1,11 +1,11 @@
+@php
+    $setting = App\Models\SiteSetting::find(1);
+@endphp
 <div class="row align-items-center dashboard-copyright-content pb-4">
-    <div class="col-lg-6" x-data="{ year: new Date().getFullYear() }">
-        <p class="copy-desc">&copy; <span x-text="year"></span> Aduca. All Rights Reserved. by <a href="https://techydevs.com/">TechyDevs</a></p>
-    </div><!-- end col-lg-6 -->
-    <div class="col-lg-6">
-        <ul class="generic-list-item d-flex flex-wrap align-items-center fs-14 justify-content-end">
-            <li class="mr-3"><a href="terms-and-conditions.html">Terms & Conditions</a></li>
-            <li><a href="privacy-policy.html">Privacy Policy</a></li>
+        <ul class="generic-list-item d-flex  align-items-center fs-14 justify-content-end">
+            <li class="mx-2 mr-2 text-nowrap"><p class="copy-desc">{{ $setting->copyright }}</p></li>
+            <li class="mx-2 text-nowrap"><a href="#">Terms & Conditions</a></li>
+            <li class="mx-2 text-nowrap"><a href="#">Privacy Policy</a></li>
         </ul>
     </div><!-- end col-lg-6 -->
 </div><!-- end row -->

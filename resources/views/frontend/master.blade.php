@@ -129,6 +129,7 @@
     {{-- sweet end alert --}}
     
     @include('frontend.body.script')
+    @stack('scripts')
 
 </body>
 

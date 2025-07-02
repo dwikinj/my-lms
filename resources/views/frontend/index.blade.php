@@ -84,10 +84,6 @@ My Lms(Aduca)
 
 <div class="section-block"></div>
 
-<!--======================================
-        START REGISTER AREA
-======================================-->
-@include('frontend.home.register-area')
 
 <!--======================================
         END REGISTER AREA

@@ -136,12 +136,8 @@
 
                                     </li>
                                     <li>
-                                        <a href="#">courses <i class="la la-angle-down fs-12"></i></a>
-                                        <ul class="dropdown-menu-item">
-                                            <li><a href="course-grid.html">course grid</a></li>
-                                            <li><a href="course-list.html">course list</a></li>
-
-                                        </ul>
+                                        
+                                       
                                     </li>
 
                                     <li>

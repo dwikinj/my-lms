@@ -10,6 +10,7 @@ use App\Models\Question;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OrderController extends Controller
 {
@@ -106,6 +107,13 @@ class OrderController extends Controller
             ->pluck('id');
 
         $myCourses = Order::whereIn('id', $latestOrderIds)
+            ->with([
+                'course' => function ($query) {
+                    $query->withCount('reviews')->withAvg('reviews', 'rating');
+                }, 'instructor'
+            ])
+            ->select('orders.*')
+            ->addSelect(DB::raw('(SELECT COUNT(*) FROM orders as o2 WHERE o2.course_id = orders.course_id) as students_count'))
             ->orderBy('id', 'DESC')
             ->get();
 
