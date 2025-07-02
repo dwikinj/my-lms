@@ -38,8 +38,8 @@
 
 
 
-    <li class="{{ request()->is('dashboard-reviews.html') ? 'page-active' : '' }}"><a
-            href="dashboard-reviews.html"><svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px"
+    <li class="{{ $route == 'user.reviews' ? 'page-active' : '' }}"><a
+            href="{{ route('user.reviews') }}"><svg class="mr-2" xmlns="http://www.w3.org/2000/svg" height="18px"
                 viewBox="0 0 24 24" width="18px">
                 <path d="M0 0h24v24H0V0z" fill="none" />
                 <path

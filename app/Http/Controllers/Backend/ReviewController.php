@@ -92,5 +92,12 @@ class ReviewController extends Controller
         return view('instructor.review.active_review', compact('reviews'));
     } //end method
 
+    public function UserReviews()
+    {
+        $userId = Auth::id();
+        $reviews = Review::with(['user', 'course', 'instructor'])->where('user_id', $userId)->where('status', 1)->orderBy('id', 'desc')->get();
+        return view('frontend.dashboard.reviews', compact('reviews'));
+    }
+
 
 }

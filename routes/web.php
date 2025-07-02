@@ -91,6 +91,7 @@ Route::middleware('auth')->group(function () {
 
     Route::controller(ReviewController::class)->group(function () {
         Route::post('/store/review', 'StoreReview')->name('store.review');
+        Route::get('/user/reviews', 'UserReviews')->name('user.reviews');
     });
     // End Review Controller
 
