@@ -2,7 +2,7 @@
 @section('home')
 
 @section('title')
-    Blog | My Lms(Aduca)
+    Blog | My Lms
 @endsection
     <!-- ================================
         START BREADCRUMB AREA

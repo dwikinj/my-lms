@@ -14,16 +14,58 @@ class IndexController extends Controller
 {
     public function CourseDetails($id, $slug)
     {
-        $course  = Course::with(['category', 'subCategory', 'courseGoals', 'courseSections.courseLectures', 'instructor'])->find($id);
-        $totalLectures = $course->courseSections->sum(function ($section) {
-            return $section->courseLectures->count();
-        });
+        $course = Course::with(['category', 'subCategory', 'courseGoals', 'courseSections.courseLectures', 'instructor'])->findOrFail($id);
 
+        // --- Data untuk Review dan Rating ---
+        $reviews = \App\Models\Review::where('course_id', $id)->where('status', 1)->latest()->get();
+        $reviewCount = $reviews->count();
+        $averageRating = $reviewCount > 0 ? round($reviews->avg('rating'), 1) : 0;
+
+        // Distribusi Rating
+        $ratingDistribution = [5 => 0, 4 => 0, 3 => 0, 2 => 0, 1 => 0];
+        if ($reviewCount > 0) {
+            foreach ($reviews as $review) {
+                if (isset($ratingDistribution[$review->rating])) {
+                    $ratingDistribution[$review->rating]++;
+                }
+            }
+            foreach ($ratingDistribution as $stars => $count) {
+                $ratingPercentages[$stars] = round(($count / $reviewCount) * 100);
+            }
+        } else {
+            $ratingPercentages = $ratingDistribution;
+        }
+
+        // --- Data Lainnya ---
+        $enrollmentCount = \App\Models\Order::where('course_id', $id)->count();
+        $totalLectures = $course->courseSections->sum(fn($section) => $section->courseLectures->count());
         $categories = Category::latest()->get();
-        $coursesByCategory = Course::with(['instructor'])->where([['category_id', '=', $course->category_id], ['id', '!=', $course->id]])->take(3)->get();
-        $instructorId = $course->instructor->id;
-        $instructorCourses = Course::where('instructor_id', $instructorId)->orderBy('id', 'DESC')->get();
-        return view('frontend.course.course_details', compact('course', 'totalLectures', 'instructorCourses', 'categories', 'coursesByCategory'));
+        $coursesByCategory = Course::with('instructor')->where('category_id', $course->category_id)->where('id', '!=', $id)->take(3)->get();
+        $instructorCourses = Course::where('instructor_id', $course->instructor_id)->orderBy('id', 'DESC')->get();
+        
+        // 5 review terbaru untuk ditampilkan
+        $latestReviews = $reviews->take(5);
+
+        // Cek apakah user sudah membeli kursus ini
+        $hasPurchased = false;
+        if (Auth::check()) {
+            $hasPurchased = \App\Models\Order::where('user_id', Auth::id())->where('course_id', $id)->exists();
+        }
+
+        return view('frontend.course.course_details', compact(
+            'course', 
+            'totalLectures', 
+            'instructorCourses', 
+            'categories', 
+            'coursesByCategory',
+            'reviewCount',
+            'averageRating',
+            'ratingDistribution',
+            'ratingPercentages',
+            'enrollmentCount',
+            'latestReviews',
+            'hasPurchased'
+        ));
     }
     //end method
 

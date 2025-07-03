@@ -2,7 +2,7 @@
 @section('home')
 
 @section('title')
-{{ $category->category_name }} | My Lms(Aduca)
+{{ $category->category_name }} | My Lms
 @endsection
     <!-- ================================
                 START BREADCRUMB AREA

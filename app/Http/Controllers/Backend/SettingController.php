@@ -50,7 +50,7 @@ class SettingController extends Controller
                 'address'   => 'Jl. Contoh No.123, Jakarta, Indonesia',
                 'facebook'  => 'https://facebook.com/example',
                 'twitter'   => 'https://twitter.com/example',
-                'copyright' => '© My Lms(Aduca)' . date('Y'),
+                'copyright' => '© My Lms' . date('Y'),
             ]);
         }
         return view('admin.backend.setting.site_update', compact('setting'));

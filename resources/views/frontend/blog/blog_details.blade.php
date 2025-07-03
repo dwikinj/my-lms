@@ -2,7 +2,7 @@
 @section('home')
 
 @section('title')
-    {{$blog->post_title}} | My Lms(Aduca)
+    {{$blog->post_title}} | My Lms
 @endsection
 
 <!-- ================================

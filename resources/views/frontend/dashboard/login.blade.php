@@ -2,7 +2,7 @@
 @section('home')
 
 @section('title')
-    Login | My Lms(Aduca)
+    Login | My Lms
 @endsection
 
 <!-- ================================

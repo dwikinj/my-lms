@@ -2,7 +2,7 @@
 @section('home')
 
 @section('title')
-My Lms(Aduca) 
+My Lms
 @endsection
 <!--================================
          START HERO AREA

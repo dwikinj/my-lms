@@ -2,7 +2,7 @@
 @section('home')
 
 @section('title')
-{{ $course->course_name }} | My Lms(Aduca)
+{{ $course->course_name }} | My Lms
 @endsection
     <!-- ================================
                 START BREADCRUMB AREA
@@ -30,53 +30,16 @@
                             <h6 class="ribbon ribbon-lg mr-2 bg-3 text-white">Bestseller</h6>
                         @endif
 
-                        @php
-                        // Ambil semua review yang aktif untuk kursus ini
-                        $activeCourseReviews = \App\Models\Review::where('course_id', $course->id)
-                                                               ->where('status', 1) // Hanya review yang aktif/disetujui
-                                                               ->get();
-                    
-                        $reviewCountForDisplay = $activeCourseReviews->count();
-                        $averageRatingForDisplay = 0; // Default jika tidak ada review
-                    
-                        if ($reviewCountForDisplay > 0) {
-                            $sumRatingForDisplay = $activeCourseReviews->sum('rating');
-                            $averageRatingForDisplay = round($sumRatingForDisplay / $reviewCountForDisplay, 1); // Bulatkan ke 1 desimal untuk tampilan angka
-                        }
-                    
-                        $fullStarsForDisplay = 0;
-                        $emptyStarsForDisplay = 5; // Default 5 bintang kosong jika tidak ada review
-                    
-                        if ($reviewCountForDisplay > 0) {
-                            // Tentukan jumlah bintang penuh berdasarkan bagian bulat dari rata-rata rating
-                            $fullStarsForDisplay = floor($averageRatingForDisplay);
-                    
-                            // Sisa bintang adalah bintang kosong
-                            $emptyStarsForDisplay = 5 - $fullStarsForDisplay;
-                        }
-
-                        //for total students
-                        $enrollmentCount = App\Models\Order::where('course_id',$course->id)->count();
-                    @endphp
-                    
-                    <div class="rating-wrap d-flex flex-wrap align-items-center">
-                        <div class="review-stars d-flex align-items-center">
-                            <span class="rating-number mr-1">{{ number_format($averageRatingForDisplay, 1) }}</span>
-                    
-                            {{-- Tampilkan Bintang Penuh --}}
-                            @for ($i = 1; $i <= $fullStarsForDisplay; $i++)
-                                <span class="la la-star"></span>
-                            @endfor
-                    
-                            {{-- Tampilkan Bintang Kosong --}}
-                            @for ($i = 1; $i <= $emptyStarsForDisplay; $i++)
-                                <span class="la la-star-o"></span>
-                            @endfor
+                        <div class="rating-wrap d-flex flex-wrap align-items-center">
+                            <div class="review-stars d-flex align-items-center">
+                                <span class="rating-number mr-1">{{ number_format($averageRating, 1) }}</span>
+                                @for ($i = 1; $i <= 5; $i++)
+                                    <span class="la la-star{{ $i <= floor($averageRating) ? '' : '-o' }}"></span>
+                                @endfor
+                            </div>
+                            <span class="rating-total pl-1">({{ $reviewCount }} {{ Str::plural('rating', $reviewCount) }})</span>
+                            <span class="student-total pl-2">{{ number_format($enrollmentCount) }} students</span>
                         </div>
-                        <span class="rating-total pl-1">({{ $reviewCountForDisplay }} {{ Str::plural('rating', $reviewCountForDisplay) }})</span>
-                        {{-- Data student masih statis --}}
-                        <span class="student-total pl-2">{{ number_format($enrollmentCount) }} students</span>
-                    </div>
                     </div><!-- end d-flex -->
                     <p class="pt-2 pb-1">Created by <a
                             href="{{ route('instructor.details', ['id' => $course->instructor->id]) }}"
@@ -100,7 +63,7 @@
                         </p>
                     </div><!-- end d-flex -->
                     <div class="bread-btn-box pt-3">
-                        <button class="btn theme-btn theme-btn-sm theme-btn-transparent lh-28 mr-2 mb-2">
+                        <button type="button" class="btn theme-btn theme-btn-sm theme-btn-transparent lh-28 mr-2 mb-2" title="Add to Wishlist" id="{{ $course->id }}" onclick="addToWishList(this.id)">
                             <i class="la la-heart-o mr-1"></i>
                             <span class="swapping-btn" data-text-swap="Wishlisted"
                                 data-text-original="Wishlist">Wishlist</span>
@@ -150,21 +113,7 @@
 
                             </ul>
                         </div><!-- end course-overview-card -->
-                        <div class="course-overview-card border border-gray p-4 rounded">
-                            <h3 class="fs-20 font-weight-semi-bold">Top companies trust Aduca</h3>
-                            <p class="fs-15 pb-1">Get your team access to Aduca's top 5,000+ courses</p>
-                            <div class="pb-3">
-                                <img width="85" class="mr-3" src="{{ asset('frontend/images/sponsor-img.png') }}"
-                                    alt="company logo">
-                                <img width="80" class="mr-3" src="{{ asset('frontend/images/sponsor-img2.png') }}"
-                                    alt="company logo">
-                                <img width="80" class="mr-3" src="{{ asset('frontend/images/sponsor-img3.png') }}"
-                                    alt="company logo">
-                                <img width="70" class="mr-3" src="{{ asset('frontend/images/sponsor-img4.png') }}"
-                                    alt="company logo">
-                            </div>
-                            <a href="for-business.html" class="btn theme-btn theme-btn-sm">Try Aduca for Business</a>
-                        </div><!-- end course-overview-card -->
+                        
                         <div class="course-overview-card">
                             <h3 class="fs-24 font-weight-semi-bold pb-3">Description</h3>
                             {!! $course->description !!}
@@ -378,11 +327,7 @@
                         <div class="course-overview-card pt-4">
                             <h3 class="fs-24 font-weight-semi-bold pb-4">Reviews</h3>
                             <div class="review-wrap">
-                                @php
-                                    $reviews = App\Models\Review::with(['user','instructor'])->where('course_id',$course->id)->where('status',1)->latest()->limit(5)->get()
-                                @endphp
-                            @if (count($reviews) > 0)
-                                @foreach ($reviews as $review)
+                            @forelse ($latestReviews as $review)
                                 <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4">
                                     <div class="media-img mr-4 rounded-full">
                                         <img class="rounded-full lazy"   src="{{ (!empty($review->user->photo)) ? 
@@ -398,38 +343,22 @@
                                         <div class="d-flex flex-wrap align-items-center justify-content-between pb-1">
                                             <h5>{{$review->user->name}}</h5>
                                             <div class="review-stars">
-                                                <div class="review-stars">
-                                                    @if(isset($review->rating) && is_numeric($review->rating) && $review->rating >= 1 && $review->rating <= 5)
-                                                        @for ($i = 1; $i <= 5; $i++) {{-- Selalu loop 5 kali untuk 5 slot bintang --}}
-                                                            @if ($i <= $review->rating)
-                                                                <span class="la la-star" title="Rating: {{ $review->rating }}/5"></span> 
-                                                            @else
-                                                                <span class="la la-star-o" title="Rating: {{ $review->rating }}/5"></span> 
-                                                            @endif
-                                                        @endfor
-                                                    @else
-                                                        @for ($i = 1; $i <= 5; $i++)
-                                                            <span class="la la-star-o" title="No rating"></span>
-                                                        @endfor
-                                                    @endif
-                                                </div>
-                                            
+                                                @for ($i = 1; $i <= 5; $i++)
+                                                    <span class="la la-star{{ $i <= $review->rating ? '' : '-o' }}"></span>
+                                                @endfor
                                             </div>
                                         </div>
                                         <span class="d-block lh-18 pb-2">{{  $review->created_at->diffForHumans() }}</span>
                                         <p class="pb-2">{{$review->comment}}</p>
                                     </div>
                                 </div><!-- end media -->
-                                @endforeach
-                            @else
-                                <p class="pb-3 text-center">No review yet</p>
-                            @endif
-                                
-                                
-
+                            @empty
+                                <p class="pb-3 text-center">No reviews yet.</p>
+                            @endforelse
                             </div><!-- end review-wrap -->
                         </div><!-- end course-overview-card -->
                         @auth
+                        @if ($hasPurchased)
                         <form id="reviewForm" action="{{ route('store.review') }}" method="post">
                             @csrf
                             <input type="hidden" name="course_id" value="{{ $course->id }}">
@@ -477,7 +406,7 @@
                                 </div>
                             </div><!-- end course-overview-card -->
                         </form>
-                      
+                        @endif
                         @endauth
                     </div><!-- end course-details-content-wrap -->
                 </div><!-- end col-lg-8 -->
@@ -540,7 +469,18 @@
                                         </p>
                                     @endif
 
+                                    @php
+                                        $hasPurchased = \App\Models\Order::where('user_id', Illuminate\Support\Facades\Auth::id())->where('course_id', $course->id)->exists();
+                                    @endphp
                                     <div class="buy-course-btn-box">
+                                        @if ($hasPurchased)
+                                        <a href="{{ route('course.view', ['course_id' => $course->id]) }}" class="btn theme-btn w-100 mb-2">
+                                            <i class="la la-video-camera fs-18 mr-1"></i> Visit Course
+                                        </a>
+                                        <button type="button" class="btn theme-btn w-100 theme-btn-white mb-2" disabled>
+                                            <i class="la la-check-circle mr-1"></i> Already Bought
+                                        </button>
+                                        @else
                                         <button type="button" class="btn theme-btn w-100 mb-2"
                                             onclick="addToCart({{ $course->id }},'{{ $course->course_name }}','{{ $course->instructor->id }}','{{ $course->course_name_slug }}')"><i
                                                 class="la la-shopping-cart fs-18 mr-1"></i> Add to cart</button>
@@ -548,6 +488,7 @@
                                             onclick="buyCourse({{ $course->id }},'{{ $course->course_name }}','{{ $course->instructor->id }}','{{ $course->course_name_slug }}')"
                                             class="btn theme-btn w-100 theme-btn-white mb-2"><i
                                                 class="la la-shopping-bag mr-1"></i> Buy this course</button>
+                                        @endif
 
                                         <div class="input-group mb-2" id="couponField">
                                             <input class="form-control form--control pl-3" type="text"
@@ -581,15 +522,7 @@
                                                     Completion</li>
                                             @endif
                                         </ul>
-                                        <div class="section-block"></div>
-                                        <div class="buy-for-team-container pt-4">
-                                            <h3 class="fs-18 font-weight-semi-bold pb-2">Training 5 or more people?</h3>
-                                            <p class="lh-24 pb-3">Get your team access to 3,000+ top Aduca courses anytime,
-                                                anywhere.</p>
-                                            <a href="for-business.html"
-                                                class="btn theme-btn theme-btn-sm theme-btn-transparent lh-30 w-100">Try
-                                                Aduca for Business</a>
-                                        </div>
+                                        
                                     </div><!-- end preview-course-incentives -->
                                 </div><!-- end preview-course-content -->
                             </div>
@@ -644,14 +577,14 @@
                                 <div class="divider"><span></span></div>
                                 @foreach ($coursesByCategory as $courseByCategory)
                                     <div class="media media-card border-bottom border-bottom-gray pb-4 mb-4">
-                                        <a href="course-details.html" class="media-img">
+                                        <a href="{{ route('course.details', ['id' => $courseByCategory->id, 'slug' => $courseByCategory->course_name_slug]) }}" class="media-img">
                                             <img class="mr-3 lazy" src="{{ asset($courseByCategory->course_image) }}"
                                                 data-src="{{ asset($courseByCategory->course_image) }}"
                                                 alt="Related course image">
                                         </a>
                                         <div class="media-body">
                                             <h5 class="fs-15"><a
-                                                    href="course-details.html">{{ $courseByCategory->course_name }}</a>
+                                                    href="{{ route('course.details', ['id' => $courseByCategory->id, 'slug' => $courseByCategory->course_name_slug]) }}">{{ $courseByCategory->course_name }}</a>
                                             </h5>
                                             <span
                                                 class="d-block lh-18 py-1 fs-14">{{ $courseByCategory->instructor->name }}</span>
@@ -771,8 +704,7 @@
                                         <p class="card-price text-black font-weight-bold">
                                             ${{ $instructorCourse->selling_price }}</p>
                                     @endif
-                                    <div class="icon-element icon-element-sm shadow-sm cursor-pointer"
-                                        title="Add to Wishlist"><i class="la la-heart-o"></i></div>
+                                    <div class="icon-element icon-element-sm shadow-sm cursor-pointer" title="Add to Wishlist" id="{{ $instructorCourse->id }}" onclick="addToWishList(this.id)"><i class="la la-heart-o"></i></div>
                                 </div>
                             </div><!-- end card-body -->
                         </div><!-- end card -->
@@ -832,7 +764,7 @@
                             @endforelse
                         </ul>
                         <div class="d-flex justify-content-between align-items-center">
-                            <a href="#" class="btn theme-btn flex-grow-1 mr-3"><i
+                            <a href="javascript:void(0)" class="btn theme-btn flex-grow-1 mr-3" onclick="addToCart({{ $course->id }}, '{{ $course->course_name }}', {{ $course->instructor_id }}, '{{ $course->course_name_slug }}')"><i
                                     class="la la-shopping-cart mr-1 fs-18"></i> Add to Cart</a>
                             <div class="icon-element icon-element-sm shadow-sm cursor-pointer" title="Add to Wishlist"
                                 id="{{ $course->id }}" onclick="addToWishList(this.id)"><i class="la la-heart-o"></i>

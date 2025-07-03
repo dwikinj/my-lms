@@ -2,7 +2,7 @@
 @section('home')
 
 @section('title')
-    Register | My Lms(Aduca)
+    Register | My Lms
 @endsection
     <!-- ================================
                         START BREADCRUMB AREA
