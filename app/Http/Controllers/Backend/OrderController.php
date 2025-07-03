@@ -7,6 +7,8 @@ use App\Models\CourseSection;
 use App\Models\Order;
 use App\Models\Payment;
 use App\Models\Question;
+use App\Models\SiteSetting;
+use App\Models\UserCourseProgress;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -126,7 +128,32 @@ class OrderController extends Controller
         $course = Order::where('user_id', $id)->where('course_id', $course_id)->first();
         $sections = CourseSection::where('course_id', $course_id)->orderBy('id', 'asc')->get();
         $questions = Question::where('course_id', $course_id)->where('user_id', $id)->whereNull('parent_id')->orderBy('id', 'desc')->get();
+        $progress = UserCourseProgress::where('user_id', $id)->where('course_id', $course_id)->first();
+        $studentCount = Order::where('course_id', $course_id)->count();
+        $siteSettings = SiteSetting::first();
 
-        return view('frontend.mycourse.course_view', compact('course', 'sections', 'questions'));
+        return view('frontend.mycourse.course_view', compact('course', 'sections', 'questions', 'progress', 'studentCount', 'siteSettings'));
     } //end method
+
+    public function CourseProgress(Request $request)
+    {
+        $userId = Auth::id();
+        $courseId = $request->course_id;
+        $lectureId = $request->lecture_id;
+        $completedLectures = $request->completed_lectures;
+
+        $progress = UserCourseProgress::updateOrCreate(
+            [
+                'user_id' => $userId,
+                'course_id' => $courseId,
+            ],
+            [
+                'last_lecture_id' => $lectureId,
+                'completed_lectures' => $completedLectures,
+            ]
+        );
+
+        return response()->json(['status' => 'success']);
+    }
 }
+

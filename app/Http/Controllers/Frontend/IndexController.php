@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Course;
+use App\Models\Order;
+use App\Models\Review;
 use App\Models\SubCategory;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -17,7 +19,7 @@ class IndexController extends Controller
         $course = Course::with(['category', 'subCategory', 'courseGoals', 'courseSections.courseLectures', 'instructor'])->findOrFail($id);
 
         // --- Data untuk Review dan Rating ---
-        $reviews = \App\Models\Review::where('course_id', $id)->where('status', 1)->latest()->get();
+        $reviews = Review::where('course_id', $id)->where('status', 1)->latest()->get();
         $reviewCount = $reviews->count();
         $averageRating = $reviewCount > 0 ? round($reviews->avg('rating'), 1) : 0;
 
@@ -37,7 +39,7 @@ class IndexController extends Controller
         }
 
         // --- Data Lainnya ---
-        $enrollmentCount = \App\Models\Order::where('course_id', $id)->count();
+        $enrollmentCount = Order::where('course_id', $id)->count();
         $totalLectures = $course->courseSections->sum(fn($section) => $section->courseLectures->count());
         $categories = Category::latest()->get();
         $coursesByCategory = Course::with('instructor')->where('category_id', $course->category_id)->where('id', '!=', $id)->take(3)->get();
@@ -49,7 +51,7 @@ class IndexController extends Controller
         // Cek apakah user sudah membeli kursus ini
         $hasPurchased = false;
         if (Auth::check()) {
-            $hasPurchased = \App\Models\Order::where('user_id', Auth::id())->where('course_id', $id)->exists();
+            $hasPurchased = Order::where('user_id', Auth::id())->where('course_id', $id)->exists();
         }
 
         return view('frontend.course.course_details', compact(

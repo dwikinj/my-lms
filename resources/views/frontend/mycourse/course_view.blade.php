@@ -44,30 +44,16 @@
                     </div><!-- end logo-box -->
                     <div class="course-dashboard-header-title pl-4">
                         <a href="course-details.html" class="text-white fs-15">{{ $course->course->course_name }}</a>
+                        <div class="course-progress-bar-wrap">
+                            <div class="progress-item">
+                                <div class="progress-bar-wrap">
+                                    <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                                <p class="fs-14 text-white lh-20">0% Complete</p>
+                            </div>
+                        </div>
                     </div><!-- end course-dashboard-header-title -->
                     <div class="menu-wrapper ml-auto">
-                        <div class="theme-picker d-flex align-items-center mr-3">
-                            <button class="theme-picker-btn dark-mode-btn" title="Dark mode">
-                                <svg class="svg-icon-color-white" viewBox="0 0 24 24" stroke-width="1.5"
-                                    stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                                </svg>
-                            </button>
-                            <button class="theme-picker-btn light-mode-btn" title="Light mode">
-                                <svg viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round"
-                                    stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="5"></circle>
-                                    <line x1="12" y1="1" x2="12" y2="3"></line>
-                                    <line x1="12" y1="21" x2="12" y2="23"></line>
-                                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                                    <line x1="1" y1="12" x2="3" y2="12"></line>
-                                    <line x1="21" y1="12" x2="23" y2="12"></line>
-                                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                                </svg>
-                            </button>
-                        </div>
                         <div class="nav-right-button d-flex align-items-center">
                             <a href="#"
                                 class="btn theme-btn theme-btn-sm theme-btn-transparent lh-26 text-white mr-2"
@@ -224,6 +210,7 @@
                                                                             <div class="course-item-content">
                                                                                 <h4 class="fs-15 lecture-title"
                                                                                     data-video-url="{{ $lecture->url }}"
+                                                                                    data-lecture-id="{{ $lecture->id }}"
                                                                                     @if ($lecture->content) data-content="{{ $lecture->content }}" @endif>
                                                                                     {{ $lecture->lecture_title }}
                                                                                 </h4>
@@ -244,7 +231,9 @@
                                     <div class="lecture-overview-wrap">
                                         <div class="lecture-overview-item">
                                             <h3 class="fs-24 font-weight-semi-bold pb-2">About this course</h3>
-                                            <p>{{ $course->course->course_title }}</p>
+                                            <div class="lecture-description">
+                                                {!! $course->course->description !!}
+                                            </div>
                                         </div><!-- end lecture-overview-item -->
                                         <div class="section-block"></div>
                                         <div class="lecture-overview-item">
@@ -255,7 +244,7 @@
                                                 <div class="lecture-overview-stats-item">
                                                     <ul class="generic-list-item">
                                                         <li><span>Skill level:</span>{{ $course->course->label }}</li>
-                                                        <li><span>Students:</span>83950</li>
+                                                        <li><span>Students:</span>{{ $studentCount }}</li>
                                                         <li><span>Languages:</span>English</li>
                                                         <li><span>Captions:</span>Yes</li>
                                                     </ul>
@@ -304,18 +293,6 @@
                                         </div><!-- end lecture-overview-item -->
                                         <div class="section-block"></div>
                                         <div class="lecture-overview-item">
-                                            <div class="lecture-overview-stats-wrap d-flex">
-                                                <div class="lecture-overview-stats-item">
-                                                    <h3 class="fs-16 font-weight-semi-bold pb-2">Description</h3>
-                                                </div><!-- end lecture-overview-stats-item -->
-                                                <div
-                                                    class="lecture-overview-stats-item lecture-overview-stats-wide-item lecture-description">
-                                                    {!! $course->course->description !!}
-                                                </div><!-- end lecture-overview-stats-item -->
-                                            </div><!-- end lecture-overview-stats-wrap -->
-                                        </div><!-- end lecture-overview-item -->
-                                        <div class="section-block"></div>
-                                        <div class="lecture-overview-item">
                                             <div class="lecture-overview-stats-wrap d-flex ">
                                                 <div class="lecture-overview-stats-item">
                                                     <h3 class="fs-16 font-weight-semi-bold pb-2">Instructor</h3>
@@ -323,7 +300,7 @@
                                                 <div
                                                     class="lecture-overview-stats-item lecture-overview-stats-wide-item">
                                                     <div class="media media-card align-items-center">
-                                                        <a href="teacher-detail.html"
+                                                        <a href="{{ route('instructor.details', ['id' => $course->instructor->id]) }}"
                                                             class="media-img d-block rounded-full avatar-md">
                                                             <img src="{{ !empty($course->instructor->photo)
                                                                 ? url('upload/instructor_images/' . $course->instructor->photo)
@@ -332,7 +309,7 @@
                                                         </a>
                                                         <div class="media-body">
                                                             <h5><a
-                                                                    href="teacher-detail.html">{{ $course->instructor->name }}</a>
+                                                                    href="{{ route('instructor.details', ['id' => $course->instructor->id]) }}">{{ $course->instructor->name }}</a>
                                                             </h5>
                                                             {!! $course->instructor->short_description !!}
                                                         </div>
@@ -630,35 +607,7 @@
                             </div><!-- end tab-content -->
                         </div><!-- end lecture-video-detail-body -->
                     </div><!-- end lecture-video-detail -->
-                    <div class="cta-area py-4 bg-gray">
-                        <div class="container-fluid">
-                            <div class="row align-items-center">
-                                <div class="col-lg-6">
-                                    <div class="cta-content-wrap">
-                                        <h3 class="fs-18 font-weight-semi-bold">Top companies choose <a
-                                                href="for-business.html" class="text-color hover-underline">Aduca for
-                                                Business</a> to build in-demand career skills.</h3>
-                                    </div>
-                                </div><!-- end col-lg-6 -->
-                                <div class="col-lg-6">
-                                    <div class="client-logo-wrap text-right">
-                                        <a href="#" class="client-logo-item client--logo-item-2 pr-3">
-                                            <img src="{{ asset('frontend/images/sponsor-img.png') }}"
-                                                alt="brand image">
-                                        </a>
-                                        <a href="#" class="client-logo-item client--logo-item-2 pr-3">
-                                            <img src="{{ asset('frontend/images/sponsor-img2.png') }}"
-                                                alt="brand image">
-                                        </a>
-                                        <a href="#" class="client-logo-item client--logo-item-2 pr-3">
-                                            <img src="{{ asset('frontend/images/sponsor-img3.png') }}"
-                                                alt="brand image">
-                                        </a>
-                                    </div><!-- end client-logo-wrap -->
-                                </div><!-- end col-lg-6 -->
-                            </div><!-- end row -->
-                        </div><!-- end container-fluid -->
-                    </div><!-- end cta-area -->
+                    
                     <div class="footer-area pt-50px">
                         <div class="container-fluid">
                             <div class="row">
@@ -669,9 +618,9 @@
                                                 class="footer__logo">
                                         </a>
                                         <ul class="generic-list-item pt-4">
-                                            <li><a href="tel:+1631237884">+163 123 7884</a></li>
-                                            <li><a href="mailto:support@wbsite.com">support@website.com</a></li>
-                                            <li>Melbourne, Australia, 105 South Park Avenue</li>
+                                            <li><a href="tel:{{ $siteSettings->phone }}">{{ $siteSettings->phone }}</a></li>
+                                            <li><a href="mailto:{{ $siteSettings->email }}">{{ $siteSettings->email }}</a></li>
+                                            <li>{{ $siteSettings->address }}</li>
                                         </ul>
                                     </div><!-- end footer-item -->
                                 </div><!-- end col-lg-3 -->
@@ -688,23 +637,7 @@
                                         </ul>
                                     </div><!-- end footer-item -->
                                 </div><!-- end col-lg-3 -->
-                                <div class="col-lg-3 responsive-column-half">
-                                    <div class="footer-item">
-                                        <h3 class="fs-20 font-weight-semi-bold pb-3">Courses</h3>
-                                        <ul class="generic-list-item">
-                                            @php
-                                                // It's generally better to fetch data in the controller,
-                                                // but here's how to do it with @php as requested.
-                                                $footerCategories = \App\Models\Category::orderBy('category_name', 'asc')->take(6)->get();
-                                            @endphp
-                                            @if(isset($footerCategories) && $footerCategories->count() > 0)
-                                                @foreach ($footerCategories as $category)
-                                                    <li><a href="{{ route('category.course', ['id' => $category->id, 'slug' => $category->category_slug]) }}">{{ $category->category_name }}</a></li>
-                                                @endforeach
-                                            @endif
-                                        </ul>
-                                    </div><!-- end footer-item -->
-                                </div><!-- end col-lg-3 -->
+                                
                                 <div class="col-lg-3 responsive-column-half">
                                     <div class="footer-item">
                                         <h3 class="fs-20 font-weight-semi-bold pb-3">Download App</h3>
@@ -726,39 +659,17 @@
                             <div class="container-fluid">
                                 <div class="row align-items-center">
                                     <div class="col-lg-6">
-                                        <p class="copy-desc">&copy; 2021 Aduca. All Rights Reserved. by <a
-                                                href="https://techydevs.com/">TechyDevs</a></p>
+                                        <p class="copy-desc">{{$siteSettings->copyright}}</p>
                                     </div><!-- end col-lg-6 -->
                                     <div class="col-lg-6">
                                         <div class="d-flex flex-wrap align-items-center justify-content-end">
                                             <ul class="generic-list-item d-flex flex-wrap align-items-center fs-14">
-                                                <li class="mr-3"><a href="terms-and-conditions.html">Terms &
+                                                <li class="mr-3"><a href="#">Terms &
                                                         Conditions</a></li>
-                                                <li class="mr-3"><a href="privacy-policy.html">Privacy Policy</a>
+                                                <li class="mr-3"><a href="#">Privacy Policy</a>
                                                 </li>
                                             </ul>
-                                            <div class="select-container select-container-sm">
-                                                <select class="select-container-select">
-                                                    <option value="1">English</option>
-                                                    <option value="2">Deutsch</option>
-                                                    <option value="3">Español</option>
-                                                    <option value="4">Français</option>
-                                                    <option value="5">Bahasa Indonesia</option>
-                                                    <option value="6">Bangla</option>
-                                                    <option value="7">日本語</option>
-                                                    <option value="8">한국어</option>
-                                                    <option value="9">Nederlands</option>
-                                                    <option value="10">Polski</option>
-                                                    <option value="11">Português</option>
-                                                    <option value="12">Română</option>
-                                                    <option value="13">Русский</option>
-                                                    <option value="14">ภาษาไทย</option>
-                                                    <option value="15">Türkçe</option>
-                                                    <option value="16">中文(简体)</option>
-                                                    <option value="17">中文(繁體)</option>
-                                                    <option value="17">Hindi</option>
-                                                </select>
-                                            </div>
+                                            
                                         </div>
                                     </div><!-- end col-lg-6 -->
                                 </div><!-- end row -->
@@ -810,6 +721,7 @@
 
                                                                     <h4 class="fs-15 lecture-title"
                                                                         data-video-url="{{ $lecture->url }}"
+                                                                        data-lecture-id="{{ $lecture->id }}"
                                                                         @if ($lecture->content) data-content="{{ $lecture->content }}" @endif>
                                                                         {{ $lecture->lecture_title }}
                                                                     </h4>
@@ -1045,23 +957,48 @@
     </div><!-- end modal -->
 
     <script type="text/javascript">
-        // Function to open the first lecture when the page loads
-        function openFirstLecture() {
-            const firstLecture = document.querySelector('.lecture-title'); // Get the first lecture element
-            if (firstLecture) {
-                firstLecture.click(); // Trigger the click event on the first lecture
+        const courseId = {{ $course->course_id }};
+        const lastLectureId = {{ $progress->last_lecture_id ?? 'null' }};
+        let completedLectures = {!! json_encode($progress->completed_lectures ?? []) !!};
+
+        // Function to open the last viewed lecture when the page loads
+        function openLastViewedLecture() {
+            let lectureToOpen = document.querySelector('.lecture-title'); // Default to first lecture
+
+            if (lastLectureId) {
+                const lastLecture = document.querySelector(`[data-lecture-id="${lastLectureId}"]`);
+                if (lastLecture) {
+                    lectureToOpen = lastLecture;
+                }
+            }
+
+            if (lectureToOpen) {
+                const collapsible = lectureToOpen.closest('.collapse');
+                
+                // Check if the collapsible element exists and is not already shown
+                if (collapsible && !$(collapsible).hasClass('show')) {
+                    // Use Bootstrap's event to ensure actions happen after the animation
+                    $(collapsible).on('shown.bs.collapse', function () {
+                        lectureToOpen.click();
+                        lectureToOpen.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }).collapse('show');
+                } else {
+                    // If it's already open or not in a collapsible, just click and scroll
+                    lectureToOpen.click();
+                    if (collapsible) { // Only scroll if it's in a collapsible view
+                        lectureToOpen.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
             }
         }
 
         // Function to handle lecture clicks and load content
-        function viewLesson(videoUrl, vimeoUrl, textContent) {
+        function viewLesson(videoUrl, vimeoUrl, textContent, lectureId) {
             const video = document.getElementById("videoContainer");
             const text = document.getElementById("textLesson");
             const textContainer = document.createElement("div");
 
-
             text.innerHTML = "";
-
 
             if (videoUrl && videoUrl.trim() !== "") {
                 video.classList.remove("d-none");
@@ -1081,23 +1018,84 @@
                 textContainer.style.paddingRight = "40px";
                 text.appendChild(textContainer);
             }
+
+            updateProgress(lectureId);
         }
 
         // Add a click event listener to all lecture elements
         document.querySelectorAll('.lecture-title').forEach((lectureTitle) => {
-            lectureTitle.addEventListener('click', () => {
+            lectureTitle.addEventListener('click', (e) => {
+                e.preventDefault();
                 const videoUrl = lectureTitle.getAttribute('data-video-url');
                 const vimeoUrl = lectureTitle.getAttribute('data-vimeo-url');
                 const textContent = lectureTitle.getAttribute('data-content');
-                console.log(textContent);
-                viewLesson(videoUrl, vimeoUrl, textContent);
+                const lectureId = lectureTitle.getAttribute('data-lecture-id');
+                viewLesson(videoUrl, vimeoUrl, textContent, lectureId);
             });
         });
 
-        // Open the first lecture when the page loads
+        // Open the last viewed lecture when the page loads
         window.addEventListener('load', () => {
-            openFirstLecture();
+            openLastViewedLecture();
+            updateCheckboxes();
+            updateProgressBar();
         });
+
+        // Progress tracking
+        const checkboxes = document.querySelectorAll('.custom-control-input');
+        const progressBar = document.querySelector('.progress-bar');
+        const progressText = document.querySelector('.fs-14.text-white.lh-20');
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', () => {
+                const lectureId = checkbox.id.replace(/courseCheckbox|mobileCourseCheckbox/, '');
+                
+                if (checkbox.checked) {
+                    if (!completedLectures.includes(lectureId)) {
+                        completedLectures.push(lectureId);
+                    }
+                } else {
+                    const index = completedLectures.indexOf(lectureId);
+                    if (index > -1) {
+                        completedLectures.splice(index, 1);
+                    }
+                }
+                
+                updateCheckboxes(); // Sync other checkbox
+                updateProgressBar();
+                updateProgress(null); // Don't update last lecture on checkbox click
+            });
+        });
+
+        function updateProgressBar() {
+            const totalLectures = new Set(Array.from(checkboxes).map(cb => cb.id.replace(/courseCheckbox|mobileCourseCheckbox/, ''))).size;
+            const progress = totalLectures > 0 ? (completedLectures.length / totalLectures) * 100 : 0;
+
+            progressBar.style.width = `${progress}%`;
+            progressBar.setAttribute('aria-valuenow', progress);
+            progressText.textContent = `${Math.round(progress)}% Complete`;
+        }
+
+        function updateCheckboxes() {
+            checkboxes.forEach(cb => {
+                const lectureId = cb.id.replace(/courseCheckbox|mobileCourseCheckbox/, '');
+                cb.checked = completedLectures.includes(lectureId);
+            });
+        }
+
+        function updateProgress(lectureId) {
+            const newLastLectureId = lectureId ? lectureId : lastLectureId;
+            $.ajax({
+                url: '{{ route("course.progress") }}',
+                method: 'POST',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    course_id: courseId,
+                    lecture_id: newLastLectureId,
+                    completed_lectures: completedLectures
+                }
+            });
+        }
     </script>
 
     <script>
