@@ -421,6 +421,15 @@ class CartController extends Controller
                     'course_title' => $cart->name,
                     'price' => $cart->price,
                 ]));
+
+                $admins = User::where('role', 'admin')->get();
+                Notification::send($admins, new OrderComplete([
+                    'message' => 'New Enrollment In Course ' . $cart->name,
+                    'order_id' => $order->id,
+                    'user_id' => $user_id,
+                    'course_title' => $cart->name,
+                    'price' => $cart->price,
+                ]));
                 //End send notification;
             }
 
@@ -514,6 +523,15 @@ class CartController extends Controller
             //Send notification
             $instructor = User::find($cart->options['instructor_id']);
             Notification::send($instructor, new OrderComplete([
+                'message' => 'New Enrollment In Course ' . $cart->name,
+                'order_id' => $order->id,
+                'user_id' => $userId,
+                'course_title' => $cart->name,
+                'price' => $cart->price,
+            ]));
+
+            $admins = User::where('role', 'admin')->get();
+            Notification::send($admins, new OrderComplete([
                 'message' => 'New Enrollment In Course ' . $cart->name,
                 'order_id' => $order->id,
                 'user_id' => $userId,

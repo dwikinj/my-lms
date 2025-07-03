@@ -91,6 +91,7 @@
     <script src="{{asset('backend/assets/plugins/input-tags/js/tagsinput.js')}}"></script>
     <!--app JS-->
     <script src="{{ asset('backend/assets/js/app.js') }}"></script>
+    @stack('scripts')
         <script src="{{ asset('backend/assets/js/dark-mode-handler.js') }}"></script>
     <!--validate js-->
     <script src="{{ asset('backend/assets/js/validate.min.js') }}"></script>
@@ -139,6 +140,9 @@
             }
         @endif
     </script>
+
+    @stack('scripts')
+
 </body>
 
 </html>

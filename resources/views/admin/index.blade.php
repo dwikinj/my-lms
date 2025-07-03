@@ -208,21 +208,6 @@
                 <div>
                     <h6 class="mb-0">Recent Orders</h6>
                 </div>
-                <div class="dropdown ms-auto">
-                    <a class="dropdown-toggle dropdown-toggle-nocaret" href="#" data-bs-toggle="dropdown"><i class='bx bx-dots-horizontal-rounded font-22 text-option'></i>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="javascript:;">Action</a>
-                        </li>
-                        <li><a class="dropdown-item" href="javascript:;">Another action</a>
-                        </li>
-                        <li>
-                            <hr class="dropdown-divider">
-                        </li>
-                        <li><a class="dropdown-item" href="javascript:;">Something else here</a>
-                        </li>
-                    </ul>
-                </div>
             </div>
         </div>
              <div class="card-body">
@@ -249,11 +234,6 @@
               </table>
               </div>
              </div>
-        </div>
-
-
-
-    
-
+      </div>
 </div>
 @endsection

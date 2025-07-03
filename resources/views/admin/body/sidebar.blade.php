@@ -155,7 +155,7 @@
         @endif
 
         <li>
-            <a href="https://themeforest.net/user/codervent" target="_blank">
+            <a href="#">
                 <div class="parent-icon"><i class="bx bx-support"></i></div>
                 <div class="menu-title">Support</div>
             </a>

@@ -197,16 +197,22 @@ class AdminController extends Controller
             return redirect()->back()->with($notification)->withErrors($validator)->withInput();
         }
 
-        User::create([
+        $user = User::create([
             'name' => $request->name,
             'username' => $request->username,
             'email' => $request->email,
             'phone' => $request->phone,
             'address' => $request->address,
             'password' => Hash::make($request->password),
-            'role' => User::ROLE_INSTRUCTOR,
-            'status' => User::STATUS_INACTIVE,
+            'role' => 'instructor',
+            'status' => '0',
         ]);
+
+        $admins = User::where('role', 'admin')->get();
+        Notification::send($admins, new NewInstructorRequest([
+            'message' => 'New instructor request from ' . $user->name,
+            'user_id' => $user->id,
+        ]));
 
         $notification = [
             'message' => 'Instructor Registered Succesfully',
