@@ -2,8 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\BlogPost;
+use App\Models\Category;
+use App\Models\Coupon;
 use App\Models\Course;
+use App\Models\Order;
+use App\Models\Question;
+use App\Models\Review;
+use App\Models\SubCategory;
 use App\Models\User;
+use App\Models\Wishlist;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -14,7 +22,47 @@ class AdminController extends Controller
 {
     public function AdminDashboard()
     {
-        return view('admin.index');
+        $totalOrders = Order::count();
+        $totalRevenue = Order::sum('price');
+        $totalStudents = User::where('role', 'user')->count();
+        $totalInstructors = User::where('role', 'instructor')->count();
+        $recentOrders = Order::with('payment')->latest()->take(6)->get();
+        $totalCourses = Course::count();
+        $totalCategories = Category::count();
+        $totalSubCategories = SubCategory::count();
+        $totalReviews = Review::count();
+        $totalQuestions = Question::count();
+        $totalBlogPosts = BlogPost::count();
+        $totalCoupons = Coupon::where('coupon_status', 1)->count();
+        $totalWishlists = Wishlist::count();
+
+        $currentYear = date('Y');
+        $orders = Order::whereYear('created_at', $currentYear)
+            ->selectRaw('DATE_FORMAT(created_at, "%b") as month, count(*) as total_orders')
+            ->groupBy('month')
+            ->orderByRaw('MIN(created_at)')
+            ->get();
+
+        $orderMonths = $orders->pluck('month');
+        $orderCounts = $orders->pluck('total_orders');
+
+        return view('admin.index', compact(
+            'totalOrders',
+            'totalRevenue',
+            'totalStudents',
+            'totalInstructors',
+            'recentOrders',
+            'totalCourses',
+            'totalCategories',
+            'totalSubCategories',
+            'totalReviews',
+            'totalQuestions',
+            'totalBlogPosts',
+            'totalCoupons',
+            'totalWishlists',
+            'orderMonths',
+            'orderCounts'
+        ));
     }
 
     public function AdminLogout(Request $request)
