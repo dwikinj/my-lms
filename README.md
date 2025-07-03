@@ -12,6 +12,7 @@ My LMS enables instructors to upload educational videos, while providing adminis
 - User registration and course enrollment
 - Responsive design using Bootstrap
 - Backend powered by Laravel
+- Etc
 
 ## Current Status
 
