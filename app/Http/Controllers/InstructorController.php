@@ -7,12 +7,33 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use App\Models\Order;
 use Illuminate\Support\Facades\Validator;
 
 class InstructorController extends Controller
 {
     public function InstructorDashboard() {
-        return view('instructor.index');
+        $id = Auth::user()->id;
+        $totalOrders = Order::where('instructor_id', $id)->count();
+        $totalRevenue = Order::where('instructor_id', $id)->sum('price');
+        $bounceRate = 'N/A'; // Placeholder for bounce rate
+        $totalStudents= Order::where('instructor_id', $id)->distinct('user_id')->count();
+
+        $currentYear = date('Y');
+        $orders = Order::where('instructor_id', $id)
+                        ->whereYear('created_at', $currentYear)
+                        ->selectRaw('DATE_FORMAT(created_at, "%b") as month, count(*) as total_orders')
+                        ->groupBy('month')
+                        ->orderByRaw('MIN(created_at)')
+                        ->get();
+
+        $orderMonths = $orders->pluck('month');
+        $orderCounts = $orders->pluck('total_orders');
+
+        $recentOrders = Order::where('instructor_id', $id)->with('course','payment')->latest()->take(6)->get();
+
+
+        return view('instructor.index', compact('totalOrders', 'totalRevenue', 'bounceRate', 'totalStudents', 'orderMonths', 'orderCounts','recentOrders'));
     }
 
     public function InstructorLogout(Request $request)
