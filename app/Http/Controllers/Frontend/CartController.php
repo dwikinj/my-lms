@@ -413,14 +413,14 @@ class CartController extends Controller
                 $order->save();
 
                 //Send notification
-                $orderData = [
-                    'message' => 'New COD Enrollment In Course',
+                $instructor = User::find($cart->options->instructor_id);
+                Notification::send($instructor, new OrderComplete([
+                    'message' => 'New Enrollment In Course ' . $cart->name,
                     'order_id' => $order->id,
-                    'user_id' => $order->user_id,
-                    'course_title' => $order->course_title,
-                    'price' => $order->price,
-                ];
-                Notification::send($user, new OrderComplete($orderData));
+                    'user_id' => $user_id,
+                    'course_title' => $cart->name,
+                    'price' => $cart->price,
+                ]));
                 //End send notification;
             }
 
@@ -510,6 +510,17 @@ class CartController extends Controller
             $order->course_title = $cart->name;
             $order->price = $cart->price;
             $order->save();
+
+            //Send notification
+            $instructor = User::find($cart->options['instructor_id']);
+            Notification::send($instructor, new OrderComplete([
+                'message' => 'New Enrollment In Course ' . $cart->name,
+                'order_id' => $order->id,
+                'user_id' => $userId,
+                'course_title' => $cart->name,
+                'price' => $cart->price,
+            ]));
+            //End send notification;
         }
 
         // Clear cart and coupon

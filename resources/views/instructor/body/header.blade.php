@@ -36,7 +36,7 @@
                             </a>
 
                             <div class="header-notifications-list" id="notifications-container">
-                                @forelse ($user->unreadNotifications as $notification)
+                                @forelse ($user->unreadNotifications->take(6) as $notification)
                                     <a class="dropdown-item notification-item" href="javascript:;"
                                         data-notification-id="{{ $notification->id }}">
                                         <div class="d-flex align-items-center">
